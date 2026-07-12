@@ -1,0 +1,517 @@
+    /* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 18px; /* Larger base font for elderly users */
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #fdf6e3; /* Warm cream background */
+    color: #1a1a1a; /* Dark charcoal for maximum legibility */
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Loading Screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fff8f0 0%, #fef5e7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.om-symbol {
+    font-size: 80px;
+    color: #ff7700;
+    margin-bottom: 20px;
+    animation: pulse 2s ease-in-out infinite;
+    font-family: 'Arial Unicode MS', sans-serif;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+.loading-text {
+    font-size: 28px;
+    color: #cc5500;
+    font-weight: 600;
+}
+
+/* App Container */
+.app {
+    min-height: 100vh;
+    background-color: #fdf6e3;
+}
+
+.app.hidden {
+    display: none;
+}
+
+/* Admin/Back Link */
+.admin-link, .back-link, .logout-link {
+    text-align: center;
+    padding: 20px;
+}
+
+.admin-btn, .back-btn, .logout-btn {
+    display: inline-block;
+    background-color: #ff7700;
+    color: white;
+    text-decoration: none;
+    padding: 16px 32px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 12px;
+    min-height: 56px;
+    border: none;
+    cursor: pointer;
+}
+
+.admin-btn:hover, .back-btn:hover, .logout-btn:hover {
+    background-color: #cc5500;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(135deg, #ff7700 0%, #cc5500 100%);
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(204, 85, 0, 0.2);
+}
+
+.app-title {
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Main Content */
+.main-content {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 22px;
+    color: #cc5500;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.subsection-title {
+    font-size: 18px;
+    color: #ff7700;
+    margin: 16px 0 12px;
+    font-weight: 500;
+}
+
+/* Event Card */
+.event-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ff7700;
+}
+
+.event-title {
+    font-size: 24px;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.event-datetime {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.event-type {
+    font-size: 18px;
+    color: #cc5500;
+    font-weight: 500;
+}
+
+/* No Events State */
+.no-events {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.no-events-text {
+    font-size: 20px;
+    color: #666;
+}
+
+/* RSVP Section */
+.rsvp-section {
+    margin-bottom: 20px;
+}
+
+.rsvp-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.rsvp-btn {
+    flex: 1;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 60px;
+}
+
+.rsvp-btn.attending {
+    background-color: #ff7700;
+    color: white;
+}
+
+.rsvp-btn.attending:hover,
+.rsvp-btn.attending.selected {
+    background-color: #cc5500;
+    transform: translateY(-2px);
+}
+
+.rsvp-btn.not-attending {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.rsvp-btn.not-attending:hover,
+.rsvp-btn.not-attending.selected {
+    background-color: #c0c0c0;
+    transform: translateY(-2px);
+}
+
+/* Bus Pickup Section */
+.bus-pickup-section {
+    margin-bottom: 20px;
+}
+
+.notice-banner {
+    background-color: #fff3e0;
+    border: 1px solid #ff7700;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: #cc5500;
+    text-align: center;
+}
+
+.bus-select {
+    width: 100%;
+    padding: 18px;
+    font-size: 18px;
+    border: 2px solid #ff7700;
+    border-radius: 12px;
+    background-color: white;
+    color: #1a1a1a;
+    cursor: pointer;
+    min-height: 60px;
+}
+
+.bus-select:focus {
+    outline: none;
+    border-color: #cc5500;
+    box-shadow: 0 0 0 3px rgba(255, 119, 0, 0.2);
+}
+
+/* Confirmation Section */
+.confirmation-section {
+    margin-top: 20px;
+}
+
+.confirmation-message {
+    background-color: #e8f5e9;
+    border: 1px solid #4caf50;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.confirmation-message p {
+    font-size: 20px;
+    color: #2e7d32;
+    font-weight: 500;
+}
+
+/* Error Message */
+.error-message {
+    background-color: #ffebee;
+    border: 1px solid #f44336;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 18px;
+    color: #c62828;
+    text-align: center;
+}
+
+/* Divider */
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+.divider span {
+    background-color: #fdf6e3;
+    padding: 0 16px;
+    color: #666;
+    font-size: 18px;
+}
+
+.divider:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #ddd;
+    z-index: -1;
+}
+
+/* Admin Sections */
+.admin-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    background-color: white;
+    color: #1a1a1a;
+    min-height: 56px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #ff7700;
+    box-shadow: 0 0 0 3px rgba(255, 119, 0, 0.2);
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    background-color: #ff7700;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    min-height: 60px;
+    transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+    background-color: #cc5500;
+}
+
+/* Bus Routes List */
+.bus-routes-list {
+    margin-top: 16px;
+}
+
+.bus-routes-list ul {
+    list-style: none;
+}
+
+.bus-routes-list li {
+    background-color: #fff8f0;
+    padding: 16px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 18px;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.remove-pickup {
+    background: none;
+    border: none;
+    color: #cc0000;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+/* Roster Content */
+.roster-content {
+    margin-top: 16px;
+}
+
+.roster-summary {
+    background-color: #fff8f0;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.roster-summary span {
+    font-weight: 600;
+    color: #cc5500;
+}
+
+.roster-lists {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.roster-column h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.roster-column ul {
+    list-style: none;
+}
+
+.roster-column li {
+    background-color: #f5f5f5;
+    padding: 14px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    font-size: 17px;
+    color: #333;
+}
+
+.bus-breakdown-section {
+    margin-top: 20px;
+}
+
+.bus-breakdown-section h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.bus-breakdown-section ul {
+    list-style: none;
+}
+
+.bus-breakdown-section li {
+    background-color: #fff3e0;
+    padding: 16px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 18px;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Hidden class */
+.hidden {
+    display: none !important;
+}
+
+/* View Management */
+.view {
+    min-height: 100vh;
+}
+
+/* Responsive Design */
+@media (min-width: 600px) {
+    .roster-lists {
+        flex-direction: row;
+    }
+    
+    .roster-column {
+        flex: 1;
+    }
+}
+
+/* Touch target improvements */
+button, select, input {
+    touch-action: manipulation;
+}
+
+/* Scrollbar styling for webkit */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ff7700;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #cc5500;
+}

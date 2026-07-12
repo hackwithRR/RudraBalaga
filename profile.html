@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Profile - Rudra Balaga</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#8f4e00",
+                    "surface-tint": "#8f4e00",
+                    "tertiary": "#735c00",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#887364",
+                    "secondary": "#ad2c00",
+                    "on-tertiary-container": "#544200",
+                    "surface-container-highest": "#e4e2e1",
+                    "secondary-container": "#d83900",
+                    "surface-container": "#f0eded",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#ffdbd1",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "on-surface-variant": "#554336",
+                    "primary-fixed-dim": "#ffb77a",
+                    "surface-container-high": "#eae8e7",
+                    "on-background": "#1b1c1c",
+                    "on-tertiary-fixed": "#241a00",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#fffbff",
+                    "surface-container-low": "#f6f3f2",
+                    "on-secondary": "#ffffff",
+                    "primary-container": "#ff9933",
+                    "error": "#ba1a1a",
+                    "outline-variant": "#dbc2b0",
+                    "tertiary-container": "#d3ae36",
+                    "tertiary-fixed": "#ffe088",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#303030",
+                    "on-secondary-fixed-variant": "#872000",
+                    "surface-dim": "#dcd9d9",
+                    "inverse-on-surface": "#f3f0f0",
+                    "background": "#fbf9f8",
+                    "on-primary-fixed": "#2e1500",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "on-surface": "#1b1c1c",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#3b0900",
+                    "inverse-primary": "#ffb77a",
+                    "surface-variant": "#e4e2e1",
+                    "on-primary-fixed-variant": "#6d3a00",
+                    "secondary-fixed-dim": "#ffb5a0",
+                    "on-primary-container": "#693800",
+                    "primary-fixed": "#ffdcc2",
+                    "surface-bright": "#fbf9f8",
+                    "error-container": "#ffdad6",
+                    "surface": "#fbf9f8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "1.5rem",
+                    "gutter-mobile": "1rem",
+                    "stack-md": "1.5rem",
+                    "stack-lg": "2.5rem",
+                    "stack-sm": "1rem",
+                    "touch-target-min": "3rem",
+                    "stack-xs": "0.5rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "chant-text": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "chant-text": ["24px", {"lineHeight": "40px", "fontWeight": "500"}],
+                    "body-lg": ["20px", {"lineHeight": "32px", "fontWeight": "400"}],
+                    "label-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-lg": ["34px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "headline-sm": ["22px", {"lineHeight": "30px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+                    "headline-md": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        body {
+            background-color: #fbf9f8;
+            color: #1b1c1c;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        .touch-active:active {
+            transform: scale(0.96);
+            transition: transform 0.1s ease;
+        }
+        .orange-glow { 
+            filter: drop-shadow(0 0 14px rgba(255, 87, 34, 0.75)); 
+        }
+        .neon-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md pb-32">
+
+    <!-- Premium Light Preloader Screen -->
+    <div id="loader-panel" class="fixed inset-0 z-[9999] flex flex-col justify-between p-6 bg-[#ffffff]">
+        
+        <!-- Top Status Bar -->
+        <div class="w-full flex justify-between items-center text-[9px] tracking-[0.4em] font-bold text-stone-400 pt-4">
+            <div>SACRED ALIGNMENT // GEN V</div>
+            <div id="load-state" class="text-right text-[#ff5722]">AUM NAMAH SHIVAYA</div>
+        </div>
+
+        <!-- Central Iconic Frame -->
+        <div class="flex-1 flex flex-col items-center justify-center relative">
+            
+            <!-- Shockwave Ring -->
+            <div id="shockwave" class="absolute w-12 h-12 rounded-full border border-[#ff5722] opacity-0 scale-50 pointer-events-none"></div>
+
+            <!-- Foreground Graphic Canvas Layout -->
+            <div class="w-80 h-80 relative flex items-center justify-center z-20">
+                
+                <!-- Master Vector SVG Geometry -->
+                <svg id="shiva-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" class="w-full h-full relative z-20">
+                    
+                    <!-- Rotating Orange Halo -->
+                    <g id="rotating-halo" class="orange-glow">
+                        <circle cx="200" cy="180" r="120" fill="none" stroke="#ff5722" stroke-width="1" stroke-dasharray="8 4" opacity="0.3">
+                            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 200 180" to="360 200 180" dur="20s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="200" cy="180" r="130" fill="none" stroke="#ff5722" stroke-width="0.5" opacity="0.2">
+                            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="360 200 180" to="0 200 180" dur="25s" repeatCount="indefinite"/>
+                        </circle>
+                    </g>
+                    
+                    <!-- Cosmic Background Framework Rings -->
+                    <circle cx="200" cy="180" r="150" fill="none" stroke="#f3f3f2" stroke-width="1" />
+                    <circle cx="200" cy="180" r="144" fill="none" stroke="#e9e9e7" stroke-width="1" stroke-dasharray="4 8" />
+
+                    <!-- Trishul Layer -->
+                    <g id="final-trishul" fill="none" stroke="#ff5722" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 orange-glow">
+                        <line x1="200" y1="40" x2="200" y2="240" stroke-width="4" />
+                        <path d="M 200,5 C 196,20 195,35 195,45 L 205,45 C 205,35 204,20 200,5 Z" fill="#ff5722" />
+                        <path d="M 165,35 C 165,70 190,75 195,75 M 165,35 C 172,45 180,50 188,52" />
+                        <path d="M 235,35 C 235,70 210,75 205,75 M 235,35 C 228,45 220,50 212,52" />
+                        <path d="M 188,95 L 212,95 L 190,115 L 212,115 Z" fill="#ffffff" stroke-width="2" />
+                        <line x1="188" y1="95" x2="212" y2="115" stroke-width="1.5" />
+                        <line x1="212" y1="95" x2="188" y2="115" stroke-width="1.5" />
+                    </g>
+
+                    <!-- Shivling Layer -->
+                    <g fill="none" stroke="#292524" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path id="draw-lingam" class="neon-line" d="M 160,185 C 160,105 240,105 240,185 Z" />
+                        <path id="draw-yoni-top" class="neon-line" d="M 120,185 L 280,185 C 295,185 300,195 300,200 C 300,205 290,205 280,205 L 120,205 C 110,205 100,205 100,200 C 100,195 105,185 120,185 Z" />
+                        <path id="draw-base-tier" class="neon-line" d="M 145,205 L 255,205 L 255,225 L 145,225 Z" />
+                        <path id="draw-pedestal" class="neon-line" d="M 125,225 L 275,225 L 265,245 L 135,245 Z" />
+                    </g>
+                    
+                    <!-- Tripundra Lines -->
+                    <g fill="none" stroke="#ff5722" stroke-width="3" stroke-linecap="round" class="orange-glow">
+                        <line id="line1" x1="185" y1="140" x2="215" y2="140" class="neon-line" />
+                        <line id="line2" x1="181" y1="147" x2="219" y2="147" class="neon-line" />
+                        <line id="line3" x1="185" y1="154" x2="215" y2="154" class="neon-line" />
+                        <circle id="bindu" cx="200" cy="147" r="2.5" fill="#ff5722" class="opacity-0"/>
+                    </g>
+                </svg>
+            </div>
+            
+        <!-- App Branding Typography -->
+        <div class="overflow-visible text-center mt-6">
+            <h1 id="app-title" class="text-3xl font-black text-stone-900 opacity-0 translate-y-[100%]">
+                ರುದ್ರ <span class="text-[#ff5722] orange-glow">ಬಲಗ</span>
+            </h1>
+        </div>
+        </div>
+
+        <!-- Bottom Loading Tracker Bar -->
+        <div class="w-full flex flex-col items-center justify-center pb-6 gap-2">
+            <div class="w-16 h-[1px] bg-stone-200 relative overflow-hidden">
+                <div id="bar-meter" class="absolute inset-y-0 left-0 w-0 bg-[#ff5722] shadow-[0_0_8px_#ff5722]"></div>
+            </div>
+            <span class="text-[8px] tracking-[0.3em] font-bold text-stone-400 uppercase">ASCENDING TO LIGHT</span>
+        </div>
+    </div>
+
+    <!-- TopAppBar -->
+    <header class="bg-surface-container-lowest border-b-2 border-primary-container w-full fixed top-0 z-50">
+        <div class="flex justify-between items-center px-4 h-16">
+            <div class="flex items-center gap-3">
+                <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
+                <h1 class="text-xl font-bold text-primary">ರುದ್ರ ಬಲಗ</h1>
+            </div>
+            <a href="index.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container">
+                <span class="material-symbols-outlined text-on-primary-container" data-icon="close">close</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Canvas -->
+    <main id="app-content" class="pt-20 px-margin-mobile space-y-stack-lg max-w-2xl mx-auto opacity-0">
+        <!-- Profile Header -->
+        <section class="mt-stack-md text-center">
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">My Profile</h2>
+        </section>
+
+        <!-- Profile Card -->
+        <section>
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <!-- Profile Form -->
+                <form id="profile-form" class="space-y-4">
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="w-24 h-24 rounded-full bg-primary-container flex items-center justify-center mb-3 overflow-hidden" id="profile-preview">
+                            <span class="material-symbols-outlined text-primary text-4xl" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+                        </div>
+                        <input type="file" id="profile-pic-input" accept="image/*" class="hidden">
+                        <button type="button" id="change-pic-btn" class="touch-active text-primary font-label-lg text-label-lg">Change Photo</button>
+                    </div>
+                    <div>
+                        <label for="profile-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Full Name</label>
+                        <input type="text" id="profile-name" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg" placeholder="Enter your name">
+                    </div>
+                    <div>
+                        <label for="profile-email" class="block font-label-lg text-label-lg text-on-surface mb-2">Email</label>
+                        <input type="email" id="profile-email" disabled class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-surface-container-high text-on-surface-variant font-body-lg">
+                    </div>
+                    <div>
+                        <label for="profile-phone" class="block font-label-lg text-label-lg text-on-surface mb-2">Phone Number</label>
+                        <input type="tel" id="profile-phone" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg" placeholder="+91XXXXXXXXXX">
+                    </div>
+                    <div>
+                        <label for="profile-dob" class="block font-label-lg text-label-lg text-on-surface mb-2">Date of Birth</label>
+                        <input type="date" id="profile-dob" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="profile-address" class="block font-label-lg text-label-lg text-on-surface mb-2">Address</label>
+                        <textarea id="profile-address" rows="3" class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg" placeholder="Enter your address"></textarea>
+                    </div>
+                    <button type="submit" class="w-full h-[60px] bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg">
+                        <span class="material-symbols-outlined" data-icon="save" style="font-variation-settings: 'FILL' 1;">save</span>
+                        Save Profile
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Logout Button -->
+        <section>
+            <button id="logout-btn" class="w-full h-[60px] bg-error text-on-error font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg">
+                <span class="material-symbols-outlined" data-icon="logout" style="font-variation-settings: 'FILL' 1;">logout</span>
+                Logout
+            </button>
+        </section>
+    </main>
+
+    <!-- BottomNavBar -->
+    <nav class="fixed bottom-0 w-full z-50 flex justify-center items-center px-4 py-3 pb-safe bg-surface-container dark:bg-surface-container border-t-2 border-outline-variant dark:border-outline shadow-lg dark:shadow-none rounded-t-xl">
+        <a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-on-primary-container rounded-full px-12 py-2 transition-all duration-150 scale-90" href="index.html">
+            <span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+            <span class="font-label-lg text-label-lg">Home</span>
+        </a>
+    </nav>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // State
+        const state = {
+            user: null,
+            userData: null
+        };
+
+        // Loading animation
+        const tl = gsap.timeline();
+
+        // 1. Text activation
+        tl.to("#app-title", { opacity: 1, translateY: 0, duration: 1, ease: "power4.out" })
+          
+          // 2. Stroke layout drawing orchestration
+          .to(".neon-line", {
+              strokeDashoffset: 0,
+              duration: 3.2,
+              ease: "power2.inOut",
+              stagger: 0.08,
+              onUpdate: function() {
+                  let progress = Math.floor(this.progress() * 100);
+                  document.getElementById("bar-meter").style.width = progress + "%";
+                  
+                  if(progress > 20 && progress < 65) {
+                      document.getElementById("load-state").textContent = "MANIFESTING DIVINE MATRIX";
+                  } else if(progress >= 65) {
+                      document.getElementById("load-state").textContent = "LOCKING AXIAL RADIALS";
+                  }
+              }
+          }, "-=0.8");
+        
+        // 3. Mount centered backplane graphics
+        tl.to("#final-trishul", {
+            opacity: 1,
+            duration: 0.5,
+            ease: "power2.out",
+            onStart: () => {
+                document.getElementById("load-state").textContent = "TRISHUL MOUNTED";
+            }
+        }, "-=0.4")
+        .to("#bindu", {
+            opacity: 1,
+            scale: 1,
+            duration: 0.3,
+            ease: "back.out(3)"
+        }, "-=0.2");
+
+        // 4. Force emission pulses
+        tl.to("#shockwave", {
+            opacity: 0.6,
+            scale: 18,
+            duration: 0.8,
+            ease: "expo.out"
+        })
+        .to("#shiva-svg", {
+            scale: 0.96,
+            duration: 0.15
+        }, "-=0.8");
+
+        // 5. Unveil core product view shell
+        tl.to("#loader-panel", {
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+            duration: 1.3,
+            ease: "expo.inOut"
+        })
+        .to("#app-content", {
+            opacity: 1,
+            scale: 1,
+            duration: 1.2,
+            ease: "power3.out",
+            onComplete: () => {
+                document.getElementById("app-content").style.pointerEvents = "auto";
+                document.getElementById("loader-panel").remove();
+                initializeApp();
+            }
+        }, "-=1.0");
+
+        // Initialize app
+        function initializeApp() {
+            // Check authentication state - STRICTLY require login
+            firebaseAuth.onAuthStateChanged(user => {
+                if (user) {
+                    state.user = user;
+                    // Listen to user data from Firestore in real-time
+                    try {
+                        firebaseDb.collection('users').doc(user.uid).onSnapshot(doc => {
+                            if (doc.exists) {
+                                state.userData = doc.data();
+                                loadProfileData();
+                            } else {
+                                // User document doesn't exist yet
+                                loadProfileData();
+                            }
+                        });
+                    } catch (error) {
+                        // If Firestore fails, use Google data
+                        loadProfileData();
+                    }
+                } else {
+                    // Redirect to login if not authenticated
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        // Load profile data
+        function loadProfileData() {
+            // Pre-fill from Google user data
+            if (state.user) {
+                document.getElementById('profile-name').value = state.userData?.name || state.user.displayName || '';
+                document.getElementById('profile-email').value = state.user.email || '';
+            }
+            // Load additional data from Firestore
+            if (state.userData) {
+                document.getElementById('profile-phone').value = state.userData.phone || '';
+                document.getElementById('profile-dob').value = state.userData.dob || '';
+                document.getElementById('profile-address').value = state.userData.address || '';
+                // Load profile picture
+                if (state.userData.photoURL) {
+                    document.getElementById('profile-preview').innerHTML = `<img src="${state.userData.photoURL}" class="w-full h-full object-cover" alt="Profile">`;
+                }
+            }
+        }
+
+        // Setup form submit
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const profileData = {
+                name: document.getElementById('profile-name').value,
+                phone: document.getElementById('profile-phone').value,
+                dob: document.getElementById('profile-dob').value,
+                address: document.getElementById('profile-address').value
+            };
+            
+            if (state.user) {
+                firebaseDb.collection('users').doc(state.user.uid).set({
+                    ...state.userData,
+                    ...profileData
+                }, { merge: true }).then(() => {
+                    alert('Profile saved successfully!');
+                });
+            }
+        });
+
+        // Setup profile picture change
+        document.getElementById('change-pic-btn').addEventListener('click', function() {
+            document.getElementById('profile-pic-input').click();
+        });
+
+        document.getElementById('profile-pic-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64 = event.target.result;
+                    // Update preview
+                    document.getElementById('profile-preview').innerHTML = `<img src="${base64}" class="w-full h-full object-cover" alt="Profile">`;
+                    // Save to Firestore
+                    if (state.user) {
+                        // Get current user data or create empty object
+                        const currentData = state.userData || {};
+                        firebaseDb.collection('users').doc(state.user.uid).set({
+                            ...currentData,
+                            photoURL: base64
+                        }, { merge: true }).then(() => {
+                            // Update state after successful save
+                            state.userData = { ...currentData, photoURL: base64 };
+                        }).catch(error => {
+                            console.error('Error saving photo:', error);
+                        });
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Setup logout button
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            // Clear demo mode data
+            localStorage.removeItem('userPhone');
+            localStorage.removeItem('userPin');
+            
+            // Sign out from Firebase
+            if (typeof firebaseAuth !== 'undefined' && firebaseAuth) {
+                firebaseAuth.signOut().then(() => {
+                    window.location.href = 'login.html';
+                }).catch(() => {
+                    window.location.href = 'login.html';
+                });
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>

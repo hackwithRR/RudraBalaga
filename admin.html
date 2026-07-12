@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin - Rudra Parayana</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#8f4e00",
+                    "surface-tint": "#8f4e00",
+                    "tertiary": "#735c00",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#887364",
+                    "secondary": "#ad2c00",
+                    "on-tertiary-container": "#544200",
+                    "surface-container-highest": "#e4e2e1",
+                    "secondary-container": "#d83900",
+                    "surface-container": "#f0eded",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#ffdbd1",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "on-surface-variant": "#554336",
+                    "primary-fixed-dim": "#ffb77a",
+                    "surface-container-high": "#eae8e7",
+                    "on-background": "#1b1c1c",
+                    "on-tertiary-fixed": "#241a00",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#fffbff",
+                    "surface-container-low": "#f6f3f2",
+                    "on-secondary": "#ffffff",
+                    "primary-container": "#ff9933",
+                    "error": "#ba1a1a",
+                    "outline-variant": "#dbc2b0",
+                    "tertiary-container": "#d3ae36",
+                    "tertiary-fixed": "#ffe088",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#303030",
+                    "on-secondary-fixed-variant": "#872000",
+                    "surface-dim": "#dcd9d9",
+                    "inverse-on-surface": "#f3f0f0",
+                    "background": "#fbf9f8",
+                    "on-primary-fixed": "#2e1500",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "on-surface": "#1b1c1c",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#3b0900",
+                    "inverse-primary": "#ffb77a",
+                    "surface-variant": "#e4e2e1",
+                    "on-primary-fixed-variant": "#6d3a00",
+                    "secondary-fixed-dim": "#ffb5a0",
+                    "on-primary-container": "#693800",
+                    "primary-fixed": "#ffdcc2",
+                    "surface-bright": "#fbf9f8",
+                    "error-container": "#ffdad6",
+                    "surface": "#fbf9f8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "1.5rem",
+                    "gutter-mobile": "1rem",
+                    "stack-md": "1.5rem",
+                    "stack-lg": "2.5rem",
+                    "stack-sm": "1rem",
+                    "touch-target-min": "3rem",
+                    "stack-xs": "0.5rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "chant-text": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "chant-text": ["24px", {"lineHeight": "40px", "fontWeight": "500"}],
+                    "body-lg": ["20px", {"lineHeight": "32px", "fontWeight": "400"}],
+                    "label-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-lg": ["34px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "headline-sm": ["22px", {"lineHeight": "30px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+                    "headline-md": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        body {
+            background-color: #fbf9f8;
+            color: #1b1c1c;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        .touch-active:active {
+            transform: scale(0.96);
+            transition: transform 0.1s ease;
+        }
+        .orange-glow { 
+            filter: drop-shadow(0 0 14px rgba(255, 87, 34, 0.75)); 
+        }
+        .neon-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        .tab-active {
+            background-color: #ff5722 !important;
+            color: white !important;
+        }
+        .tab-inactive {
+            background-color: #f6f3f2 !important;
+            color: #554336 !important;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md pb-32">
+
+    <!-- Premium Light Preloader Screen -->
+    <div id="loader-panel" class="fixed inset-0 z-[9999] flex flex-col justify-between p-6 bg-[#ffffff]">
+        
+        <!-- Top Status Bar -->
+        <div class="w-full flex justify-between items-center text-[9px] tracking-[0.4em] font-bold text-stone-400 pt-4">
+            <div>SACRED ALIGNMENT // GEN V</div>
+            <div id="load-state" class="text-right text-[#ff5722]">AUM NAMAH SHIVAYA</div>
+        </div>
+
+        <!-- Central Iconic Frame -->
+        <div class="flex-1 flex flex-col items-center justify-center relative">
+            
+            <!-- Shockwave Ring -->
+            <div id="shockwave" class="absolute w-12 h-12 rounded-full border border-[#ff5722] opacity-0 scale-50 pointer-events-none"></div>
+
+            <!-- Foreground Graphic Canvas Layout -->
+            <div class="w-80 h-80 relative flex items-center justify-center z-20">
+                
+                <!-- Master Vector SVG Geometry -->
+                <svg id="shiva-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" class="w-full h-full relative z-20">
+                    
+                    <!-- Rotating Orange Halo -->
+                    <g id="rotating-halo" class="orange-glow">
+                        <circle cx="200" cy="180" r="120" fill="none" stroke="#ff5722" stroke-width="1" stroke-dasharray="8 4" opacity="0.3">
+                            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 200 180" to="360 200 180" dur="20s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="200" cy="180" r="130" fill="none" stroke="#ff5722" stroke-width="0.5" opacity="0.2">
+                            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="360 200 180" to="0 200 180" dur="25s" repeatCount="indefinite"/>
+                        </circle>
+                    </g>
+                    
+                    <!-- Cosmic Background Framework Rings -->
+                    <circle cx="200" cy="180" r="150" fill="none" stroke="#f3f3f2" stroke-width="1" />
+                    <circle cx="200" cy="180" r="144" fill="none" stroke="#e9e9e7" stroke-width="1" stroke-dasharray="4 8" />
+
+                    <!-- Trishul Layer -->
+                    <g id="final-trishul" fill="none" stroke="#ff5722" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 orange-glow">
+                        <line x1="200" y1="40" x2="200" y2="240" stroke-width="4" />
+                        <path d="M 200,5 C 196,20 195,35 195,45 L 205,45 C 205,35 204,20 200,5 Z" fill="#ff5722" />
+                        <path d="M 165,35 C 165,70 190,75 195,75 M 165,35 C 172,45 180,50 188,52" />
+                        <path d="M 235,35 C 235,70 210,75 205,75 M 235,35 C 228,45 220,50 212,52" />
+                        <path d="M 188,95 L 212,95 L 190,115 L 212,115 Z" fill="#ffffff" stroke-width="2" />
+                        <line x1="188" y1="95" x2="212" y2="115" stroke-width="1.5" />
+                        <line x1="212" y1="95" x2="188" y2="115" stroke-width="1.5" />
+                    </g>
+
+                    <!-- Shivling Layer -->
+                    <g fill="none" stroke="#292524" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path id="draw-lingam" class="neon-line" d="M 160,185 C 160,105 240,105 240,185 Z" />
+                        <path id="draw-yoni-top" class="neon-line" d="M 120,185 L 280,185 C 295,185 300,195 300,200 C 300,205 290,205 280,205 L 120,205 C 110,205 100,205 100,200 C 100,195 105,185 120,185 Z" />
+                        <path id="draw-base-tier" class="neon-line" d="M 145,205 L 255,205 L 255,225 L 145,225 Z" />
+                        <path id="draw-pedestal" class="neon-line" d="M 125,225 L 275,225 L 265,245 L 135,245 Z" />
+                    </g>
+                    
+                    <!-- Tripundra Lines -->
+                    <g fill="none" stroke="#ff5722" stroke-width="3" stroke-linecap="round" class="orange-glow">
+                        <line id="line1" x1="185" y1="140" x2="215" y2="140" class="neon-line" />
+                        <line id="line2" x1="181" y1="147" x2="219" y2="147" class="neon-line" />
+                        <line id="line3" x1="185" y1="154" x2="215" y2="154" class="neon-line" />
+                        <circle id="bindu" cx="200" cy="147" r="2.5" fill="#ff5722" class="opacity-0"/>
+                    </g>
+                </svg>
+            </div>
+            
+        <!-- App Branding Typography -->
+        <div class="overflow-visible text-center mt-6">
+            <h1 id="app-title" class="text-3xl font-black text-stone-900 opacity-0 translate-y-[100%]">
+                ರುದ್ರ <span class="text-[#ff5722] orange-glow">ಬಲಗ</span>
+            </h1>
+        </div>
+        </div>
+
+        <!-- Bottom Loading Tracker Bar -->
+        <div class="w-full flex flex-col items-center justify-center pb-6 gap-2">
+            <div class="w-16 h-[1px] bg-stone-200 relative overflow-hidden">
+                <div id="bar-meter" class="absolute inset-y-0 left-0 w-0 bg-[#ff5722] shadow-[0_0_8px_#ff5722]"></div>
+            </div>
+            <span class="text-[8px] tracking-[0.3em] font-bold text-stone-400 uppercase">ASCENDING TO LIGHT</span>
+        </div>
+    </div>
+
+    <!-- TopAppBar -->
+    <header class="bg-surface-container-lowest border-b-2 border-primary-container w-full fixed top-0 z-50">
+        <div class="flex justify-between items-center px-4 h-16">
+            <div class="flex items-center gap-2">
+                <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-on-primary-container">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                </a>
+                <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
+                <h1 class="text-xl font-bold text-primary">ರುದ್ರ ಬಲಗ</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="text-right">
+                    <p id="user-name" class="text-sm font-medium text-on-surface">Admin</p>
+                </div>
+                <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
+                    <span class="material-symbols-outlined text-on-primary-container" data-icon="account_circle">account_circle</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Canvas -->
+    <main id="app-content" class="pt-24 px-margin-mobile space-y-stack-lg max-w-2xl mx-auto opacity-0">
+        <!-- Welcome Section -->
+        <section class="mt-stack-md">
+            <p class="text-on-surface-variant font-label-lg text-label-lg">Admin Panel</p>
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Manage Events</h2>
+        </section>
+
+        <!-- Tab Navigation - 2x2 Grid for Mobile -->
+        <section>
+            <div class="grid grid-cols-2 gap-3">
+                <button id="add-event-tab" class="tab-active touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-primary-container text-on-primary-container shadow-md">
+                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V7h14v12zm-8-8h2v-2h2v-2h-2V7h-2v2H9v2h2v2z"/>
+                    </svg>
+                    <span>Add Event</span>
+                </button>
+                <button id="bus-routes-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
+                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4 16.5V6.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5zm2-11v10h11V6.5H6zm5 2.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                    </svg>
+                    <span>Bus Routes</span>
+                </button>
+                <button id="attendance-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
+                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    <span>Attendance</span>
+                </button>
+                <button id="members-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
+                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2v2zm8 0c1.1 0 2-.9 2-2h2c0 2.21-1.79 4-4 4zm4.5 6.5c-1.66-1.34-4.34-1.34-6 0l-1.5 1.5c-.39.39-.39 1.02 0 1.41l1.5 1.5c.67.53 1.37.79 2.12.79s1.45-.26 2.12-.79l1.5-1.5c.39-.39.39-1.02 0-1.41l-1.5-1.5z"/>
+                    </svg>
+                    <span>Members</span>
+                </button>
+            </div>
+        </section>
+        
+        <!-- Announcements Button (Full width) -->
+        <section class="mt-3">
+            <button id="announcements-tab" class="touch-active w-full h-16 rounded-xl font-bold text-body-lg flex items-center justify-center gap-3 bg-secondary-container text-on-secondary-container shadow-md">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2-2V4c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1z"/>
+                </svg>
+                Announcements
+            </button>
+        </section>
+
+        <!-- Announcements Tab Content (Hidden by default) -->
+        <section id="announcements-content" class="tab-content hidden">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Create Announcement</h3>
+                <form id="create-announcement-form" class="space-y-4">
+                    <div>
+                        <label for="announcement-title" class="block font-label-lg text-label-lg text-on-surface mb-2">Title</label>
+                        <input type="text" id="announcement-title" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="announcement-content" class="block font-label-lg text-label-lg text-on-surface mb-2">Content</label>
+                        <textarea id="announcement-content" rows="4" required class="w-full h-[120px] px-4 py-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"></textarea>
+                    </div>
+                    <div>
+                        <label for="announcement-image" class="block font-label-lg text-label-lg text-on-surface mb-2">Image (Optional)</label>
+                        <input type="file" id="announcement-image" accept="image/*" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <button type="submit" class="w-full h-[60px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12c1.37-1.03 1.37-3.1 0-4.14L2.01 3v7.5l10.5 2.5-10.5 2.5V21z"/>
+                        </svg>
+                        Send Announcement
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Add Event Tab Content -->
+        <section id="add-event-content" class="tab-content">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Create New Event</h3>
+                <form id="create-event-form" class="space-y-4">
+                    <div>
+                        <label for="event-title-input" class="block font-label-lg text-label-lg text-on-surface mb-2">Event Title</label>
+                        <input type="text" id="event-title-input" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="event-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Date</label>
+                        <input type="date" id="event-date" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="event-time" class="block font-label-lg text-label-lg text-on-surface mb-2">Time</label>
+                        <input type="time" id="event-time" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="event-type-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Event Type</label>
+                        <select id="event-type-select" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="">Select Type</option>
+                            <option value="Bangalore">Bangalore</option>
+                            <option value="Outstation">Outstation</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="event-location" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Address</label>
+                        <textarea id="event-location" rows="3" required class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"></textarea>
+                    </div>
+                    <div>
+                        <label for="event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link (Optional)</label>
+                        <input type="url" id="event-map-link" placeholder="https://maps.google.com/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="event-limit" class="block font-label-lg text-label-lg text-on-surface mb-2">Member Limit</label>
+                        <select id="event-limit" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="">No Limit</option>
+                            <option value="50">50 Members</option>
+                            <option value="100">100 Members</option>
+                            <option value="150">150 Members</option>
+                            <option value="200">200 Members</option>
+                            <option value="custom">Custom Limit</option>
+                        </select>
+                    </div>
+                    <div id="custom-limit-input" class="hidden">
+                        <label for="event-custom-limit" class="block font-label-lg text-label-lg text-on-surface mb-2">Custom Limit Number</label>
+                        <input type="number" id="event-custom-limit" placeholder="Enter custom limit" min="1" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <button type="submit" class="w-full h-[60px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 13h-4v4h-2v-4H5v-2h10V5h2v6h4v2z"/>
+                        </svg>
+                        Create Event
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Bus Routes Tab Content (Hidden by default) -->
+        <section id="bus-routes-content" class="tab-content hidden">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Manage Bus Routes</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="outstation-event-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Select Outstation Event</label>
+                        <select id="outstation-event-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="">Select an event</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Add Bus Form -->
+                    <form id="add-bus-form" class="hidden space-y-4">
+                        <div>
+                            <label for="bus-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Bus Name/Number</label>
+                            <input type="text" id="bus-name" placeholder="e.g., Bus 1, Volvo, etc." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        </div>
+                        <button type="submit" class="w-full h-[56px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 13h-4v4h-2v-4H5v-2h10V5h2v6h4v2z"/>
+                            </svg>
+                            Add Bus
+                        </button>
+                    </form>
+                    
+                    <!-- Add Pickup Point Form -->
+                    <form id="bus-route-form" class="hidden space-y-4">
+                        <div>
+                            <label for="bus-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Select Bus</label>
+                            <select id="bus-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                <option value="">Select a bus</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="pickup-point" class="block font-label-lg text-label-lg text-on-surface mb-2">Pickup Point</label>
+                            <input type="text" id="pickup-point" placeholder="Pickup location" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        </div>
+                        <div>
+                            <label for="pickup-time" class="block font-label-lg text-label-lg text-on-surface mb-2">Pickup Time</label>
+                            <input type="time" id="pickup-time" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        </div>
+                        <button type="submit" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                            </svg>
+                            Add Pickup Point
+                        </button>
+                    </form>
+                    
+                    <div id="bus-routes-list" class="hidden">
+                        <h4 class="font-label-lg text-label-lg text-secondary mb-2">Buses & Pickup Points</h4>
+                        <div id="buses-container" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attendance Tab Content (Hidden by default) -->
+        <section id="attendance-content" class="tab-content hidden">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Attendance Roster</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="roster-event-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Select Event</label>
+                        <select id="roster-event-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="">Select an event</option>
+                        </select>
+                    </div>
+                    <div id="roster-content" class="hidden">
+                        <div class="p-4 bg-surface-container-high rounded-xl mb-4">
+                            <p class="font-body-lg text-body-lg">Total Attending: <span id="total-attending" class="font-bold text-secondary">0</span></p>
+                            <p class="font-body-lg text-body-lg">Total Not Attending: <span id="total-not-attending" class="font-bold text-secondary">0</span></p>
+                        </div>
+                        
+                        <!-- Take Attendance Section -->
+                        <div class="mb-4">
+                        <button id="take-attendance-btn" class="w-full h-[56px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                            Take Attendance
+                        </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-label-lg text-label-lg text-secondary mb-2">Attending Members</h4>
+                                <ul id="attending-list" class="space-y-2"></ul>
+                            </div>
+                            <div>
+                                <h4 class="font-label-lg text-label-lg text-secondary mb-2">Not Attending Members</h4>
+                                <ul id="not-attending-list" class="space-y-2"></ul>
+                            </div>
+                        </div>
+                        <div id="bus-breakdown-section" class="hidden mt-4">
+                            <h4 class="font-label-lg text-label-lg text-secondary mb-2">Bus Pickup Breakdown</h4>
+                            <ul id="bus-breakdown-list" class="space-y-2"></ul>
+                        </div>
+                        
+                        <!-- Download Buttons -->
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <button id="download-pdf-btn" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm2-4H6v-2h8v2zm4-4h-2V5h2v4z"/>
+                                </svg>
+                                Download PDF
+                            </button>
+                            <button id="download-excel-btn" class="w-full h-[56px] bg-tertiary-container text-on-tertiary rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8H5v-2h4v2zm0-4H5V9h4v4zm0-4H5V5h4v2z"/>
+                                </svg>
+                                Download Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Members Tab Content (Hidden by default) -->
+        <section id="members-content" class="tab-content hidden">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Members List</h3>
+                <div class="space-y-4">
+                    <ul id="members-list" class="space-y-2">
+                        <li class="text-on-surface-variant">Loading members...</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <section class="grid grid-cols-1 gap-3">
+            <button id="logout-btn" class="w-full h-[56px] bg-error text-on-error rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 13v-2H7V8l-5 4 5 4v-3h9zM20 3H4c-1.1 0-2 .9-2 2v4h2V5h16v14H4v-4H2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+                Logout
+            </button>
+        </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // State Management
+        const state = {
+            events: [],
+            rsvps: {},
+            busRoutes: {},
+            user: null
+        };
+
+        // Loading animation
+        const tl = gsap.timeline();
+
+        // 1. Text activation
+        tl.to("#app-title", { opacity: 1, translateY: 0, duration: 1, ease: "power4.out" })
+          
+          // 2. Stroke layout drawing orchestration
+          .to(".neon-line", {
+              strokeDashoffset: 0,
+              duration: 3.2,
+              ease: "power2.inOut",
+              stagger: 0.08,
+              onUpdate: function() {
+                  let progress = Math.floor(this.progress() * 100);
+                  document.getElementById("bar-meter").style.width = progress + "%";
+                  
+                  if(progress > 20 && progress < 65) {
+                      document.getElementById("load-state").textContent = "MANIFESTING DIVINE MATRIX";
+                  } else if(progress >= 65) {
+                      document.getElementById("load-state").textContent = "LOCKING AXIAL RADIALS";
+                  }
+              }
+          }, "-=0.8");
+        
+        // 3. Mount centered backplane graphics
+        tl.to("#final-trishul", {
+            opacity: 1,
+            duration: 0.5,
+            ease: "power2.out",
+            onStart: () => {
+                document.getElementById("load-state").textContent = "TRISHUL MOUNTED";
+            }
+        }, "-=0.4")
+        .to("#bindu", {
+            opacity: 1,
+            scale: 1,
+            duration: 0.3,
+            ease: "back.out(3)"
+        }, "-=0.2");
+
+        // 4. Force emission pulses
+        tl.to("#shockwave", {
+            opacity: 0.6,
+            scale: 18,
+            duration: 0.8,
+            ease: "expo.out"
+        })
+        .to("#shiva-svg", {
+            scale: 0.96,
+            duration: 0.15
+        }, "-=0.8");
+
+        // 5. Unveil core product view shell
+        tl.to("#loader-panel", {
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+            duration: 1.3,
+            ease: "expo.inOut"
+        })
+        .to("#app-content", {
+            opacity: 1,
+            scale: 1,
+            duration: 1.2,
+            ease: "power3.out",
+            onComplete: () => {
+                document.getElementById("app-content").style.pointerEvents = "auto";
+                document.getElementById("loader-panel").remove();
+                initializeApp();
+            }
+        }, "-=1.0");
+
+        // Initialize app
+        function initializeApp() {
+            // Check authentication state
+            firebaseAuth.onAuthStateChanged(user => {
+                if (user) {
+                    // Check if user is admin
+                    firebaseDb.collection('users').doc(user.uid).get()
+                        .then(doc => {
+                            if (doc.exists && doc.data().role === 'admin') {
+                                state.user = user;
+                                loadEvents();
+                                loadRsvps();
+                                loadBusRoutesFromDb();
+                                setupEventListeners();
+                                populateEventSelectors();
+                            } else {
+                                // Not admin, redirect to member view
+                                window.location.href = 'index.html';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking admin status: ', error);
+                            window.location.href = 'login.html';
+                        });
+                } else {
+                    // Not logged in, redirect to login
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        // Load events from Firestore
+        function loadEvents() {
+            firebaseDb.collection('events').orderBy('date').onSnapshot(snapshot => {
+                state.events = [];
+                snapshot.forEach(doc => {
+                    state.events.push({ id: doc.id, ...doc.data() });
+                });
+                populateEventSelectors();
+            });
+        }
+
+        // Load RSVPs from Firestore
+        function loadRsvps() {
+            firebaseDb.collection('rsvps').onSnapshot(snapshot => {
+                state.rsvps = {};
+                snapshot.forEach(doc => {
+                    state.rsvps[doc.id] = doc.data();
+                });
+            });
+        }
+
+        // Load bus routes from Firestore
+        function loadBusRoutesFromDb() {
+            firebaseDb.collection('busRoutes').onSnapshot(snapshot => {
+                state.busRoutes = {};
+                snapshot.forEach(doc => {
+                    state.busRoutes[doc.id] = doc.data().buses || [];
+                });
+                // Auto-refresh the bus routes display if an event is selected
+                const eventId = document.getElementById('outstation-event-select')?.value;
+                if (eventId) {
+                    displayBusRoutes();
+                }
+            });
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            document.getElementById('create-event-form').addEventListener('submit', createEvent);
+            document.getElementById('bus-route-form').addEventListener('submit', addBusRoute);
+            document.getElementById('add-bus-form').addEventListener('submit', addBus);
+            document.getElementById('outstation-event-select').addEventListener('change', displayBusRoutes);
+            document.getElementById('roster-event-select').addEventListener('change', loadRoster);
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            
+            // Tab navigation
+            document.getElementById('add-event-tab').addEventListener('click', () => switchTab('add-event'));
+            document.getElementById('bus-routes-tab').addEventListener('click', () => switchTab('bus-routes'));
+            document.getElementById('attendance-tab').addEventListener('click', () => switchTab('attendance'));
+            document.getElementById('members-tab').addEventListener('click', () => switchTab('members'));
+            document.getElementById('announcements-tab').addEventListener('click', () => switchTab('announcements'));
+            
+            // Announcement form
+            document.getElementById('create-announcement-form').addEventListener('submit', createAnnouncement);
+            
+            // Event delegation for remove buttons
+            document.getElementById('buses-container').addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-bus')) {
+                    removeBus(e);
+                } else if (e.target.classList.contains('remove-route')) {
+                    removeRoute(e);
+                }
+            });
+            
+            // Attendance buttons
+            document.getElementById('take-attendance-btn').addEventListener('click', takeAttendance);
+            document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
+            document.getElementById('download-excel-btn').addEventListener('click', downloadExcel);
+            
+            // Member limit dropdown
+            document.getElementById('event-limit').addEventListener('change', function(e) {
+                const customLimitInput = document.getElementById('custom-limit-input');
+                if (e.target.value === 'custom') {
+                    customLimitInput.classList.remove('hidden');
+                } else {
+                    customLimitInput.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Add new bus (Admin)
+        function addBus(e) {
+            e.preventDefault();
+            
+            const eventId = document.getElementById('outstation-event-select').value;
+            if (!eventId) return;
+            
+            const busName = document.getElementById('bus-name').value;
+            if (!busName) return;
+
+            const existingBuses = state.busRoutes[eventId] || [];
+            const newBus = {
+                id: 'bus-' + Date.now(),
+                name: busName,
+                routes: []
+            };
+
+            firebaseDb.collection('busRoutes').doc(eventId).set({
+                buses: [...existingBuses, newBus]
+            });
+
+            e.target.reset();
+        }
+        
+        // Add pickup point to a bus (Admin)
+        function addBusRoute(e) {
+            e.preventDefault();
+            
+            const eventId = document.getElementById('outstation-event-select').value;
+            const busId = document.getElementById('bus-select').value;
+            if (!eventId || !busId) return;
+            
+            const point = document.getElementById('pickup-point').value;
+            const time = document.getElementById('pickup-time').value;
+
+            const buses = state.busRoutes[eventId] || [];
+            const busIndex = buses.findIndex(b => b.id === busId);
+            
+            if (busIndex === -1) return;
+            
+            const newRoute = {
+                id: 'route-' + Date.now(),
+                point,
+                time
+            };
+            
+            buses[busIndex].routes.push(newRoute);
+
+            firebaseDb.collection('busRoutes').doc(eventId).set({
+                buses: buses
+            });
+
+            e.target.reset();
+        }
+        
+        // Display buses and routes for selected event (Admin)
+        function displayBusRoutes() {
+            const eventId = document.getElementById('outstation-event-select').value;
+            const addBusForm = document.getElementById('add-bus-form');
+            const busRouteForm = document.getElementById('bus-route-form');
+            const busRoutesList = document.getElementById('bus-routes-list');
+            const busesContainer = document.getElementById('buses-container');
+            const busSelect = document.getElementById('bus-select');
+
+            if (!eventId) {
+                addBusForm.classList.add('hidden');
+                busRouteForm.classList.add('hidden');
+                busRoutesList.classList.add('hidden');
+                return;
+            }
+
+            addBusForm.classList.remove('hidden');
+            busRouteForm.classList.remove('hidden');
+            
+            // Populate bus select
+            busSelect.innerHTML = '<option value="">Select a bus</option>';
+            const buses = state.busRoutes[eventId] || [];
+            buses.forEach(bus => {
+                const option = document.createElement('option');
+                option.value = bus.id;
+                option.textContent = bus.name;
+                busSelect.appendChild(option);
+            });
+            
+            // Display buses and their routes
+            if (buses.length > 0) {
+                busRoutesList.classList.remove('hidden');
+                busesContainer.innerHTML = '';
+                
+                buses.forEach(bus => {
+                    const busDiv = document.createElement('div');
+                    busDiv.className = 'border-2 border-outline-variant rounded-xl p-4';
+                    busDiv.innerHTML = `
+                        <div class="flex justify-between items-center mb-3">
+                            <h5 class="font-bold text-lg text-primary">${bus.name}</h5>
+                            <button class="remove-bus text-error text-xl font-bold" data-bus-id="${bus.id}" data-event-id="${eventId}">×</button>
+                        </div>
+                        <ul class="space-y-2" id="bus-routes-${bus.id}"></ul>
+                    `;
+                    busesContainer.appendChild(busDiv);
+                    
+                    // Add routes to this bus
+                    const routesList = document.getElementById(`bus-routes-${bus.id}`);
+                    if (bus.routes && bus.routes.length > 0) {
+                        bus.routes.forEach(route => {
+                            const li = document.createElement('li');
+                            li.className = 'flex justify-between items-center p-2 bg-surface-container-high rounded-lg';
+                            li.innerHTML = `
+                                <span class="font-body-lg text-body-lg">${route.point} - ${route.time}</span>
+                                <button class="remove-route text-error text-xl font-bold" data-route-id="${route.id}" data-bus-id="${bus.id}" data-event-id="${eventId}">×</button>
+                            `;
+                            routesList.appendChild(li);
+                        });
+                    }
+                });
+            } else {
+                busRoutesList.classList.add('hidden');
+            }
+        }
+        
+        // Remove bus (Admin)
+        function removeBus(e) {
+            const busId = e.target.dataset.busId;
+            const eventId = e.target.dataset.eventId;
+            
+            const updatedBuses = state.busRoutes[eventId].filter(bus => bus.id !== busId);
+            
+            firebaseDb.collection('busRoutes').doc(eventId).set({
+                buses: updatedBuses
+            });
+        }
+        
+        // Remove route (Admin)
+        function removeRoute(e) {
+            const routeId = e.target.dataset.routeId;
+            const busId = e.target.dataset.busId;
+            const eventId = e.target.dataset.eventId;
+            
+            const buses = state.busRoutes[eventId];
+            const busIndex = buses.findIndex(b => b.id === busId);
+            
+            if (busIndex === -1) return;
+            
+            buses[busIndex].routes = buses[busIndex].routes.filter(route => route.id !== routeId);
+
+            firebaseDb.collection('busRoutes').doc(eventId).set({
+                buses: buses
+            });
+        }
+
+        // Switch between tabs
+        function switchTab(tab) {
+            // Update tab buttons - remove all active classes first
+            document.getElementById('add-event-tab').classList.remove('tab-active');
+            document.getElementById('add-event-tab').classList.add('tab-inactive');
+            document.getElementById('bus-routes-tab').classList.remove('tab-active');
+            document.getElementById('bus-routes-tab').classList.add('tab-inactive');
+            document.getElementById('attendance-tab').classList.remove('tab-active');
+            document.getElementById('attendance-tab').classList.add('tab-inactive');
+            document.getElementById('members-tab').classList.remove('tab-active');
+            document.getElementById('members-tab').classList.add('tab-inactive');
+            document.getElementById('announcements-tab').classList.remove('tab-active');
+            document.getElementById('announcements-tab').classList.add('tab-inactive');
+            
+            // Add active class to selected tab
+            if (tab === 'add-event') {
+                document.getElementById('add-event-tab').classList.add('tab-active');
+                document.getElementById('add-event-tab').classList.remove('tab-inactive');
+            } else if (tab === 'bus-routes') {
+                document.getElementById('bus-routes-tab').classList.add('tab-active');
+                document.getElementById('bus-routes-tab').classList.remove('tab-inactive');
+            } else if (tab === 'attendance') {
+                document.getElementById('attendance-tab').classList.add('tab-active');
+                document.getElementById('attendance-tab').classList.remove('tab-inactive');
+            } else if (tab === 'members') {
+                document.getElementById('members-tab').classList.add('tab-active');
+                document.getElementById('members-tab').classList.remove('tab-inactive');
+                loadMembers();
+            } else if (tab === 'announcements') {
+                document.getElementById('announcements-tab').classList.add('tab-active');
+                document.getElementById('announcements-tab').classList.remove('tab-inactive');
+            }
+            
+            // Update tab content
+            document.getElementById('add-event-content').classList.toggle('hidden', tab !== 'add-event');
+            document.getElementById('bus-routes-content').classList.toggle('hidden', tab !== 'bus-routes');
+            document.getElementById('attendance-content').classList.toggle('hidden', tab !== 'attendance');
+            document.getElementById('members-content').classList.toggle('hidden', tab !== 'members');
+            document.getElementById('announcements-content').classList.toggle('hidden', tab !== 'announcements');
+        }
+
+        // Create announcement (Admin)
+        function createAnnouncement(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('announcement-title').value;
+            const content = document.getElementById('announcement-content').value;
+            const imageFile = document.getElementById('announcement-image').files[0];
+
+            if (imageFile) {
+                // Convert image to base64
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64Image = event.target.result;
+                    firebaseDb.collection('announcements').add({
+                        title,
+                        content,
+                        image: base64Image,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        alert('Announcement sent successfully!');
+                        e.target.reset();
+                    });
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                firebaseDb.collection('announcements').add({
+                    title,
+                    content,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    alert('Announcement sent successfully!');
+                    e.target.reset();
+                });
+            }
+        }
+
+        // Load and display all members
+        function loadMembers() {
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const members = [];
+                usersSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    members.push({
+                        id: data.userId || 'N/A',
+                        name: data.name || data.email || 'Unknown',
+                        phone: data.phone || 'N/A',
+                        email: data.email || 'N/A',
+                        dob: data.dob || 'N/A',
+                        address: data.address || 'N/A'
+                    });
+                });
+                
+                // Sort alphabetically by name
+                members.sort((a, b) => a.name.localeCompare(b.name));
+                
+                const membersList = document.getElementById('members-list');
+                membersList.innerHTML = members.map((m, index) => {
+                    const phoneLink = m.phone ? `<a href="tel:${m.phone}" class="text-primary underline">Call: ${m.phone}</a>` : '';
+                    return `<li class="p-3 bg-surface-container-high rounded-lg font-body-lg text-body-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-primary">${index + 1}.</span>
+                                <span class="ml-2">${m.name}</span>
+                            </div>
+                            ${phoneLink}
+                        </div>
+                    </li>`;
+                }).join('');
+            });
+        }
+
+        // Logout function
+        function logout() {
+            firebaseAuth.signOut().then(() => {
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Create new event (Admin)
+        function createEvent(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('event-title-input').value;
+            const date = document.getElementById('event-date').value;
+            const time = document.getElementById('event-time').value;
+            const type = document.getElementById('event-type-select').value;
+            const location = document.getElementById('event-location').value;
+            const mapLink = document.getElementById('event-map-link').value;
+            const limitSelect = document.getElementById('event-limit').value;
+            const customLimit = document.getElementById('event-custom-limit').value;
+            
+            // Determine the limit value
+            let limit = null;
+            if (limitSelect === 'custom' && customLimit) {
+                limit = parseInt(customLimit);
+            } else if (limitSelect) {
+                limit = parseInt(limitSelect);
+            }
+
+            firebaseDb.collection('events').add({
+                title,
+                date,
+                time,
+                type,
+                location,
+                mapLink: mapLink || null,
+                limit: limit,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            e.target.reset();
+            document.getElementById('custom-limit-input').classList.add('hidden');
+            alert('Event created successfully!');
+        }
+
+        // Load attendance roster (Admin)
+        function loadRoster() {
+            const eventId = document.getElementById('roster-event-select').value;
+            const rosterContent = document.getElementById('roster-content');
+            const busBreakdownSection = document.getElementById('bus-breakdown-section');
+            const busBreakdownList = document.getElementById('bus-breakdown-list');
+
+            if (!eventId) {
+                rosterContent.classList.add('hidden');
+                return;
+            }
+
+            const event = state.events.find(e => e.id === eventId);
+            if (!event) return;
+
+            let attendingCount = 0;
+            let notAttendingCount = 0;
+            const attendingMembers = [];
+            const notAttendingMembers = [];
+            const busBreakdown = {};
+
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+
+                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                    const rsvp = rsvpData[eventId];
+                    if (rsvp && rsvp.status === 'attending') {
+                        attendingCount++;
+                        const member = users[uid] || { name: 'Unknown Member' };
+                        attendingMembers.push({ ...member, pickupPoint: rsvp.pickupPoint });
+                        
+                        if (rsvp.pickupPoint) {
+                            // Find the route in the new structure (buses with routes)
+                            const buses = state.busRoutes[eventId] || [];
+                            let foundRoute = null;
+                            for (const bus of buses) {
+                                if (bus.routes) {
+                                    foundRoute = bus.routes.find(r => r.id === rsvp.pickupPoint);
+                                    if (foundRoute) {
+                                        foundRoute.busName = bus.name;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (foundRoute) {
+                                if (!busBreakdown[foundRoute.point]) {
+                                    busBreakdown[foundRoute.point] = { count: 0, time: foundRoute.time, busName: foundRoute.busName };
+                                }
+                                busBreakdown[foundRoute.point].count++;
+                            }
+                        }
+                    } else if (rsvp && rsvp.status === 'not-attending') {
+                        notAttendingCount++;
+                        const member = users[uid] || { name: 'Unknown Member' };
+                        notAttendingMembers.push(member);
+                    }
+                });
+
+                document.getElementById('total-attending').textContent = attendingCount;
+                document.getElementById('total-not-attending').textContent = notAttendingCount;
+
+                const attendingList = document.getElementById('attending-list');
+                attendingList.innerHTML = attendingMembers.map(m => `<li class="p-3 bg-surface-container-high rounded-lg font-body-lg text-body-lg">${m.name || m.email}</li>`).join('');
+
+                const notAttendingList = document.getElementById('not-attending-list');
+                notAttendingList.innerHTML = notAttendingMembers.map(m => `<li class="p-3 bg-surface-container-high rounded-lg font-body-lg text-body-lg">${m.name || m.email}</li>`).join('');
+
+                if (event.type === 'Outstation' && Object.keys(busBreakdown).length > 0) {
+                    busBreakdownSection.classList.remove('hidden');
+                    busBreakdownList.innerHTML = Object.entries(busBreakdown)
+                        .map(([point, data]) => `<li class="flex justify-between p-3 bg-secondary-fixed rounded-lg font-body-lg text-body-lg"><span>${point}</span><span>${data.count} members at ${data.time}</span></li>`)
+                        .join('');
+                } else {
+                    busBreakdownSection.classList.add('hidden');
+                }
+
+                rosterContent.classList.remove('hidden');
+            });
+        }
+
+        // Populate event selectors (Admin)
+        function populateEventSelectors() {
+            const outstationSelect = document.getElementById('outstation-event-select');
+            const rosterSelect = document.getElementById('roster-event-select');
+
+            outstationSelect.innerHTML = '<option value="">Select an event</option>';
+            rosterSelect.innerHTML = '<option value="">Select an event</option>';
+
+            state.events.forEach(event => {
+                const option1 = document.createElement('option');
+                option1.value = event.id;
+                option1.textContent = `${event.title} (${event.type})`;
+                outstationSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = event.id;
+                option2.textContent = `${event.title} (${event.type})`;
+                rosterSelect.appendChild(option2);
+            });
+        }
+
+        // Take attendance - mark members as present
+        function takeAttendance() {
+            const eventId = document.getElementById('roster-event-select').value;
+            if (!eventId) return;
+
+            // Get all attending members
+            const attendingMembers = [];
+            document.querySelectorAll('#attending-list li').forEach(li => {
+                const name = li.textContent;
+                attendingMembers.push(name);
+            });
+
+            // Store attendance in Firestore
+            firebaseDb.collection('attendance').add({
+                eventId,
+                eventTitle: state.events.find(e => e.id === eventId)?.title || '',
+                date: new Date().toISOString(),
+                present: attendingMembers,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert('Attendance taken successfully!');
+            });
+        }
+
+        // Download attendance as PDF
+        function downloadPDF() {
+            const eventId = document.getElementById('roster-event-select').value;
+            if (!eventId) return;
+
+            const event = state.events.find(e => e.id === eventId);
+
+            // Get all member data
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+
+                const attendingRows = [];
+
+                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                    const rsvp = rsvpData[eventId];
+                    const user = users[uid] || {};
+                    if (rsvp && rsvp.status === 'attending') {
+                        attendingRows.push({
+                            id: user.userId || 'N/A',
+                            name: user.name || user.email || 'Unknown',
+                            phone: user.phone || 'N/A',
+                            email: user.email || 'N/A',
+                            dob: user.dob || 'N/A',
+                            address: user.address || 'N/A'
+                        });
+                    }
+                });
+
+                // Create HTML content for PDF
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Attendance - ${event?.title || 'Event'}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #ff5722; text-align: center; }
+                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                            th { background-color: #ff5722; color: white; }
+                            tr:nth-child(even) { background-color: #f9f9f9; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                            .date { text-align: center; color: #666; margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h2>Attendance Sheet</h2>
+                            <p class="date">Event: ${event?.title || 'Unknown'} | Date: ${new Date().toLocaleDateString()}</p>
+                        </div>
+                        
+                        <h2>Attending Members (${attendingRows.length})</h2>
+                        <table>
+                            <tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>DOB</th><th>Address</th></tr>
+                `;
+                
+                attendingRows.forEach(row => {
+                    html += `<tr><td>${row.id}</td><td>${row.name}</td><td>${row.phone}</td><td>${row.email}</td><td>${row.dob}</td><td>${row.address}</td></tr>`;
+                });
+                
+                html += `
+                        </table>
+                    </body>
+                    </html>
+                `;
+
+                // Create a new window and print as PDF
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(html);
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            });
+        }
+
+        // Download attendance as Excel
+        function downloadExcel() {
+            const eventId = document.getElementById('roster-event-select').value;
+            if (!eventId) return;
+
+            const event = state.events.find(e => e.id === eventId);
+
+            // Get all member data
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+
+                const attendingRows = [];
+
+                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                    const rsvp = rsvpData[eventId];
+                    const user = users[uid] || {};
+                    if (rsvp && rsvp.status === 'attending') {
+                        attendingRows.push([
+                            user.userId || 'N/A',
+                            user.name || user.email || 'Unknown',
+                            user.phone || 'N/A',
+                            user.email || 'N/A',
+                            user.dob || 'N/A',
+                            user.address || 'N/A'
+                        ]);
+                    }
+                });
+
+                // Create Excel XML content
+                let excel = '<?xml version="1.0" encoding="UTF-8"?>\n';
+                excel += '<?mso-application progid="Excel.Sheet"?>\n';
+                excel += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n';
+                excel += ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+                excel += ' <Worksheet ss:ss:name="Attending">\n';
+                excel += '  <Table>\n';
+                excel += '   <Row><Cell><Data ss:Type="String">ID</Data></Cell><Cell><Data ss:Type="String">Name</Data></Cell><Cell><Data ss:Type="String">Phone</Data></Cell><Cell><Data ss:Type="String">Email</Data></Cell><Cell><Data ss:Type="String">DOB</Data></Cell><Cell><Data ss:Type="String">Address</Data></Cell></Row>\n';
+                attendingRows.forEach(row => {
+                    excel += '   <Row>';
+                    row.forEach(cell => {
+                        excel += `<Cell><Data ss:Type="String">${cell}</Data></Cell>`;
+                    });
+                    excel += '</Row>\n';
+                });
+                excel += '  </Table>\n';
+                excel += ' </Worksheet>\n';
+                excel += '</Workbook>';
+
+                // Download as XML (Excel format)
+                const blob = new Blob([excel], { type: 'application/xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `attendance-${event?.title || 'event'}.xml`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+    </script>
+</body>
+</html>
+

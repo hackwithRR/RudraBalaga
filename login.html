@@ -1,0 +1,419 @@
+56<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login - Rudra Parayana</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .font-sans { font-family: 'Inter', sans-serif; }
+        
+        body, html {
+            width: 100%;
+            min-height: 100%;
+            background-color: #fafafa;
+            touch-action: none;
+        }
+        
+        .login-container {
+            min-height: 100vh;
+        }
+
+        .orange-glow { 
+            filter: drop-shadow(0 0 14px rgba(255, 87, 34, 0.75)); 
+        }
+        
+        .neon-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        
+        .btn-active:active {
+            transform: scale(0.96);
+            transition: transform 0.1s ease-in-out;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-stone-900 font-sans antialiased m-0 p-0">
+
+    <!-- Premium Light Preloader Screen -->
+    <div id="loader-panel" class="fixed inset-0 z-[9999] flex flex-col justify-between p-6 bg-[#ffffff]">
+        
+        <!-- Top Status Bar -->
+        <div class="w-full flex justify-between items-center text-[9px] tracking-[0.4em] font-bold text-stone-400 pt-4">
+            <div>SACRED ALIGNMENT // GEN V</div>
+            <div id="load-state" class="text-right text-[#ff5722]">AUM NAMAH SHIVAYA</div>
+        </div>
+
+        <!-- Central Iconic Frame -->
+        <div class="flex-1 flex flex-col items-center justify-center relative">
+            
+            <!-- Shockwave Ring -->
+            <div id="shockwave" class="absolute w-12 h-12 rounded-full border border-[#ff5722] opacity-0 scale-50 pointer-events-none"></div>
+
+            <!-- Foreground Graphic Canvas Layout -->
+            <div class="w-80 h-80 relative flex items-center justify-center z-20">
+                
+                <!-- Master Vector SVG Geometry -->
+                <svg id="shiva-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" class="w-full h-full relative z-20">
+                    
+                    <!-- Rotating Orange Halo -->
+                    <g id="rotating-halo" class="orange-glow">
+                        <circle cx="200" cy="180" r="120" fill="none" stroke="#ff5722" stroke-width="1" stroke-dasharray="8 4" opacity="0.3">
+                            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 200 180" to="360 200 180" dur="20s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="200" cy="180" r="130" fill="none" stroke="#ff5722" stroke-width="0.5" opacity="0.2">
+                            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="360 200 180" to="0 200 180" dur="25s" repeatCount="indefinite"/>
+                        </circle>
+                    </g>
+                    
+                    <!-- Cosmic Background Framework Rings -->
+                    <circle cx="200" cy="180" r="150" fill="none" stroke="#f3f3f2" stroke-width="1" />
+                    <circle cx="200" cy="180" r="144" fill="none" stroke="#e9e9e7" stroke-width="1" stroke-dasharray="4 8" />
+
+                    <!-- Trishul Layer -->
+                    <g id="final-trishul" fill="none" stroke="#ff5722" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 orange-glow">
+                        <line x1="200" y1="40" x2="200" y2="240" stroke-width="4" />
+                        <path d="M 200,5 C 196,20 195,35 195,45 L 205,45 C 205,35 204,20 200,5 Z" fill="#ff5722" />
+                        <path d="M 165,35 C 165,70 190,75 195,75 M 165,35 C 172,45 180,50 188,52" />
+                        <path d="M 235,35 C 235,70 210,75 205,75 M 235,35 C 228,45 220,50 212,52" />
+                        <path d="M 188,95 L 212,95 L 190,115 L 212,115 Z" fill="#ffffff" stroke-width="2" />
+                        <line x1="188" y1="95" x2="212" y2="115" stroke-width="1.5" />
+                        <line x1="212" y1="95" x2="188" y2="115" stroke-width="1.5" />
+                    </g>
+
+                    <!-- Shivling Layer -->
+                    <g fill="none" stroke="#292524" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path id="draw-lingam" class="neon-line" d="M 160,185 C 160,105 240,105 240,185 Z" />
+                        <path id="draw-yoni-top" class="neon-line" d="M 120,185 L 280,185 C 295,185 300,195 300,200 C 300,205 290,205 280,205 L 120,205 C 110,205 100,205 100,200 C 100,195 105,185 120,185 Z" />
+                        <path id="draw-base-tier" class="neon-line" d="M 145,205 L 255,205 L 255,225 L 145,225 Z" />
+                        <path id="draw-pedestal" class="neon-line" d="M 125,225 L 275,225 L 265,245 L 135,245 Z" />
+                    </g>
+                    
+                    <!-- Tripundra Lines -->
+                    <g fill="none" stroke="#ff5722" stroke-width="3" stroke-linecap="round" class="orange-glow">
+                        <line id="line1" x1="185" y1="140" x2="215" y2="140" class="neon-line" />
+                        <line id="line2" x1="181" y1="147" x2="219" y2="147" class="neon-line" />
+                        <line id="line3" x1="185" y1="154" x2="215" y2="154" class="neon-line" />
+                        <circle id="bindu" cx="200" cy="147" r="2.5" fill="#ff5722" class="opacity-0"/>
+                    </g>
+                </svg>
+            </div>
+            
+        <!-- App Branding Typography -->
+        <div class="overflow-visible text-center mt-6">
+            <h1 id="app-title" class="text-3xl font-black text-stone-900 opacity-0 translate-y-[100%]">
+                ರುದ್ರ <span class="text-[#ff5722] orange-glow">ಬಲಗ</span>
+            </h1>
+        </div>
+        </div>
+
+        <!-- Bottom Loading Tracker Bar -->
+        <div class="w-full flex flex-col items-center justify-center pb-6 gap-2">
+            <div class="w-16 h-[1px] bg-stone-200 relative overflow-hidden">
+                <div id="bar-meter" class="absolute inset-y-0 left-0 w-0 bg-[#ff5722] shadow-[0_0_8px_#ff5722]"></div>
+            </div>
+            <span class="text-[8px] tracking-[0.3em] font-bold text-stone-400 uppercase">ASCENDING TO LIGHT</span>
+        </div>
+    </div>
+
+    <!-- Application Dashboard Content Container -->
+    <main id="app-content" class="min-h-screen w-full flex flex-col items-center justify-center bg-[#fafafa] opacity-0 scale-105 pointer-events-none p-6">
+        <div class="w-full max-w-md flex flex-col items-center text-center">
+            <!-- Logo Section -->
+            <div class="mb-10 relative">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-2 border-[#ff5722] opacity-20" style="animation: rotate 20s linear infinite;">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#ff5722" stroke-width="1" stroke-dasharray="8 4"/>
+                        </svg>
+                    </div>
+                </div>
+                <img alt="Meditating Shiva" class="w-32 h-32 md:w-40 md:h-40 object-contain relative z-10" src="https://lh3.googleusercontent.com/aida/AP1WRLu1u5MrBo2YLZlSC3IKio5gxp2badve6kSyChwmPZ96B6FjvpRLff38Dm6NgjCJ1JCCd9ya1oV8wb-lLT5TlyTAoJToGzMar01taVIvhpYOakTOfElOnE-pM841PfMaLNFGJbXpLOvZ1F402v1UWkQjLB4O3T9YmySS5ZFzu6YK88_1gHiJICOp4-LxSw-XkfqSvCpl9XgfHJHv8a_6vNEM6udRL5p2D2PbEHM5bR2gHktsy_bv4q_tcjxF"/>
+            </div>
+            
+            <!-- Header Typography Anchor -->
+            <div class="mb-10">
+                <h1 class="text-2xl font-black text-primary">
+                    Namaste
+                </h1>
+                <p class="text-lg text-stone-500 max-w-[280px] mx-auto mt-2">
+                    Please sign in to join the chanting.
+                </p>
+            </div>
+            
+            <!-- Sign-in Options Cluster -->
+            <div class="w-full space-y-4">
+                <!-- Primary Action: Google -->
+                <button id="google-login-btn" class="w-full h-[60px] flex items-center justify-center gap-4 bg-white border-2 border-stone-300 rounded-xl text-stone-900 font-bold text-lg shadow-sm btn-active">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.45-1.05 2.7-2.29 3.63v3.02h3.58c2.08-1.92 3.28-4.74 3.28-8.66z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.9 7.27-2.41l-3.58-3.02c-.99.66-2.23 1.06-3.69 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v3.18C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.71H2.18C1.43 9.09 1 10.55 1 12s.43 2.91 1.18 4.29l2.66-2.18z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.71l3.66 2.18c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+            </div>
+            
+            <!-- Spacer for visual balance -->
+            <div class="h-12"></div>
+            
+            <!-- Terms & Privacy -->
+            <div class="mb-12">
+                <p class="text-sm font-semibold text-stone-500 px-4">
+                    By signing in, you agree to our spiritual community guidelines and privacy policy.
+                </p>
+            </div>
+            
+            <!-- Error Message -->
+            <div id="error-message" class="hidden w-full max-w-md p-4 bg-red-50 border border-red-500 rounded-xl text-red-700 text-center"></div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // State
+        let confirmationResult = null;
+
+        // Loading animation
+        const tl = gsap.timeline();
+
+        // 1. Text activation
+        tl.to("#app-title", { opacity: 1, translateY: 0, duration: 1, ease: "power4.out" })
+          
+          // 2. Stroke layout drawing orchestration
+          .to(".neon-line", {
+              strokeDashoffset: 0,
+              duration: 3.2,
+              ease: "power2.inOut",
+              stagger: 0.08,
+              onUpdate: function() {
+                  let progress = Math.floor(this.progress() * 100);
+                  document.getElementById("bar-meter").style.width = progress + "%";
+                  
+                  if(progress > 20 && progress < 65) {
+                      document.getElementById("load-state").textContent = "MANIFESTING DIVINE MATRIX";
+                  } else if(progress >= 65) {
+                      document.getElementById("load-state").textContent = "LOCKING AXIAL RADIALS";
+                  }
+              }
+          }, "-=0.8");
+        
+        // 3. Mount centered backplane graphics
+        tl.to("#final-trishul", {
+            opacity: 1,
+            duration: 0.5,
+            ease: "power2.out",
+            onStart: () => {
+                document.getElementById("load-state").textContent = "TRISHUL MOUNTED";
+            }
+        }, "-=0.4")
+        .to("#bindu", {
+            opacity: 1,
+            scale: 1,
+            duration: 0.3,
+            ease: "back.out(3)"
+        }, "-=0.2");
+
+        // 4. Force emission pulses
+        tl.to("#shockwave", {
+            opacity: 0.6,
+            scale: 18,
+            duration: 0.8,
+            ease: "expo.out"
+        })
+        .to("#shiva-svg", {
+            scale: 0.96,
+            duration: 0.15
+        }, "-=0.8");
+
+        // 5. Unveil core product view shell
+        tl.to("#loader-panel", {
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+            duration: 1.3,
+            ease: "expo.inOut"
+        })
+        .to("#app-content", {
+            opacity: 1,
+            scale: 1,
+            duration: 1.2,
+            ease: "power3.out",
+            onComplete: () => {
+                document.getElementById("app-content").style.pointerEvents = "auto";
+                document.getElementById("loader-panel").remove();
+                initializeApp();
+            }
+        }, "-=1.0");
+
+        // Initialize
+        function initializeApp() {
+            // Setup event listeners
+            document.getElementById('google-login-btn').addEventListener('click', googleLogin);
+            
+            // Check if user is already logged in
+            try {
+                firebaseAuth.onAuthStateChanged(user => {
+                    if (user) {
+                        checkUserRole(user);
+                    }
+                    // If no user, stay on login page (don't redirect)
+                });
+            } catch (error) {
+                console.log('Firebase not configured, staying on login page');
+                // Stay on login page - don't redirect
+            }
+        }
+
+        // Google login
+        function googleLogin() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            firebaseAuth.signInWithPopup(provider)
+                .then(userCredential => {
+                    checkUserRole(userCredential.user);
+                })
+                .catch(error => {
+                    showError(error.message);
+                });
+        }
+
+        // Generate user ID in format 00001, 00002, etc.
+        function generateUserId() {
+            const timestamp = Date.now();
+            const random = Math.floor(Math.random() * 1000);
+            return String(timestamp + random).slice(-5).padStart(5, '0');
+        }
+
+        // Check user role and redirect (with account linking)
+        function checkUserRole(user) {
+            const userEmail = user.email || '';
+            const userPhone = user.phoneNumber || '';
+            
+            // Check if Firebase is configured
+            if (typeof firebaseDb === 'undefined' || !firebaseDb) {
+                // Demo mode: redirect to index
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // First, check if this phone number exists in any user document
+            if (userPhone) {
+                firebaseDb.collection('users').where('phone', '==', userPhone).limit(1).get()
+                    .then(existingUsers => {
+                        if (!existingUsers.empty) {
+                            const existingDoc = existingUsers.docs[0];
+                            const existingUid = existingDoc.id;
+                            const existingData = existingDoc.data();
+                            
+                            if (existingUid !== user.uid) {
+                                firebaseDb.collection('users').doc(user.uid).set({
+                                    ...existingData,
+                                    linkedTo: existingUid,
+                                    authProvider: 'google'
+                                }).then(() => {
+                                    redirectBasedOnRole(existingData.role);
+                                });
+                            } else {
+                                redirectBasedOnRole(existingData.role);
+                            }
+                        } else {
+                            checkByEmail(user);
+                        }
+                    })
+                    .catch(error => {
+                        showError('Error checking user: ' + error.message);
+                    });
+            } else {
+                checkByEmail(user);
+            }
+        }
+        
+        // Check by email
+        function checkByEmail(user) {
+            const userEmail = user.email || '';
+            
+            if (userEmail) {
+                firebaseDb.collection('users').where('email', '==', userEmail).limit(1).get()
+                    .then(existingUsers => {
+                        if (!existingUsers.empty) {
+                            const existingDoc = existingUsers.docs[0];
+                            const existingUid = existingDoc.id;
+                            const existingData = existingDoc.data();
+                            
+                            if (existingUid !== user.uid) {
+                                firebaseDb.collection('users').doc(user.uid).set({
+                                    ...existingData,
+                                    linkedTo: existingUid,
+                                    authProvider: 'google'
+                                }).then(() => {
+                                    redirectBasedOnRole(existingData.role);
+                                });
+                            } else {
+                                redirectBasedOnRole(existingData.role);
+                            }
+                        } else {
+                            createNewUser(user);
+                        }
+                    })
+                    .catch(error => {
+                        showError('Error checking user: ' + error.message);
+                    });
+            } else {
+                firebaseDb.collection('users').doc(user.uid).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            redirectBasedOnRole(doc.data().role);
+                        } else {
+                            createNewUser(user);
+                        }
+                    });
+            }
+        }
+        
+        // Create new user document
+        function createNewUser(user) {
+            const userId = generateUserId();
+            firebaseDb.collection('users').doc(user.uid).set({
+                email: user.email || '',
+                phone: user.phoneNumber || '',
+                role: 'member',
+                name: user.displayName || 'Member',
+                authProvider: user.phoneNumber ? 'phone' : 'google',
+                userId: userId
+            }).then(() => {
+                window.location.href = 'index.html';
+            }).catch(error => {
+                // If Firebase fails, still redirect to index for demo
+                window.location.href = 'index.html';
+            });
+        }
+        
+        // Redirect based on role
+        function redirectBasedOnRole(role) {
+            if (role === 'admin') {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
