@@ -2043,11 +2043,30 @@
                 //     --> pickup point
                 //         --> members
                 buses.forEach(bus => {
+                    // compute total members for this bus across all pickup points
+                    let busMemberCount = 0;
+                    if (bus.routes && bus.routes.length) {
+                        bus.routes.forEach(route => {
+                            const members = pickupPointMembers[route.id] || [];
+                            busMemberCount += members.length;
+                        });
+                    }
+
                     html += `
                         <div class="border-2 border-outline-variant rounded-xl p-4 mb-4">
-                            <div class="mb-2">
-                                <h5 class="font-bold text-primary text-lg">${bus.name}</h5>
-                                <p class="text-on-surface-variant font-body-lg text-body-lg">--> route</p>
+                            <div class="flex items-start justify-between gap-3 mb-2">
+                                <div>
+                                    <h5 class="font-bold text-primary text-lg">${bus.name}</h5>
+                                    <p class="text-on-surface-variant font-body-lg text-body-lg">--> route</p>
+                                </div>
+                                <button
+                                    class="touch-active bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg px-4 py-2"
+                                    data-download-bus-id="${bus.id}"
+                                    data-download-event-id="${eventId}"
+                                    onclick="downloadRouteWiseBusMembersPDF('${eventId}', '${bus.id}')"
+                                >
+                                    Download Bus
+                                </button>
                             </div>
                     `;
 
@@ -2079,6 +2098,78 @@
             });
         }
 
+
+        function downloadRouteWiseBusMembersPDF(eventId, busId) {
+            if (!eventId || !busId) return;
+
+            const buses = state.busRoutes[eventId] || [];
+            const bus = buses.find(b => b.id === busId);
+            if (!bus) return;
+
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+
+                // Collect members per route pickup id for this bus
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Bus Members - ${bus.name}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #ff5722; text-align: center; }
+                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
+                            .bus { font-weight: 800; margin: 10px 0 18px 0; }
+                            .pickup { margin-top: 10px; font-weight: 800; }
+                            .members { margin-left: 18px; margin-top: 6px; }
+                            .member { margin: 4px 0; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                        <h2>Bus: ${bus.name}</h2>
+                        <div class="bus">Pickup points & selected members</div>
+                `;
+
+                (bus.routes || []).forEach(route => {
+                    const routeMembers = [];
+
+                    Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                        const rsvp = rsvpData[eventId];
+                        if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                            const user = users[uid] || {};
+                            routeMembers.push({
+                                name: user.name || user.email || 'Unknown',
+                                phone: user.phone || 'N/A'
+                            });
+                        }
+                    });
+
+                    html += `
+                        <div class="pickup">${route.point} - ${route.time}</div>
+                        <div class="members">
+                            ${routeMembers.length ? routeMembers.map(m => `<div class="member">--> ${m.name} - ${m.phone}</div>`).join('') : '<div class="member">--> No members selected</div>'}
+                        </div>
+                    `;
+                });
+
+                html += '</body></html>';
+
+                const printWindow = window.open('', '_blank');
+                if (printWindow) {
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                } else {
+                    alert('Please allow popups to download the PDF');
+                }
+            });
+        }
 
         function downloadBusRoutesSelectedMembersPDF() {
             const eventId = document.getElementById('bus-routes-selected-members-event-select').value;
@@ -2173,6 +2264,15 @@
 
         function downloadConsolidatedBusRoutesSelectedMembersPDF() {
             const outstationEvents = state.events.filter(e => e.type === 'Outstation');
+
+            // Only include events that actually have attending members
+            const attendingEventIds = new Set(
+                Object.values(state.rsvps || {})
+                    .map(r => r && r ? Object.entries(r).filter(([eventId, data]) => data && data.status === 'attending') : [])
+                    .flat()
+                    .map(([eventId]) => eventId)
+            );
+            const selectedEvents = outstationEvents.filter(e => attendingEventIds.has(e.id));
 
             firebaseDb.collection('users').get().then(usersSnapshot => {
                 const users = {};
