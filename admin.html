@@ -1546,7 +1546,8 @@
 
                 Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                     const rsvp = rsvpData[eventId];
-                    if (rsvp && rsvp.status === 'attending') {
+                    // Check for both 'attending' and 'attended' statuses
+                    if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended')) {
                         attendingCount++;
                         const member = users[uid] || { name: 'Unknown Member' };
                         attendingMembers.push({ ...member, pickupPoint: rsvp.pickupPoint });
@@ -1571,7 +1572,7 @@
                                 busBreakdown[foundRoute.point].count++;
                             }
                         }
-                    } else if (rsvp && rsvp.status === 'not-attending') {
+                    } else if (rsvp && (rsvp.status === 'not-attending' || rsvp.status === 'not-attended')) {
                         notAttendingCount++;
                         const member = users[uid] || { name: 'Unknown Member' };
                         notAttendingMembers.push(member);
@@ -1646,6 +1647,7 @@
                 });
 
                 // Build attending + not-attending lists from RSVP state, as your roster does
+                // Include both 'attending'/'not-attending' (initial RSVP) and 'attended'/'not-attended' (after taking attendance)
                 const memberUids = Object.keys(state.rsvps || {});
                 const attendingUids = [];
                 const notAttendingUids = [];
@@ -1653,8 +1655,8 @@
                 memberUids.forEach(uid => {
                     const rsvpForEvent = state.rsvps[uid]?.[eventId];
                     if (!rsvpForEvent) return;
-                    if (rsvpForEvent.status === 'attending') attendingUids.push(uid);
-                    if (rsvpForEvent.status === 'not-attending') notAttendingUids.push(uid);
+                    if (rsvpForEvent.status === 'attending' || rsvpForEvent.status === 'attended') attendingUids.push(uid);
+                    if (rsvpForEvent.status === 'not-attending' || rsvpForEvent.status === 'not-attended') notAttendingUids.push(uid);
                 });
 
                 // Render modal UI
@@ -1762,6 +1764,25 @@
                         if (cb.checked) absent.push(cb.dataset.uid);
                     });
 
+                    // Update RSVP status to 'attended' for present members and 'not-attended' for absent
+                    const rsvpUpdates = [];
+                    present.forEach(uid => {
+                        rsvpUpdates.push(
+                            firebaseDb.collection('rsvps').doc(uid).set(
+                                { [eventId]: { status: 'attended', pickupPoint: state.rsvps[uid]?.[eventId]?.pickupPoint || null } },
+                                { merge: true }
+                            )
+                        );
+                    });
+                    absent.forEach(uid => {
+                        rsvpUpdates.push(
+                            firebaseDb.collection('rsvps').doc(uid).set(
+                                { [eventId]: { status: 'not-attended', pickupPoint: state.rsvps[uid]?.[eventId]?.pickupPoint || null } },
+                                { merge: true }
+                            )
+                        );
+                    });
+
                     // Store as userId list; your existing roster download expects names.
                     // We'll also store present/absent as names for backward compatibility.
                     const presentNames = present.map(uid => (users[uid]?.name || users[uid]?.email || 'Unknown'));
@@ -1782,7 +1803,10 @@
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     };
 
-                    firebaseDb.collection('attendance').doc(attendanceDocId).set(attendanceDoc, { merge: true }).then(() => {
+                    // Save to attendance collection and update RSVPs
+                    Promise.all(rsvpUpdates).then(() => {
+                        return firebaseDb.collection('attendance').doc(attendanceDocId).set(attendanceDoc, { merge: true });
+                    }).then(() => {
                         document.body.removeChild(modal);
                         alert('Attendance saved successfully!');
                         loadRoster();
@@ -1810,7 +1834,8 @@
                 Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                     const rsvp = rsvpData[eventId];
                     const user = users[uid] || {};
-                    if (rsvp && rsvp.status === 'attending') {
+                    // Check for both 'attending' and 'attended' statuses
+                    if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended')) {
                         attendingRows.push({
                             id: user.userId || 'N/A',
                             name: user.name || user.email || 'Unknown',
@@ -1891,7 +1916,8 @@
                 Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                     const rsvp = rsvpData[eventId];
                     const user = users[uid] || {};
-                    if (rsvp && rsvp.status === 'attending') {
+                    // Check for both 'attending' and 'attended' statuses
+                    if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended')) {
                         attendingRows.push([
                             user.userId || 'N/A',
                             user.name || user.email || 'Unknown',
@@ -2573,5 +2599,4 @@
         }
     </script>
 </body>
-    </script>
 </html>
