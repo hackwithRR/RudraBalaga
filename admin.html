@@ -1767,6 +1767,10 @@
                     const presentNames = present.map(uid => (users[uid]?.name || users[uid]?.email || 'Unknown'));
                     const absentNames = absent.map(uid => (users[uid]?.name || users[uid]?.email || 'Unknown'));
 
+                    // IMPORTANT: Use deterministic doc id so saving twice for same event updates instead of creating new docs.
+                    // This prevents your UI from resetting when you open modal again.
+                    const attendanceDocId = `event-${eventId}`;
+
                     const attendanceDoc = {
                         eventId,
                         eventTitle: event.title,
@@ -1778,10 +1782,9 @@
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     };
 
-                    firebaseDb.collection('attendance').add(attendanceDoc).then(() => {
+                    firebaseDb.collection('attendance').doc(attendanceDocId).set(attendanceDoc, { merge: true }).then(() => {
                         document.body.removeChild(modal);
                         alert('Attendance saved successfully!');
-                        // Optionally re-render roster counts by calling loadRoster again
                         loadRoster();
                     });
                 });
