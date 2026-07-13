@@ -2061,7 +2061,8 @@
                     const routeUsers = [];
                     Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                         const rsvp = rsvpData[eventId];
-                        if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                        // Check for both 'attending' and 'attended' statuses
+                        if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended') && rsvp.pickupPoint === route.id) {
                             const user = users[uid] || {};
                             routeUsers.push({
                                 name: user.name || user.email || 'Unknown',
@@ -2135,7 +2136,8 @@
                             const routeUsers = [];
                             Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                                 const rsvp = rsvpData[eventId];
-                                if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                                // Check for both 'attending' and 'attended' statuses
+                                if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended') && rsvp.pickupPoint === route.id) {
                                     const user = users[uid] || {};
                                     routeUsers.push(user.name || user.email || 'Unknown');
                                 }
@@ -2184,10 +2186,11 @@
                 });
 
                 // Precompute member lists by pickupPoint
+                // Check for both 'attending' and 'attended' statuses
                 const pickupPointMembers = {}; // pickupPointId -> [{name, phone}]
                 Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                     const rsvp = rsvpData[eventId];
-                    if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint) {
+                    if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended') && rsvp.pickupPoint) {
                         if (!pickupPointMembers[rsvp.pickupPoint]) pickupPointMembers[rsvp.pickupPoint] = [];
                         const user = users[uid] || {};
                         pickupPointMembers[rsvp.pickupPoint].push({
@@ -2301,7 +2304,8 @@
 
                     Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                         const rsvp = rsvpData[eventId];
-                        if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                        // Check for both 'attending' and 'attended' statuses
+                        if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended') && rsvp.pickupPoint === route.id) {
                             const user = users[uid] || {};
                             routeMembers.push({
                                 name: user.name || user.email || 'Unknown',
