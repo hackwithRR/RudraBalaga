@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin - Rudra Parayana</title>
+    <link rel="icon" type="image/x-icon" href="om.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -256,11 +257,11 @@
                     </svg>
                     <span>Add Event</span>
                 </button>
-                <button id="bus-routes-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
+                <button id="event-history-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
                     <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M4 16.5V6.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5zm2-11v10h11V6.5H6zm5 2.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
                     </svg>
-                    <span>Bus Routes</span>
+                    <span>Event History</span>
                 </button>
                 <button id="attendance-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
                     <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
@@ -268,18 +269,34 @@
                     </svg>
                     <span>Attendance</span>
                 </button>
-                <button id="members-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
+                <button id="bus-routes-users-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
                     <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2v2zm8 0c1.1 0 2-.9 2-2h2c0 2.21-1.79 4-4 4zm4.5 6.5c-1.66-1.34-4.34-1.34-6 0l-1.5 1.5c-.39.39-.39 1.02 0 1.41l1.5 1.5c.67.53 1.37.79 2.12.79s1.45-.26 2.12-.79l1.5-1.5c.39-.39.39-1.02 0-1.41l-1.5-1.5z"/>
+                        <path d="M4 16.5V6.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5zm2-11v10h11V6.5H6zm5 2.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
                     </svg>
-                    <span>Members</span>
+                    <span>Bus Routes (Manage)</span>
+                </button>
+                <button id="bus-routes-selected-members-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
+                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2v2zm8 0c1.1 0 2-.9 2-2h2c0 2.21-1.79 4-4 4v-2zm-3 9c-2.67 0-8-1.34-8-4v-2h16v2c0 2.66-5.33 4-8 4z"/>
+                    </svg>
+                    <span>Route-wise Members</span>
                 </button>
             </div>
         </section>
         
+        <!-- Members Button (Full width) -->
+        <section class="mt-3">
+            <button id="members-tab" class="touch-active w-full h-16 rounded-xl font-bold text-body-lg flex items-center justify-center gap-3 bg-tertiary-container text-on-tertiary shadow-md">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2v2zm8 0c1.1 0 2-.9 2-2h2c0 2.21-1.79 4-4 4zm4.5 6.5c-1.66-1.34-4.34-1.34-6 0l-1.5 1.5c-.39.39-.39 1.02 0 1.41l1.5 1.5c.67.53 1.37.79 2.12.79s1.45-.26 2.12-.79l1.5-1.5c.39-.39.39-1.02 0-1.41l-1.5-1.5z"/>
+                </svg>
+                Members
+            </button>
+        </section>
+        
         <!-- Announcements Button (Full width) -->
         <section class="mt-3">
-            <button id="announcements-tab" class="touch-active w-full h-16 rounded-xl font-bold text-body-lg flex items-center justify-center gap-3 bg-secondary-container text-on-secondary-container shadow-md">
+            <button id="announcements-tab" class="touch-active w-full h-16 rounded-xl font-bold text-body-lg flex items-center justify-center gap-3 bg-tertiary-container text-on-tertiary shadow-md">
                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2-2V4c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1z"/>
                 </svg>
@@ -347,6 +364,22 @@
                         <label for="event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link (Optional)</label>
                         <input type="url" id="event-map-link" placeholder="https://maps.google.com/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                     </div>
+                    <!-- Outstation Dates (shown only for Outstation events) -->
+                    <div id="outstation-dates-section" class="hidden">
+                        <div class="p-4 bg-surface-container-high rounded-xl border-2 border-secondary-container">
+                            <h4 class="font-label-lg text-label-lg text-secondary mb-3">Outstation Event Dates</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label for="departure-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Departure Date</label>
+                                    <input type="date" id="departure-date" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                </div>
+                                <div>
+                                    <label for="return-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Return to Bangalore Date</label>
+                                    <input type="date" id="return-date" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         <label for="event-limit" class="block font-label-lg text-label-lg text-on-surface mb-2">Member Limit</label>
                         <select id="event-limit" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
@@ -372,59 +405,105 @@
             </div>
         </section>
 
-        <!-- Bus Routes Tab Content (Hidden by default) -->
-        <section id="bus-routes-content" class="tab-content hidden">
+        <!-- Bus Routes Manage Tab Content (Hidden by default) -->
+        <section id="bus-routes-users-content" class="tab-content hidden">
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
-                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Manage Bus Routes</h3>
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Bus Routes - Manage</h3>
                 <div class="space-y-4">
                     <div>
-                        <label for="outstation-event-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Select Outstation Event</label>
-                        <select id="outstation-event-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                            <option value="">Select an event</option>
+                        <label for="bus-routes-users-event-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Select Outstation Event</label>
+                        <select id="bus-routes-users-event-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="">Select an outstation event</option>
                         </select>
                     </div>
                     
-                    <!-- Add Bus Form -->
-                    <form id="add-bus-form" class="hidden space-y-4">
-                        <div>
-                            <label for="bus-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Bus Name/Number</label>
-                            <input type="text" id="bus-name" placeholder="e.g., Bus 1, Volvo, etc." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    <!-- Bus Management Section -->
+                    <div id="bus-management-section" class="hidden">
+                        <div class="p-4 bg-surface-container-high rounded-xl border-2 border-secondary-container mb-4">
+                            <h4 class="font-label-lg text-label-lg text-secondary mb-3">Manage Buses</h4>
+                            <form id="add-bus-form" class="space-y-3 mb-4">
+                                <div>
+                                    <label for="bus-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Bus Name</label>
+                                    <input type="text" id="bus-name" required class="w-full h-[50px] px-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Enter bus name">
+                                </div>
+                                <button type="submit" class="w-full h-[44px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active">Add Bus</button>
+                            </form>
+                            
+                            <form id="bus-route-form" class="space-y-3 hidden">
+                                <div>
+                                    <label for="bus-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Select Bus</label>
+                                    <select id="bus-select" required class="w-full h-[50px] px-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                        <option value="">Select a bus</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="pickup-point" class="block font-label-lg text-label-lg text-on-surface mb-2">Pickup Point</label>
+                                    <input type="text" id="pickup-point" required class="w-full h-[50px] px-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Enter pickup point">
+                                </div>
+                                <div>
+                                    <label for="pickup-time" class="block font-label-lg text-label-lg text-on-surface mb-2">Pickup Time</label>
+                                    <input type="time" id="pickup-time" required class="w-full h-[50px] px-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                </div>
+                                <button type="submit" class="w-full h-[44px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active">Add Pickup Point</button>
+                            </form>
                         </div>
-                        <button type="submit" class="w-full h-[56px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 13h-4v4h-2v-4H5v-2h10V5h2v6h4v2z"/>
-                            </svg>
-                            Add Bus
-                        </button>
-                    </form>
+                        
+                        <div id="bus-routes-list" class="hidden">
+                            <h4 class="font-label-lg text-label-lg text-secondary mb-2">Buses & Routes</h4>
+                            <div id="buses-container" class="space-y-3"></div>
+                        </div>
+                    </div>
                     
-                    <!-- Add Pickup Point Form -->
-                    <form id="bus-route-form" class="hidden space-y-4">
-                        <div>
-                            <label for="bus-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Select Bus</label>
-                            <select id="bus-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                                <option value="">Select a bus</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="pickup-point" class="block font-label-lg text-label-lg text-on-surface mb-2">Pickup Point</label>
-                            <input type="text" id="pickup-point" placeholder="Pickup location" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                        </div>
-                        <div>
-                            <label for="pickup-time" class="block font-label-lg text-label-lg text-on-surface mb-2">Pickup Time</label>
-                            <input type="time" id="pickup-time" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                        </div>
-                        <button type="submit" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                    <div id="bus-routes-users-container" class="space-y-3">
+                        <p class="text-on-surface-variant">Select an event to view bus routes and users.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-4">
+                        <button id="download-bus-routes-users-pdf" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm2-4H6v-2h8v2zm4-4h-2V5h2v4z"/>
                             </svg>
-                            Add Pickup Point
+                            Download PDF
                         </button>
-                    </form>
-                    
-                    <div id="bus-routes-list" class="hidden">
-                        <h4 class="font-label-lg text-label-lg text-secondary mb-2">Buses & Pickup Points</h4>
-                        <div id="buses-container" class="space-y-4"></div>
+                        <button id="download-consolidated-bus-routes-pdf" class="w-full h-[56px] bg-tertiary-container text-on-tertiary rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8H5v-2h4v2zm0-4H5V9h4v4zm0-4H5V5h4v2z"/>
+                            </svg>
+                            Consolidated
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Route-wise Members Tab Content (Hidden by default) -->
+        <section id="bus-routes-selected-members-content" class="tab-content hidden">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Route-wise Members</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="bus-routes-selected-members-event-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Select Outstation Event</label>
+                        <select id="bus-routes-selected-members-event-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="">Select an outstation event</option>
+                        </select>
+                    </div>
+
+                    <div id="bus-routes-selected-members-container" class="space-y-3">
+                        <p class="text-on-surface-variant">Select an event to view members route-wise (by pickup point).</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mt-4">
+                        <button id="download-bus-routes-selected-members-pdf" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm2-4H6v-2h8v2zm4-4h-2V5h2v4z"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                        <button id="download-consolidated-bus-routes-selected-members-pdf" class="w-full h-[56px] bg-tertiary-container text-on-tertiary rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8H5v-2h4v2zm0-4H5V9h4v4zm0-4H5V5h4v2z"/>
+                            </svg>
+                            Consolidated
+                        </button>
                     </div>
                 </div>
             </div>
@@ -504,15 +583,120 @@
             </div>
         </section>
 
-        <!-- Action Buttons -->
-        <section class="grid grid-cols-1 gap-3">
-            <button id="logout-btn" class="w-full h-[56px] bg-error text-on-error rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M16 13v-2H7V8l-5 4 5 4v-3h9zM20 3H4c-1.1 0-2 .9-2 2v4h2V5h16v14H4v-4H2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-                </svg>
-                Logout
-            </button>
+        <!-- Event History Tab Content (Hidden by default) -->
+        <section id="event-history-content" class="tab-content hidden">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Event History</h3>
+                <div class="space-y-4">
+                    <ul id="events-history-list" class="space-y-2">
+                        <li class="text-on-surface-variant">Loading events...</li>
+                    </ul>
+                </div>
+            </div>
         </section>
+
+        <!-- Event Edit Modal (Hidden by default) -->
+        <div id="event-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+            <div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Edit Event</h3>
+                <form id="edit-event-form" class="space-y-4">
+                    <input type="hidden" id="edit-event-id">
+                    <div>
+                        <label for="edit-event-title" class="block font-label-lg text-label-lg text-on-surface mb-2">Event Title</label>
+                        <input type="text" id="edit-event-title" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="edit-event-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Date</label>
+                        <input type="date" id="edit-event-date" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="edit-event-time" class="block font-label-lg text-label-lg text-on-surface mb-2">Time</label>
+                        <input type="time" id="edit-event-time" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div>
+                        <label for="edit-event-type" class="block font-label-lg text-label-lg text-on-surface mb-2">Event Type</label>
+                        <select id="edit-event-type" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="Bangalore">Bangalore</option>
+                            <option value="Outstation">Outstation</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-event-location" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Address</label>
+                        <textarea id="edit-event-location" rows="3" required class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"></textarea>
+                    </div>
+                    <div>
+                        <label for="edit-event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link (Optional)</label>
+                        <input type="url" id="edit-event-map-link" placeholder="https://maps.google.com/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <!-- Outstation Dates (shown only for Outstation events) -->
+                    <div id="edit-outstation-dates-section" class="hidden">
+                        <div class="p-4 bg-surface-container-high rounded-xl border-2 border-secondary-container">
+                            <h4 class="font-label-lg text-label-lg text-secondary mb-3">Outstation Event Dates</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label for="edit-departure-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Departure Date</label>
+                                    <input type="date" id="edit-departure-date" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                </div>
+                                <div>
+                                    <label for="edit-return-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Return to Bangalore Date</label>
+                                    <input type="date" id="edit-return-date" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="edit-event-limit" class="block font-label-lg text-label-lg text-on-surface mb-2">Member Limit</label>
+                        <select id="edit-event-limit" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="">No Limit</option>
+                            <option value="50">50 Members</option>
+                            <option value="100">100 Members</option>
+                            <option value="150">150 Members</option>
+                            <option value="200">200 Members</option>
+                            <option value="custom">Custom Limit</option>
+                        </select>
+                    </div>
+                    <div id="edit-custom-limit-input" class="hidden">
+                        <label for="edit-event-custom-limit" class="block font-label-lg text-label-lg text-on-surface mb-2">Custom Limit Number</label>
+                        <input type="number" id="edit-event-custom-limit" placeholder="Enter custom limit" min="1" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" id="cancel-edit-btn" class="w-full h-[56px] bg-surface-container-high text-on-surface-variant rounded-xl font-bold text-body-lg flex items-center justify-center">
+                            Cancel
+                        </button>
+                        <button type="submit" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V7h14v12zm-8-8h2v-2h2v-2h-2V7h-2v2H9v2h2v2z"/>
+                            </svg>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed top-20 right-4 z-50 bg-primary-container text-on-primary-container px-6 py-4 rounded-xl shadow-lg max-w-sm">
+        <div class="flex items-center gap-3">
+            <span id="toast-icon" class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            <span id="toast-message" class="font-body-lg text-body-lg"></span>
+        </div>
+    </div>
+
+    <!-- Help Button (Floating) -->
+    <button id="help-btn" class="fixed bottom-32 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
+        <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
+        <span class="font-label-lg text-label-lg">ಸಹಾಯ</span>
+    </button>
+
+    <!-- Action Buttons -->
+    <section class="grid grid-cols-1 gap-3">
+        <button id="logout-btn" class="w-full h-[56px] bg-error text-on-error rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 13v-2H7V8l-5 4 5 4v-3h9zM20 3H4c-1.1 0-2 .9-2 2v4h2V5h16v14H4v-4H2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+            </svg>
+            Logout
+        </button>
+    </section>
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -618,10 +802,19 @@
                                 window.location.href = 'index.html';
                             }
                         })
-                        .catch(error => {
-                            console.error('Error checking admin status: ', error);
-                            window.location.href = 'login.html';
-                        });
+                         .catch(error => {
+                             console.error('Error checking admin status: ', error);
+                             // Show error on page instead of redirecting to prevent login loop
+                             const errorDiv = document.createElement('div');
+                             errorDiv.className = 'fixed top-20 right-4 z-50 bg-error text-on-error px-6 py-4 rounded-xl shadow-lg max-w-sm';
+                             errorDiv.innerHTML = '<p>Authentication error. Please try logging in again.</p>';
+                             document.body.appendChild(errorDiv);
+                             setTimeout(() => {
+                                 firebaseAuth.signOut().then(() => {
+                                     window.location.href = 'login.html';
+                                 });
+                             }, 2000);
+                         });
                 } else {
                     // Not logged in, redirect to login
                     window.location.href = 'login.html';
@@ -631,7 +824,7 @@
 
         // Load events from Firestore
         function loadEvents() {
-            firebaseDb.collection('events').orderBy('date').onSnapshot(snapshot => {
+            firebaseDb.collection('events').orderBy('date', 'desc').onSnapshot(snapshot => {
                 state.events = [];
                 snapshot.forEach(doc => {
                     state.events.push({ id: doc.id, ...doc.data() });
@@ -657,63 +850,250 @@
                 snapshot.forEach(doc => {
                     state.busRoutes[doc.id] = doc.data().buses || [];
                 });
-                // Auto-refresh the bus routes display if an event is selected
-                const eventId = document.getElementById('outstation-event-select')?.value;
-                if (eventId) {
+
+                // Auto-refresh panels if an event is selected
+                const manageEventId = document.getElementById('bus-routes-users-event-select')?.value;
+                if (manageEventId) {
                     displayBusRoutes();
+                }
+
+                const selectedMembersEventId = document.getElementById('bus-routes-selected-members-event-select')?.value;
+                if (selectedMembersEventId) {
+                    displayBusRoutesSelectedMembers();
                 }
             });
         }
 
         // Setup all event listeners
         function setupEventListeners() {
-            document.getElementById('create-event-form').addEventListener('submit', createEvent);
-            document.getElementById('bus-route-form').addEventListener('submit', addBusRoute);
-            document.getElementById('add-bus-form').addEventListener('submit', addBus);
-            document.getElementById('outstation-event-select').addEventListener('change', displayBusRoutes);
-            document.getElementById('roster-event-select').addEventListener('change', loadRoster);
-            document.getElementById('logout-btn').addEventListener('click', logout);
+            // Create event form
+            const createEventForm = document.getElementById('create-event-form');
+            if (createEventForm) {
+                createEventForm.addEventListener('submit', createEvent);
+            }
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
             
             // Tab navigation
-            document.getElementById('add-event-tab').addEventListener('click', () => switchTab('add-event'));
-            document.getElementById('bus-routes-tab').addEventListener('click', () => switchTab('bus-routes'));
-            document.getElementById('attendance-tab').addEventListener('click', () => switchTab('attendance'));
-            document.getElementById('members-tab').addEventListener('click', () => switchTab('members'));
-            document.getElementById('announcements-tab').addEventListener('click', () => switchTab('announcements'));
+            const addEventTab = document.getElementById('add-event-tab');
+            if (addEventTab) {
+                addEventTab.addEventListener('click', () => switchTab('add-event'));
+            }
+            
+            const busRoutesUsersTab = document.getElementById('bus-routes-users-tab');
+            if (busRoutesUsersTab) {
+                busRoutesUsersTab.addEventListener('click', () => switchTab('bus-routes-users'));
+            }
+
+            const busRoutesSelectedMembersTab = document.getElementById('bus-routes-selected-members-tab');
+            if (busRoutesSelectedMembersTab) {
+                busRoutesSelectedMembersTab.addEventListener('click', () => switchTab('bus-routes-selected-members'));
+            }
+            
+            
+            const attendanceTab = document.getElementById('attendance-tab');
+            if (attendanceTab) {
+                attendanceTab.addEventListener('click', () => switchTab('attendance'));
+            }
+            
+            const membersTab = document.getElementById('members-tab');
+            if (membersTab) {
+                membersTab.addEventListener('click', () => switchTab('members'));
+            }
+            
+            const announcementsTab = document.getElementById('announcements-tab');
+            if (announcementsTab) {
+                announcementsTab.addEventListener('click', () => switchTab('announcements'));
+            }
+            
+            const eventHistoryTab = document.getElementById('event-history-tab');
+            if (eventHistoryTab) {
+                eventHistoryTab.addEventListener('click', () => {
+                    switchTab('event-history');
+                    loadEventHistory();
+                });
+            }
             
             // Announcement form
-            document.getElementById('create-announcement-form').addEventListener('submit', createAnnouncement);
-            
-            // Event delegation for remove buttons
-            document.getElementById('buses-container').addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-bus')) {
-                    removeBus(e);
-                } else if (e.target.classList.contains('remove-route')) {
-                    removeRoute(e);
-                }
-            });
+            const createAnnouncementForm = document.getElementById('create-announcement-form');
+            if (createAnnouncementForm) {
+                createAnnouncementForm.addEventListener('submit', createAnnouncement);
+            }
             
             // Attendance buttons
-            document.getElementById('take-attendance-btn').addEventListener('click', takeAttendance);
-            document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
-            document.getElementById('download-excel-btn').addEventListener('click', downloadExcel);
+            const takeAttendanceBtn = document.getElementById('take-attendance-btn');
+            if (takeAttendanceBtn) {
+                takeAttendanceBtn.addEventListener('click', takeAttendance);
+            }
+            
+            const downloadPdfBtn = document.getElementById('download-pdf-btn');
+            if (downloadPdfBtn) {
+                downloadPdfBtn.addEventListener('click', downloadPDF);
+            }
+            
+            const downloadExcelBtn = document.getElementById('download-excel-btn');
+            if (downloadExcelBtn) {
+                downloadExcelBtn.addEventListener('click', downloadExcel);
+            }
             
             // Member limit dropdown
-            document.getElementById('event-limit').addEventListener('change', function(e) {
-                const customLimitInput = document.getElementById('custom-limit-input');
-                if (e.target.value === 'custom') {
-                    customLimitInput.classList.remove('hidden');
-                } else {
-                    customLimitInput.classList.add('hidden');
-                }
-            });
+            const eventLimit = document.getElementById('event-limit');
+            if (eventLimit) {
+                eventLimit.addEventListener('change', function(e) {
+                    const customLimitInput = document.getElementById('custom-limit-input');
+                    if (customLimitInput) {
+                        if (e.target.value === 'custom') {
+                            customLimitInput.classList.remove('hidden');
+                        } else {
+                            customLimitInput.classList.add('hidden');
+                        }
+                    }
+                });
+            }
+            
+            // Event type change - show/hide outstation dates
+            const eventTypeSelect = document.getElementById('event-type-select');
+            if (eventTypeSelect) {
+                eventTypeSelect.addEventListener('change', function(e) {
+                    const outstationDatesSection = document.getElementById('outstation-dates-section');
+                    if (outstationDatesSection) {
+                        if (e.target.value === 'Outstation') {
+                            outstationDatesSection.classList.remove('hidden');
+                        } else {
+                            outstationDatesSection.classList.add('hidden');
+                        }
+                    }
+                });
+            }
+            
+            // Event edit form
+            const editEventForm = document.getElementById('edit-event-form');
+            if (editEventForm) {
+                editEventForm.addEventListener('submit', saveEditedEvent);
+            }
+            
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            if (cancelEditBtn) {
+                cancelEditBtn.addEventListener('click', () => {
+                    document.getElementById('event-edit-modal').classList.add('hidden');
+                });
+            }
+            
+            const editEventLimit = document.getElementById('edit-event-limit');
+            if (editEventLimit) {
+                editEventLimit.addEventListener('change', function(e) {
+                    const customLimitInput = document.getElementById('edit-custom-limit-input');
+                    if (customLimitInput) {
+                        if (e.target.value === 'custom') {
+                            customLimitInput.classList.remove('hidden');
+                        } else {
+                            customLimitInput.classList.add('hidden');
+                        }
+                    }
+                });
+            }
+            
+            // Event delegation for edit buttons
+            const eventsHistoryList = document.getElementById('events-history-list');
+            if (eventsHistoryList) {
+                eventsHistoryList.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('edit-event-btn')) {
+                        const eventId = e.target.dataset.eventId;
+                        openEditEventModal(eventId);
+                    }
+                });
+            }
+            
+            // Bus routes (manage) event selector
+            const busRoutesUsersEventSelect = document.getElementById('bus-routes-users-event-select');
+            if (busRoutesUsersEventSelect) {
+                busRoutesUsersEventSelect.addEventListener('change', function() {
+                    const eventId = this.value;
+                    if (eventId) {
+                        displayBusRoutes();
+                    }
+                });
+            }
+
+            // Route-wise members event selector
+            const busRoutesSelectedMembersEventSelect = document.getElementById('bus-routes-selected-members-event-select');
+            if (busRoutesSelectedMembersEventSelect) {
+                busRoutesSelectedMembersEventSelect.addEventListener('change', function() {
+                    const eventId = this.value;
+                    if (eventId) {
+                        displayBusRoutesSelectedMembers();
+                    }
+                });
+            }
+            
+            // Add bus form
+            const addBusForm = document.getElementById('add-bus-form');
+            if (addBusForm) {
+                addBusForm.addEventListener('submit', addBus);
+            }
+            
+            // Add bus route form
+            const busRouteForm = document.getElementById('bus-route-form');
+            if (busRouteForm) {
+                busRouteForm.addEventListener('submit', addBusRoute);
+            }
+            
+            // Download buttons for bus routes manage
+            const downloadBusRoutesUsersPdf = document.getElementById('download-bus-routes-users-pdf');
+            if (downloadBusRoutesUsersPdf) {
+                downloadBusRoutesUsersPdf.addEventListener('click', downloadBusRoutesUsersPDF);
+            }
+            
+            const downloadConsolidatedBusRoutesPdf = document.getElementById('download-consolidated-bus-routes-pdf');
+            if (downloadConsolidatedBusRoutesPdf) {
+                downloadConsolidatedBusRoutesPdf.addEventListener('click', downloadConsolidatedBusRoutesPDF);
+            }
+
+            // Download buttons for route-wise members
+            const downloadBusRoutesSelectedMembersPdf = document.getElementById('download-bus-routes-selected-members-pdf');
+            if (downloadBusRoutesSelectedMembersPdf) {
+                downloadBusRoutesSelectedMembersPdf.addEventListener('click', downloadBusRoutesSelectedMembersPDF);
+            }
+
+            const downloadConsolidatedSelectedMembersPdf = document.getElementById('download-consolidated-bus-routes-selected-members-pdf');
+            if (downloadConsolidatedSelectedMembersPdf) {
+                downloadConsolidatedSelectedMembersPdf.addEventListener('click', downloadConsolidatedBusRoutesSelectedMembersPDF);
+            }
+            
+            // Roster event select
+            const rosterEventSelect = document.getElementById('roster-event-select');
+            if (rosterEventSelect) {
+                rosterEventSelect.addEventListener('change', loadRoster);
+            }
+            
+            // Event delegation for remove bus and remove route buttons
+            const busesContainer = document.getElementById('buses-container');
+            if (busesContainer) {
+                busesContainer.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-bus')) {
+                        removeBus(e);
+                    } else if (e.target.classList.contains('remove-route')) {
+                        removeRoute(e);
+                    }
+                });
+            }
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
         }
         
         // Add new bus (Admin)
         function addBus(e) {
             e.preventDefault();
             
-            const eventId = document.getElementById('outstation-event-select').value;
+            const eventId = document.getElementById('bus-routes-users-event-select').value;
             if (!eventId) return;
             
             const busName = document.getElementById('bus-name').value;
@@ -737,7 +1117,7 @@
         function addBusRoute(e) {
             e.preventDefault();
             
-            const eventId = document.getElementById('outstation-event-select').value;
+            const eventId = document.getElementById('bus-routes-users-event-select').value;
             const busId = document.getElementById('bus-select').value;
             if (!eventId || !busId) return;
             
@@ -764,24 +1144,21 @@
             e.target.reset();
         }
         
-        // Display buses and routes for selected event (Admin)
+        // Display buses and routes for selected event (Admin) - Manage
         function displayBusRoutes() {
-            const eventId = document.getElementById('outstation-event-select').value;
-            const addBusForm = document.getElementById('add-bus-form');
-            const busRouteForm = document.getElementById('bus-route-form');
+            const eventId = document.getElementById('bus-routes-users-event-select').value;
+            const busManagementSection = document.getElementById('bus-management-section');
             const busRoutesList = document.getElementById('bus-routes-list');
             const busesContainer = document.getElementById('buses-container');
             const busSelect = document.getElementById('bus-select');
 
+
             if (!eventId) {
-                addBusForm.classList.add('hidden');
-                busRouteForm.classList.add('hidden');
-                busRoutesList.classList.add('hidden');
+                busManagementSection.classList.add('hidden');
                 return;
             }
 
-            addBusForm.classList.remove('hidden');
-            busRouteForm.classList.remove('hidden');
+            busManagementSection.classList.remove('hidden');
             
             // Populate bus select
             busSelect.innerHTML = '<option value="">Select a bus</option>';
@@ -858,28 +1235,33 @@
                 buses: buses
             });
         }
-
+        
         // Switch between tabs
         function switchTab(tab) {
             // Update tab buttons - remove all active classes first
             document.getElementById('add-event-tab').classList.remove('tab-active');
             document.getElementById('add-event-tab').classList.add('tab-inactive');
-            document.getElementById('bus-routes-tab').classList.remove('tab-active');
-            document.getElementById('bus-routes-tab').classList.add('tab-inactive');
+            document.getElementById('bus-routes-users-tab').classList.remove('tab-active');
+            document.getElementById('bus-routes-users-tab').classList.add('tab-inactive');
             document.getElementById('attendance-tab').classList.remove('tab-active');
             document.getElementById('attendance-tab').classList.add('tab-inactive');
             document.getElementById('members-tab').classList.remove('tab-active');
             document.getElementById('members-tab').classList.add('tab-inactive');
             document.getElementById('announcements-tab').classList.remove('tab-active');
             document.getElementById('announcements-tab').classList.add('tab-inactive');
+            document.getElementById('event-history-tab').classList.remove('tab-active');
+            document.getElementById('event-history-tab').classList.add('tab-inactive');
             
             // Add active class to selected tab
             if (tab === 'add-event') {
                 document.getElementById('add-event-tab').classList.add('tab-active');
                 document.getElementById('add-event-tab').classList.remove('tab-inactive');
-            } else if (tab === 'bus-routes') {
-                document.getElementById('bus-routes-tab').classList.add('tab-active');
-                document.getElementById('bus-routes-tab').classList.remove('tab-inactive');
+            } else if (tab === 'bus-routes-users') {
+                document.getElementById('bus-routes-users-tab').classList.add('tab-active');
+                document.getElementById('bus-routes-users-tab').classList.remove('tab-inactive');
+            } else if (tab === 'bus-routes-selected-members') {
+                document.getElementById('bus-routes-selected-members-tab').classList.add('tab-active');
+                document.getElementById('bus-routes-selected-members-tab').classList.remove('tab-inactive');
             } else if (tab === 'attendance') {
                 document.getElementById('attendance-tab').classList.add('tab-active');
                 document.getElementById('attendance-tab').classList.remove('tab-inactive');
@@ -890,14 +1272,123 @@
             } else if (tab === 'announcements') {
                 document.getElementById('announcements-tab').classList.add('tab-active');
                 document.getElementById('announcements-tab').classList.remove('tab-inactive');
+            } else if (tab === 'event-history') {
+                document.getElementById('event-history-tab').classList.add('tab-active');
+                document.getElementById('event-history-tab').classList.remove('tab-inactive');
             }
             
             // Update tab content
             document.getElementById('add-event-content').classList.toggle('hidden', tab !== 'add-event');
-            document.getElementById('bus-routes-content').classList.toggle('hidden', tab !== 'bus-routes');
+            document.getElementById('bus-routes-users-content').classList.toggle('hidden', tab !== 'bus-routes-users');
+            document.getElementById('bus-routes-selected-members-content').classList.toggle('hidden', tab !== 'bus-routes-selected-members');
             document.getElementById('attendance-content').classList.toggle('hidden', tab !== 'attendance');
             document.getElementById('members-content').classList.toggle('hidden', tab !== 'members');
             document.getElementById('announcements-content').classList.toggle('hidden', tab !== 'announcements');
+            document.getElementById('event-history-content').classList.toggle('hidden', tab !== 'event-history');
+        }
+        
+        // Load and display event history
+        function loadEventHistory() {
+            const eventsList = document.getElementById('events-history-list');
+            eventsList.innerHTML = state.events.map(event => {
+                const attendingCount = Object.values(state.rsvps).filter(r => r[event.id]?.status === 'attending').length;
+                const limitText = event.limit ? ` (Limit: ${event.limit})` : '';
+                const buses = state.busRoutes[event.id] || [];
+                const busInfo = buses.length > 0 ? `<br><span class="text-secondary">Buses: ${buses.map(b => b.name).join(', ')}</span>` : '';
+                
+                return `
+                    <li class="p-4 bg-surface-container-high rounded-lg">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-bold text-primary text-lg">${event.title}</h4>
+                                <p class="text-on-surface-variant font-body-lg text-body-lg">${formatDate(event.date)} at ${event.time}</p>
+                                <p class="text-on-surface-variant font-body-lg text-body-lg">${event.type} - ${event.location}</p>
+                                <p class="text-secondary font-body-lg text-body-lg">Attending: ${attendingCount}${limitText}${busInfo}</p>
+                            </div>
+                            <button class="edit-event-btn touch-active bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-bold text-body-lg" data-event-id="${event.id}">
+                                Edit
+                            </button>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+        }
+        
+        // Open edit event modal
+        function openEditEventModal(eventId) {
+            const event = state.events.find(e => e.id === eventId);
+            if (!event) return;
+            
+            document.getElementById('edit-event-id').value = event.id;
+            document.getElementById('edit-event-title').value = event.title;
+            document.getElementById('edit-event-date').value = event.date;
+            document.getElementById('edit-event-time').value = event.time;
+            document.getElementById('edit-event-type').value = event.type;
+            document.getElementById('edit-event-location').value = event.location;
+            document.getElementById('edit-event-map-link').value = event.mapLink || '';
+            
+            // Set limit
+            if (event.limit) {
+                if ([50, 100, 150, 200].includes(event.limit)) {
+                    document.getElementById('edit-event-limit').value = event.limit;
+                } else {
+                    document.getElementById('edit-event-limit').value = 'custom';
+                    document.getElementById('edit-custom-limit-input').classList.remove('hidden');
+                    document.getElementById('edit-event-custom-limit').value = event.limit;
+                }
+            } else {
+                document.getElementById('edit-event-limit').value = '';
+            }
+            
+            // Set outstation dates
+            if (event.type === 'Outstation') {
+                document.getElementById('edit-outstation-dates-section').classList.remove('hidden');
+                document.getElementById('edit-departure-date').value = event.departureDate || '';
+                document.getElementById('edit-return-date').value = event.returnDate || '';
+            } else {
+                document.getElementById('edit-outstation-dates-section').classList.add('hidden');
+            }
+            
+            document.getElementById('event-edit-modal').classList.remove('hidden');
+        }
+        
+        // Save edited event
+        function saveEditedEvent(e) {
+            e.preventDefault();
+            
+            const eventId = document.getElementById('edit-event-id').value;
+            const limitSelect = document.getElementById('edit-event-limit').value;
+            const customLimit = document.getElementById('edit-event-custom-limit').value;
+            const type = document.getElementById('edit-event-type').value;
+            
+            // Determine the limit value
+            let limit = null;
+            if (limitSelect === 'custom' && customLimit) {
+                limit = parseInt(customLimit);
+            } else if (limitSelect) {
+                limit = parseInt(limitSelect);
+            }
+            
+            const updateData = {
+                title: document.getElementById('edit-event-title').value,
+                date: document.getElementById('edit-event-date').value,
+                time: document.getElementById('edit-event-time').value,
+                type: type,
+                location: document.getElementById('edit-event-location').value,
+                mapLink: document.getElementById('edit-event-map-link').value || null,
+                limit: limit
+            };
+
+            // Add outstation dates if type is Outstation
+            if (type === 'Outstation') {
+                updateData.departureDate = document.getElementById('edit-departure-date').value || null;
+                updateData.returnDate = document.getElementById('edit-return-date').value || null;
+            }
+            
+            firebaseDb.collection('events').doc(eventId).update(updateData).then(() => {
+                alert('Event updated successfully!');
+                document.getElementById('event-edit-modal').classList.add('hidden');
+            });
         }
 
         // Create announcement (Admin)
@@ -990,6 +1481,8 @@
             const mapLink = document.getElementById('event-map-link').value;
             const limitSelect = document.getElementById('event-limit').value;
             const customLimit = document.getElementById('event-custom-limit').value;
+            const departureDate = document.getElementById('departure-date').value;
+            const returnDate = document.getElementById('return-date').value;
             
             // Determine the limit value
             let limit = null;
@@ -999,7 +1492,7 @@
                 limit = parseInt(limitSelect);
             }
 
-            firebaseDb.collection('events').add({
+            const eventData = {
                 title,
                 date,
                 time,
@@ -1008,10 +1501,19 @@
                 mapLink: mapLink || null,
                 limit: limit,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            };
+
+            // Add outstation dates if type is Outstation
+            if (type === 'Outstation') {
+                eventData.departureDate = departureDate || null;
+                eventData.returnDate = returnDate || null;
+            }
+
+            firebaseDb.collection('events').add(eventData);
 
             e.target.reset();
             document.getElementById('custom-limit-input').classList.add('hidden');
+            document.getElementById('outstation-dates-section').classList.add('hidden');
             alert('Event created successfully!');
         }
 
@@ -1100,22 +1602,32 @@
 
         // Populate event selectors (Admin)
         function populateEventSelectors() {
-            const outstationSelect = document.getElementById('outstation-event-select');
             const rosterSelect = document.getElementById('roster-event-select');
+            const busRoutesUsersSelect = document.getElementById('bus-routes-users-event-select');
+            const busRoutesSelectedMembersSelect = document.getElementById('bus-routes-selected-members-event-select');
 
-            outstationSelect.innerHTML = '<option value="">Select an event</option>';
             rosterSelect.innerHTML = '<option value="">Select an event</option>';
+            busRoutesUsersSelect.innerHTML = '<option value="">Select an outstation event</option>';
+            busRoutesSelectedMembersSelect.innerHTML = '<option value="">Select an outstation event</option>';
 
             state.events.forEach(event => {
-                const option1 = document.createElement('option');
-                option1.value = event.id;
-                option1.textContent = `${event.title} (${event.type})`;
-                outstationSelect.appendChild(option1);
-
                 const option2 = document.createElement('option');
                 option2.value = event.id;
                 option2.textContent = `${event.title} (${event.type})`;
                 rosterSelect.appendChild(option2);
+                
+                // Only add outstation events to bus routes manage + selected members selectors
+                if (event.type === 'Outstation') {
+                    const option3 = document.createElement('option');
+                    option3.value = event.id;
+                    option3.textContent = `${event.title} (${formatDate(event.date)})`;
+                    busRoutesUsersSelect.appendChild(option3);
+
+                    const option4 = document.createElement('option');
+                    option4.value = event.id;
+                    option4.textContent = `${event.title} (${formatDate(event.date)})`;
+                    busRoutesSelectedMembersSelect.appendChild(option4);
+                }
             });
         }
 
@@ -1284,7 +1796,484 @@
                 URL.revokeObjectURL(url);
             });
         }
+
+        // Show help modal
+        function showHelpModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 w-full max-w-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-headline-sm text-headline-sm text-primary">Help & Support</h3>
+                        <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-surface-container-high rounded-lg">
+                            <h4 class="font-bold text-primary mb-2">Admin Help</h4>
+                            <p class="text-on-surface font-body-lg text-body-lg">For admin-specific issues, contact an admin:</p>
+                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1">
+                                <li>Event creation problems</li>
+                                <li>Bus route management</li>
+                                <li>Attendance tracking issues</li>
+                                <li>Member data access</li>
+                            </ul>
+                        </div>
+                        <div id="admins-list" class="space-y-2">
+                            <p class="text-center text-on-surface-variant">Loading admins...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('close-help-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Fetch admin users from Firestore
+            if (typeof firebaseDb !== 'undefined' && firebaseDb) {
+                try {
+                    firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
+                        const adminsList = document.getElementById('admins-list');
+                        if (snapshot.empty) {
+                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant">No admins available</p>';
+                            return;
+                        }
+                        
+                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2">Contact an Admin:</p>';
+                        snapshot.forEach(doc => {
+                            const admin = doc.data();
+                            const phone = admin.phone || admin.email || 'N/A';
+                            const name = admin.name || 'Admin';
+                            html += `
+                                <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
+                                    <span class="font-body-lg text-body-lg text-on-primary-fixed">${name}</span>
+                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg">${phone}</a>
+                                </div>
+                            `;
+                        });
+                        adminsList.innerHTML = html;
+                    });
+                } catch (error) {
+                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant">Unable to load admin contacts</p>';
+                }
+            }
+        }
+
+        // Add help button click handler
+        document.getElementById('help-btn').addEventListener('click', showHelpModal);
+        
+        // Display bus routes with users for selected event
+        function displayBusRoutesUsers() {
+            const eventId = document.getElementById('bus-routes-users-event-select').value;
+            const routesContainer = document.getElementById('bus-routes-users-container');
+            
+            if (!eventId) {
+                routesContainer.innerHTML = '<p class="text-on-surface-variant">Select an event to view bus routes and users.</p>';
+                return;
+            }
+            
+            const buses = state.busRoutes[eventId] || [];
+            const allRoutes = [];
+            buses.forEach(bus => {
+                if (bus.routes) {
+                    bus.routes.forEach(route => {
+                        allRoutes.push({ ...route, busName: bus.name });
+                    });
+                }
+            });
+            
+            if (allRoutes.length === 0) {
+                routesContainer.innerHTML = '<p class="text-on-surface-variant">No bus routes configured for this event.</p>';
+                return;
+            }
+            
+            // Get users for each route
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+                
+                let html = '';
+                allRoutes.forEach(route => {
+                    const routeUsers = [];
+                    Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                        const rsvp = rsvpData[eventId];
+                        if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                            const user = users[uid] || {};
+                            routeUsers.push({
+                                name: user.name || user.email || 'Unknown',
+                                phone: user.phone || 'N/A'
+                            });
+                        }
+                    });
+                    
+                    html += `
+                        <div class="border-2 border-outline-variant rounded-xl p-4 mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h5 class="font-bold text-primary text-lg">${route.point}</h5>
+                                <span class="text-on-surface-variant font-body-lg text-body-lg">${route.time} (${route.busName})</span>
+                            </div>
+                            <p class="text-on-surface-variant font-body-lg text-body-lg mb-2">Members: ${routeUsers.length}</p>
+                            ${routeUsers.length > 0 ? `
+                                <ul class="space-y-1 mb-3">
+                                    ${routeUsers.map(u => `<li class="p-2 bg-surface-container-high rounded-lg font-body-lg text-body-lg">${u.name} - ${u.phone}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                routesContainer.innerHTML = html;
+            });
+        }
+        
+        // Download bus routes users as PDF
+        function downloadBusRoutesUsersPDF() {
+            const eventId = document.getElementById('bus-routes-users-event-select').value;
+            if (!eventId) return;
+            
+            const event = state.events.find(e => e.id === eventId);
+            const buses = state.busRoutes[eventId] || [];
+            
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+                
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Bus Routes - ${event?.title || 'Event'}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #ff5722; text-align: center; }
+                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                            th { background-color: #ff5722; color: white; }
+                            tr:nth-child(even) { background-color: #f9f9f9; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h2>Bus Routes Report</h2>
+                            <p>Event: ${event?.title || 'Unknown'}</p>
+                        </div>
+                `;
+                
+                buses.forEach(bus => {
+                    html += `<h3>${bus.name}</h3><table><tr><th>Pickup Point</th><th>Time</th><th>Members</th></tr>`;
+                    if (bus.routes) {
+                        bus.routes.forEach(route => {
+                            const routeUsers = [];
+                            Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                                const rsvp = rsvpData[eventId];
+                                if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                                    const user = users[uid] || {};
+                                    routeUsers.push(user.name || user.email || 'Unknown');
+                                }
+                            });
+                            html += `<tr><td>${route.point}</td><td>${route.time}</td><td>${routeUsers.join(', ') || 'None'}</td></tr>`;
+                        });
+                    }
+                    html += '</table>';
+                });
+                
+                html += '</body></html>';
+                
+                const printWindow = window.open('', '_blank');
+                if (printWindow) {
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                } else {
+                    alert('Please allow popups to download the PDF');
+                }
+            });
+        }
+        
+        // Route-wise members (new tab)
+        function displayBusRoutesSelectedMembers() {
+            const eventId = document.getElementById('bus-routes-selected-members-event-select').value;
+            const routesContainer = document.getElementById('bus-routes-selected-members-container');
+
+            if (!eventId) {
+                routesContainer.innerHTML = '<p class="text-on-surface-variant">Select an outstation event.</p>';
+                return;
+            }
+
+            const buses = state.busRoutes[eventId] || [];
+            const allRoutes = [];
+            buses.forEach(bus => {
+                if (bus.routes) {
+                    bus.routes.forEach(route => {
+                        allRoutes.push({ ...route, busName: bus.name });
+                    });
+                }
+            });
+
+            if (allRoutes.length === 0) {
+                routesContainer.innerHTML = '<p class="text-on-surface-variant">No bus routes configured for this event.</p>';
+                return;
+            }
+
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+
+                let html = '';
+                allRoutes.forEach(route => {
+                    const routeUsers = [];
+                    Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                        const rsvp = rsvpData[eventId];
+                        if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                            const user = users[uid] || {};
+                            routeUsers.push({
+                                name: user.name || user.email || 'Unknown',
+                                phone: user.phone || 'N/A'
+                            });
+                        }
+                    });
+
+                    html += `
+                        <div class="border-2 border-outline-variant rounded-xl p-4 mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h5 class="font-bold text-primary text-lg">${route.point}</h5>
+                                <span class="text-on-surface-variant font-body-lg text-body-lg">${route.time} (${route.busName})</span>
+                            </div>
+                            <p class="text-on-surface-variant font-body-lg text-body-lg mb-2">Members: ${routeUsers.length}</p>
+                            ${routeUsers.length > 0 ? `
+                                <ul class="space-y-1 mb-3">
+                                    ${routeUsers.map(u => `<li class="p-2 bg-surface-container-high rounded-lg font-body-lg text-body-lg">${u.name} - ${u.phone}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+
+                routesContainer.innerHTML = html;
+            });
+        }
+
+        function downloadBusRoutesSelectedMembersPDF() {
+            const eventId = document.getElementById('bus-routes-selected-members-event-select').value;
+            if (!eventId) return;
+
+            const event = state.events.find(e => e.id === eventId);
+            const buses = state.busRoutes[eventId] || [];
+
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Route-wise Members - ${event?.title || 'Event'}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #ff5722; text-align: center; }
+                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                            th { background-color: #ff5722; color: white; }
+                            tr:nth-child(even) { background-color: #f9f9f9; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h2>Route-wise Members Report</h2>
+                            <p>Event: ${event?.title || 'Unknown'}</p>
+                        </div>
+                `;
+
+                buses.forEach(bus => {
+                    html += `<h3>${bus.name}</h3><table><tr><th>Pickup Point</th><th>Time</th><th>Members</th></tr>`;
+                    if (bus.routes) {
+                        bus.routes.forEach(route => {
+                            const routeUsers = [];
+                            Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                                const rsvp = rsvpData[eventId];
+                                if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                                    const user = users[uid] || {};
+                                    routeUsers.push(user.name || user.email || 'Unknown');
+                                }
+                            });
+                            html += `<tr><td>${route.point}</td><td>${route.time}</td><td>${routeUsers.join(', ') || 'None'}</td></tr>`;
+                        });
+                    }
+                    html += '</table>';
+                });
+
+                html += '</body></html>';
+
+                const printWindow = window.open('', '_blank');
+                if (printWindow) {
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                } else {
+                    alert('Please allow popups to download the PDF');
+                }
+            });
+        }
+
+        function downloadConsolidatedBusRoutesSelectedMembersPDF() {
+            const outstationEvents = state.events.filter(e => e.type === 'Outstation');
+
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Consolidated Route-wise Members</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #ff5722; text-align: center; }
+                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                            th { background-color: #ff5722; color: white; }
+                            tr:nth-child(even) { background-color: #f9f9f9; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h2>Consolidated Route-wise Members Report</h2>
+                        </div>
+                `;
+
+                outstationEvents.forEach(event => {
+                    const buses = state.busRoutes[event.id] || [];
+                    html += `<h3>${event.title} - ${formatDate(event.date)}</h3><table><tr><th>Bus</th><th>Pickup Point</th><th>Time</th><th>Members</th></tr>`;
+
+                    buses.forEach(bus => {
+                        if (bus.routes) {
+                            bus.routes.forEach(route => {
+                                const routeUsers = [];
+                                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                                    const rsvp = rsvpData[event.id];
+                                    if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                                        const user = users[uid] || {};
+                                        routeUsers.push(user.name || user.email || 'Unknown');
+                                    }
+                                });
+
+                                html += `<tr><td>${bus.name}</td><td>${route.point}</td><td>${route.time}</td><td>${routeUsers.length}</td></tr>`;
+                            });
+                        }
+                    });
+
+                    html += '</table>';
+                });
+
+                html += '</body></html>';
+
+                const printWindow = window.open('', '_blank');
+                if (printWindow) {
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                } else {
+                    alert('Please allow popups to download the PDF');
+                }
+            });
+        }
+
+        // Download consolidated bus routes as PDF
+        function downloadConsolidatedBusRoutesPDF() {
+            const outstationEvents = state.events.filter(e => e.type === 'Outstation');
+            
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+                
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Consolidated Bus Routes</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #ff5722; text-align: center; }
+                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                            th { background-color: #ff5722; color: white; }
+                            tr:nth-child(even) { background-color: #f9f9f9; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h2>Consolidated Bus Routes Report</h2>
+                        </div>
+                `;
+                
+                outstationEvents.forEach(event => {
+                    const buses = state.busRoutes[event.id] || [];
+                    html += `<h3>${event.title} - ${formatDate(event.date)}</h3><table><tr><th>Bus</th><th>Pickup Point</th><th>Time</th><th>Members</th></tr>`;
+                    buses.forEach(bus => {
+                        if (bus.routes) {
+                            bus.routes.forEach(route => {
+                                const routeUsers = [];
+                                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                                    const rsvp = rsvpData[event.id];
+                                    if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
+                                        const user = users[uid] || {};
+                                        routeUsers.push(user.name || user.email || 'Unknown');
+                                    }
+                                });
+                                html += `<tr><td>${bus.name}</td><td>${route.point}</td><td>${route.time}</td><td>${routeUsers.length}</td></tr>`;
+                            });
+                        }
+                    });
+                    html += '</table>';
+                });
+                
+                html += '</body></html>';
+                
+                const printWindow = window.open('', '_blank');
+                if (printWindow) {
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                } else {
+                    alert('Please allow popups to download the PDF');
+                }
+            });
+        }
     </script>
 </body>
+    </script>
 </html>
-

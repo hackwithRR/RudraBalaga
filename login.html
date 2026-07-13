@@ -1,9 +1,10 @@
 56<!DOCTYPE html>
 <html lang="en">
-<head>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Login - Rudra Parayana</title>
+    <link rel="icon" type="image/x-icon" href="om.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
@@ -124,8 +125,14 @@
         </div>
     </div>
 
+    <!-- Help Button (Floating) -->
+    <button id="help-btn" class="fixed bottom-20 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
+        <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
+        <span class="font-label-lg text-label-lg">ಬೆಂಬದ್ದು</span>
+    </button>
+
     <!-- Application Dashboard Content Container -->
-    <main id="app-content" class="min-h-screen w-full flex flex-col items-center justify-center bg-[#fafafa] opacity-0 scale-105 pointer-events-none p-6">
+    <main id="app-content" class="min-h-screen w-full flex flex-col items-center justify-center bg-[#fafafa] opacity-0 scale-105 pointer-events-none p-6 pb-40">
         <div class="w-full max-w-md flex flex-col items-center text-center">
             <!-- Logo Section -->
             <div class="mb-10 relative">
@@ -256,10 +263,73 @@
             }
         }, "-=1.0");
 
+        // Show help modal
+        function showHelpModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 w-full max-w-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-headline-sm text-headline-sm text-primary">Help & Support</h3>
+                        <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-surface-container-high rounded-lg">
+                            <h4 class="font-bold text-primary mb-2">Need Help?</h4>
+                            <p class="text-on-surface font-body-lg text-body-lg">Contact an admin for assistance with:</p>
+                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1">
+                                <li>Login or account issues</li>
+                                <li>Event registration problems</li>
+                                <li>Bus pickup point selection</li>
+                                <li>Technical support</li>
+                            </ul>
+                        </div>
+                        <div id="admins-list" class="space-y-2">
+                            <p class="text-center text-on-surface-variant">Loading admins...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('close-help-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Fetch admin users from Firestore
+            if (typeof firebaseDb !== 'undefined' && firebaseDb) {
+                try {
+                    firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
+                        const adminsList = document.getElementById('admins-list');
+                        if (snapshot.empty) {
+                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant">No admins available</p>';
+                            return;
+                        }
+                        
+                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2">Contact an Admin:</p>';
+                        snapshot.forEach(doc => {
+                            const admin = doc.data();
+                            const phone = admin.phone || admin.email || 'N/A';
+                            const name = admin.name || 'Admin';
+                            html += `
+                                <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
+                                    <span class="font-body-lg text-body-lg text-on-primary-fixed">${name}</span>
+                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg">${phone}</a>
+                                </div>
+                            `;
+                        });
+                        adminsList.innerHTML = html;
+                    });
+                } catch (error) {
+                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant">Unable to load admin contacts</p>';
+                }
+            }
+        }
+
         // Initialize
         function initializeApp() {
             // Setup event listeners
             document.getElementById('google-login-btn').addEventListener('click', googleLogin);
+            document.getElementById('help-btn').addEventListener('click', showHelpModal);
             
             // Check if user is already logged in
             try {

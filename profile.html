@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Profile - Rudra Balaga</title>
+    <link rel="icon" type="image/x-icon" href="om.ico">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -277,13 +278,11 @@
         </section>
     </main>
 
-    <!-- BottomNavBar -->
-    <nav class="fixed bottom-0 w-full z-50 flex justify-center items-center px-4 py-3 pb-safe bg-surface-container dark:bg-surface-container border-t-2 border-outline-variant dark:border-outline shadow-lg dark:shadow-none rounded-t-xl">
-        <a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-on-primary-container rounded-full px-12 py-2 transition-all duration-150 scale-90" href="index.html">
-            <span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
-            <span class="font-label-lg text-label-lg">Home</span>
-        </a>
-    </nav>
+    <!-- Help Button (Floating) -->
+    <button id="help-btn" class="fixed bottom-32 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
+        <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
+        <span class="font-label-lg text-label-lg">ಸಹಾಯ</span>
+    </button>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -466,23 +465,88 @@
             }
         });
 
-        // Setup logout button
-        document.getElementById('logout-btn').addEventListener('click', function() {
-            // Clear demo mode data
-            localStorage.removeItem('userPhone');
-            localStorage.removeItem('userPin');
+        // Show help modal
+        function showHelpModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 w-full max-w-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-headline-sm text-headline-sm text-primary">Help & Support</h3>
+                        <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-surface-container-high rounded-lg">
+                            <h4 class="font-bold text-primary mb-2">Need Help?</h4>
+                            <p class="text-on-surface font-body-lg text-body-lg">Contact an admin for assistance with:</p>
+                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1">
+                                <li>Profile update issues</li>
+                                <li>Event registration problems</li>
+                                <li>Bus pickup point selection</li>
+                                <li>Technical support</li>
+                            </ul>
+                        </div>
+                        <div id="admins-list" class="space-y-2">
+                            <p class="text-center text-on-surface-variant">Loading admins...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('close-help-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
             
-            // Sign out from Firebase
-            if (typeof firebaseAuth !== 'undefined' && firebaseAuth) {
-                firebaseAuth.signOut().then(() => {
-                    window.location.href = 'login.html';
-                }).catch(() => {
-                    window.location.href = 'login.html';
-                });
-            } else {
-                window.location.href = 'login.html';
+            // Fetch admin users from Firestore
+            if (typeof firebaseDb !== 'undefined' && firebaseDb) {
+                try {
+                    firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
+                        const adminsList = document.getElementById('admins-list');
+                        if (snapshot.empty) {
+                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant">No admins available</p>';
+                            return;
+                        }
+                        
+                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2">Contact an Admin:</p>';
+                        snapshot.forEach(doc => {
+                            const admin = doc.data();
+                            const phone = admin.phone || admin.email || 'N/A';
+                            const name = admin.name || 'Admin';
+                            html += `
+                                <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
+                                    <span class="font-body-lg text-body-lg text-on-primary-fixed">${name}</span>
+                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg">${phone}</a>
+                                </div>
+                            `;
+                        });
+                        adminsList.innerHTML = html;
+                    });
+                } catch (error) {
+                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant">Unable to load admin contacts</p>';
+                }
             }
-        });
+        }
+
+    // Setup logout button
+    document.getElementById('logout-btn').addEventListener('click', function() {
+        // Clear demo mode data
+        localStorage.removeItem('userPhone');
+        localStorage.removeItem('userPin');
+        
+        // Sign out from Firebase
+        if (typeof firebaseAuth !== 'undefined' && firebaseAuth) {
+            firebaseAuth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch(() => {
+                window.location.href = 'login.html';
+            });
+        } else {
+            window.location.href = 'login.html';
+        }
+    });
+
+    // Setup help button
+    document.getElementById('help-btn').addEventListener('click', showHelpModal);
     </script>
 </body>
 </html>
