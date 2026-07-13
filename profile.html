@@ -79,15 +79,15 @@
                     "stack-xs": "0.5rem"
             },
             "fontFamily": {
-                    "body-md": ["Inter"],
-                    "chant-text": ["Inter"],
-                    "body-lg": ["Inter"],
-                    "label-lg": ["Inter"],
-                    "headline-lg": ["Inter"],
-                    "headline-lg-mobile": ["Inter"],
-                    "headline-sm": ["Inter"],
-                    "label-md": ["Inter"],
-                    "headline-md": ["Inter"]
+                "body-md": ["Noto Sans Kannada", "Inter"],
+                "chant-text": ["Noto Sans Kannada", "Inter"],
+                "body-lg": ["Noto Sans Kannada", "Inter"],
+                "label-lg": ["Noto Sans Kannada", "Inter"],
+                "headline-lg": ["Noto Sans Kannada", "Inter"],
+                "headline-lg-mobile": ["Noto Sans Kannada", "Inter"],
+                "headline-sm": ["Noto Sans Kannada", "Inter"],
+                "label-md": ["Noto Sans Kannada", "Inter"],
+                "headline-md": ["Noto Sans Kannada", "Inter"]
             },
             "fontSize": {
                     "body-md": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
@@ -226,7 +226,7 @@
     <main id="app-content" class="pt-20 px-margin-mobile space-y-stack-lg max-w-2xl mx-auto opacity-0">
         <!-- Profile Header -->
         <section class="mt-stack-md text-center">
-            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">My Profile</h2>
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary kannada-text">ನನ್ನ ಪ್ರೊಫೈಲ್</h2>
         </section>
 
         <!-- Profile Card -->
@@ -239,31 +239,31 @@
                             <span class="material-symbols-outlined text-primary text-4xl" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
                         </div>
                         <input type="file" id="profile-pic-input" accept="image/*" class="hidden">
-                        <button type="button" id="change-pic-btn" class="touch-active text-primary font-label-lg text-label-lg">Change Photo</button>
+                        <button type="button" id="change-pic-btn" class="touch-active text-primary font-label-lg text-label-lg kannada-text">ಫೋಟೋ ಬದಲಿಸಿ</button>
                     </div>
                     <div>
-                        <label for="profile-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Full Name</label>
-                        <input type="text" id="profile-name" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg" placeholder="Enter your name">
+                        <label for="profile-name" class="block font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಪೂರ್ಣ ಹೆಸರು</label>
+                        <input type="text" id="profile-name" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg kannada-text" placeholder="ನಿಮ್ಮ ಹೆಸರನ್ನು ನಮೂದಿಸಿ">
                     </div>
                     <div>
-                        <label for="profile-email" class="block font-label-lg text-label-lg text-on-surface mb-2">Email</label>
-                        <input type="email" id="profile-email" disabled class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-surface-container-high text-on-surface-variant font-body-lg">
+                        <label for="profile-email" class="block font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಇಮೇಲ್</label>
+                        <input type="email" id="profile-email" disabled class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-surface-container-high text-on-surface-variant font-body-lg kannada-text">
                     </div>
                     <div>
-                        <label for="profile-phone" class="block font-label-lg text-label-lg text-on-surface mb-2">Phone Number</label>
-                        <input type="tel" id="profile-phone" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg" placeholder="+91XXXXXXXXXX">
+                        <label for="profile-phone" class="block font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಫೋನ್ ನಂಬರ್</label>
+                        <input type="tel" id="profile-phone" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg kannada-text" placeholder="+91XXXXXXXXXX">
                     </div>
                     <div>
-                        <label for="profile-dob" class="block font-label-lg text-label-lg text-on-surface mb-2">Date of Birth</label>
-                        <input type="date" id="profile-dob" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg">
+                        <label for="profile-dob" class="block font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಜನ್ಮ ತಾರೆ</label>
+                        <input type="date" id="profile-dob" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg kannada-text">
                     </div>
                     <div>
-                        <label for="profile-address" class="block font-label-lg text-label-lg text-on-surface mb-2">Address</label>
-                        <textarea id="profile-address" rows="3" class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg" placeholder="Enter your address"></textarea>
+                        <label for="profile-address" class="block font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ವಿಳಾಸ</label>
+                        <textarea id="profile-address" rows="3" class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg kannada-text" placeholder="ನಿಮ್ಮ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ"></textarea>
                     </div>
-                    <button type="submit" class="w-full h-[60px] bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg">
+                    <button type="submit" class="w-full h-[60px] bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                         <span class="material-symbols-outlined" data-icon="save" style="font-variation-settings: 'FILL' 1;">save</span>
-                        Save Profile
+                        ಪ್ರೊಫೈಲ್ ಸೇವ್ ಮಾಡಿ
                     </button>
                 </form>
             </div>
@@ -271,9 +271,9 @@
 
         <!-- Logout Button -->
         <section>
-            <button id="logout-btn" class="w-full h-[60px] bg-error text-on-error font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg">
+            <button id="logout-btn" class="w-full h-[60px] bg-error text-on-error font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                 <span class="material-symbols-outlined" data-icon="logout" style="font-variation-settings: 'FILL' 1;">logout</span>
-                Logout
+                ಲಾಗ್ ಔಟ್
             </button>
         </section>
     </main>
@@ -472,22 +472,22 @@
             modal.innerHTML = `
                 <div class="bg-white rounded-xl p-6 w-full max-w-lg">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary">Help & Support</h3>
+                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ</h3>
                         <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
                     </div>
                     <div class="space-y-4">
                         <div class="p-4 bg-surface-container-high rounded-lg">
-                            <h4 class="font-bold text-primary mb-2">Need Help?</h4>
-                            <p class="text-on-surface font-body-lg text-body-lg">Contact an admin for assistance with:</p>
-                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1">
-                                <li>Profile update issues</li>
-                                <li>Event registration problems</li>
-                                <li>Bus pickup point selection</li>
-                                <li>Technical support</li>
+                            <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
+                            <p class="text-on-surface font-body-lg text-body-lg kannada-text">ದಯವಿಟ್ಟು ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
+                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
+                                <li>ಪ್ರೊಫೈಲ್ ಅಪ್ಡೇಟ್ ಸಮಸ್ಯಾಲ್</li>
+                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
+                                <li>ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
+                                <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
                             </ul>
                         </div>
                         <div id="admins-list" class="space-y-2">
-                            <p class="text-center text-on-surface-variant">Loading admins...</p>
+                            <p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                         </div>
                     </div>
                 </div>
@@ -503,26 +503,26 @@
                     firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
                         const adminsList = document.getElementById('admins-list');
                         if (snapshot.empty) {
-                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant">No admins available</p>';
+                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಯಾವ ಅಡ್ಮಿನ್ ಲಭ್ಯವಿಲ್ಲ</p>';
                             return;
                         }
                         
-                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2">Contact an Admin:</p>';
+                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕಿಸಿ:</p>';
                         snapshot.forEach(doc => {
                             const admin = doc.data();
                             const phone = admin.phone || admin.email || 'N/A';
                             const name = admin.name || 'Admin';
                             html += `
                                 <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
-                                    <span class="font-body-lg text-body-lg text-on-primary-fixed">${name}</span>
-                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg">${phone}</a>
+                                    <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
+                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg kannada-text">${phone}</a>
                                 </div>
                             `;
                         });
                         adminsList.innerHTML = html;
                     });
                 } catch (error) {
-                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant">Unable to load admin contacts</p>';
+                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</p>';
                 }
             }
         }

@@ -78,15 +78,15 @@
                 "stack-xs": "0.5rem"
             },
             "fontFamily": {
-                "body-md": ["Inter"],
-                "chant-text": ["Inter"],
-                "body-lg": ["Inter"],
-                "label-lg": ["Inter"],
-                "headline-lg": ["Inter"],
-                "headline-lg-mobile": ["Inter"],
-                "headline-sm": ["Inter"],
-                "label-md": ["Inter"],
-                "headline-md": ["Inter"]
+                "body-md": ["Noto Sans Kannada", "Inter"],
+                "chant-text": ["Noto Sans Kannada", "Inter"],
+                "body-lg": ["Noto Sans Kannada", "Inter"],
+                "label-lg": ["Noto Sans Kannada", "Inter"],
+                "headline-lg": ["Noto Sans Kannada", "Inter"],
+                "headline-lg-mobile": ["Noto Sans Kannada", "Inter"],
+                "headline-sm": ["Noto Sans Kannada", "Inter"],
+                "label-md": ["Noto Sans Kannada", "Inter"],
+                "headline-md": ["Noto Sans Kannada", "Inter"]
             },
             "fontSize": {
                 "body-md": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
@@ -115,6 +115,9 @@
         .touch-active:active {
             transform: scale(0.96);
             transition: transform 0.1s ease;
+        }
+        .kannada-text {
+            line-height: 1.8;
         }
     </style>
 </head>
@@ -735,22 +738,22 @@
             modal.innerHTML = `
                 <div class="bg-white rounded-xl p-6 w-full max-w-lg">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary">Help & Support</h3>
+                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ</h3>
                         <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
                     </div>
                     <div class="space-y-4">
                         <div class="p-4 bg-surface-container-high rounded-lg">
-                            <h4 class="font-bold text-primary mb-2">Need Help?</h4>
-                            <p class="text-on-surface font-body-lg text-body-lg">Contact an admin for assistance with:</p>
-                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1">
-                                <li>Event registration issues</li>
-                                <li>Bus pickup point selection</li>
-                                <li>Account or profile problems</li>
-                                <li>Technical support</li>
+                            <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
+                            <p class="text-on-surface font-body-lg text-body-lg kannada-text">ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
+                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
+                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
+                                <li>ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
+                                <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
+                                <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
                             </ul>
                         </div>
                         <div id="admins-list" class="space-y-2">
-                            <p class="text-center text-on-surface-variant">Loading admins...</p>
+                            <p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                         </div>
                     </div>
                 </div>
@@ -766,26 +769,26 @@
                     firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
                         const adminsList = document.getElementById('admins-list');
                         if (snapshot.empty) {
-                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant">No admins available</p>';
+                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಯಾವ ಅಡ್ಮಿನ್ ಲಭ್ಯವಿಲ್ಲ</p>';
                             return;
                         }
                         
-                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2">Contact an Admin:</p>';
+                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕಿಸಿ:</p>';
                         snapshot.forEach(doc => {
                             const admin = doc.data();
                             const phone = admin.phone || admin.email || 'N/A';
                             const name = admin.name || 'Admin';
                             html += `
                                 <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
-                                    <span class="font-body-lg text-body-lg text-on-primary-fixed">${name}</span>
-                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg">${phone}</a>
+                                    <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
+                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg kannada-text">${phone}</a>
                                 </div>
                             `;
                         });
                         adminsList.innerHTML = html;
                     });
                 } catch (error) {
-                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant">Unable to load admin contacts</p>';
+                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</p>';
                 }
             }
         }
