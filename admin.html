@@ -1636,22 +1636,31 @@
             const eventId = document.getElementById('roster-event-select').value;
             if (!eventId) return;
 
-            // Get all attending members
-            const attendingMembers = [];
+            // Current roster lists are rendered in loadRoster() from RSVP statuses
+            const presentMembers = [];
+            const absentMembers = [];
+
             document.querySelectorAll('#attending-list li').forEach(li => {
                 const name = li.textContent;
-                attendingMembers.push(name);
+                if (name) presentMembers.push(name);
             });
 
-            // Store attendance in Firestore
-            firebaseDb.collection('attendance').add({
+            document.querySelectorAll('#not-attending-list li').forEach(li => {
+                const name = li.textContent;
+                if (name) absentMembers.push(name);
+            });
+
+            const attendanceDoc = {
                 eventId,
                 eventTitle: state.events.find(e => e.id === eventId)?.title || '',
                 date: new Date().toISOString(),
-                present: attendingMembers,
+                present: presentMembers,
+                absent: absentMembers,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                alert('Attendance taken successfully!');
+            };
+
+            firebaseDb.collection('attendance').add(attendanceDoc).then(() => {
+                alert('Attendance saved (Present/Absent) successfully!');
             });
         }
 
