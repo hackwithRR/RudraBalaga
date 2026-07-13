@@ -441,23 +441,29 @@
         // 1. Text activation
         tl.to("#app-title", { opacity: 1, translateY: 0, duration: 1, ease: "power4.out" })
           
-          // 2. Stroke layout drawing orchestration
-          .to(".neon-line", {
-              strokeDashoffset: 0,
-              duration: 3.2,
-              ease: "power2.inOut",
-              stagger: 0.08,
-              onUpdate: function() {
-                  let progress = Math.floor(this.progress() * 100);
-                  document.getElementById("bar-meter").style.width = progress + "%";
-                  
-                  if(progress > 20 && progress < 65) {
-                      document.getElementById("load-state").textContent = "MANIFESTING DIVINE MATRIX";
-                  } else if(progress >= 65) {
-                      document.getElementById("load-state").textContent = "LOCKING AXIAL RADIALS";
-                  }
-              }
-          }, "-=0.8");
+           // 2. Stroke layout drawing orchestration
+           .to(".neon-line", {
+               strokeDashoffset: 0,
+               duration: 3.2,
+               ease: "power2.inOut",
+               stagger: 0.08,
+               onUpdate: function() {
+                   let progress = Math.floor(this.progress() * 100);
+                   const barMeter = document.getElementById("bar-meter");
+                   if (barMeter) {
+                       barMeter.style.width = progress + "%";
+                   }
+                   
+                   const loadState = document.getElementById("load-state");
+                   if (loadState) {
+                       if(progress > 20 && progress < 65) {
+                           loadState.textContent = "MANIFESTING DIVINE MATRIX";
+                       } else if(progress >= 65) {
+                           loadState.textContent = "LOCKING AXIAL RADIALS";
+                       }
+                   }
+               }
+           }, "-=0.8");
         
         // 3. Mount centered backplane graphics
         tl.to("#final-trishul", {
@@ -465,7 +471,10 @@
             duration: 0.5,
             ease: "power2.out",
             onStart: () => {
-                document.getElementById("load-state").textContent = "TRISHUL MOUNTED";
+                const loadState = document.getElementById("load-state");
+                if (loadState) {
+                    loadState.textContent = "TRISHUL MOUNTED";
+                }
             }
         }, "-=0.4")
         .to("#bindu", {
@@ -533,9 +542,15 @@
         // Load user data
         function loadUserData(user) {
             // Set Google data as fallback
-            document.getElementById('user-name').textContent = user.displayName || user.email || 'Devotee';
+            const userNameEl = document.getElementById('user-name');
+            if (userNameEl) {
+                userNameEl.textContent = user.displayName || user.email || 'Devotee';
+            }
             if (user.photoURL) {
-                document.getElementById('profile-link').innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
+                const profileLinkEl = document.getElementById('profile-link');
+                if (profileLinkEl) {
+                    profileLinkEl.innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
+                }
             }
             
             // Listen to user data from Firestore in real-time
@@ -545,19 +560,31 @@
                         if (doc.exists) {
                             const userData = doc.data();
                             // Update user name in header (Firestore first, then Google)
-                            document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'Devotee';
+                            const userNameEl = document.getElementById('user-name');
+                            if (userNameEl) {
+                                userNameEl.textContent = userData.name || user.displayName || user.email || 'Devotee';
+                            }
                             // Show user ID
                             if (userData.userId) {
-                                document.getElementById('user-id').textContent = `ID: ${userData.userId}`;
-                                document.getElementById('user-id').classList.remove('hidden');
+                                const userIdEl = document.getElementById('user-id');
+                                if (userIdEl) {
+                                    userIdEl.textContent = `ID: ${userData.userId}`;
+                                    userIdEl.classList.remove('hidden');
+                                }
                             }
                             // Show profile picture in header (Firestore first, then Google)
                             if (userData.photoURL) {
-                                document.getElementById('profile-link').innerHTML = `<img src="${userData.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
+                                const profileLinkEl = document.getElementById('profile-link');
+                                if (profileLinkEl) {
+                                    profileLinkEl.innerHTML = `<img src="${userData.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
+                                }
                             }
                             // Show admin button if admin
                             if (userData.role === 'admin') {
-                                document.getElementById('admin-link').classList.remove('hidden');
+                                const adminLinkEl = document.getElementById('admin-link');
+                                if (adminLinkEl) {
+                                    adminLinkEl.classList.remove('hidden');
+                                }
                             }
                         }
                     });
@@ -666,15 +693,33 @@
 
         // Setup all event listeners
         function setupEventListeners() {
-            document.getElementById('attending-btn').addEventListener('click', () => setRSVP('attending'));
-            document.getElementById('not-attending-btn').addEventListener('click', () => setRSVP('not-attending'));
-            document.getElementById('bus-pickup-select').addEventListener('change', setPickupPoint);
-            document.getElementById('view-all-announcements').addEventListener('click', showAllAnnouncements);
-            document.getElementById('view-scripts-btn').addEventListener('click', showScriptsModal);
+            const attendingBtn = document.getElementById('attending-btn');
+            if (attendingBtn) {
+                attendingBtn.addEventListener('click', () => setRSVP('attending'));
+            }
+            const notAttendingBtn = document.getElementById('not-attending-btn');
+            if (notAttendingBtn) {
+                notAttendingBtn.addEventListener('click', () => setRSVP('not-attending'));
+            }
+            const busPickupSelect = document.getElementById('bus-pickup-select');
+            if (busPickupSelect) {
+                busPickupSelect.addEventListener('change', setPickupPoint);
+            }
+            const viewAllAnnouncements = document.getElementById('view-all-announcements');
+            if (viewAllAnnouncements) {
+                viewAllAnnouncements.addEventListener('click', showAllAnnouncements);
+            }
+            const viewScriptsBtn = document.getElementById('view-scripts-btn');
+            if (viewScriptsBtn) {
+                viewScriptsBtn.addEventListener('click', showScriptsModal);
+            }
             // Events nav button now links to events.html directly
             
             // Help button
-            document.getElementById('help-btn').addEventListener('click', showHelpModal);
+            const helpBtn = document.getElementById('help-btn');
+            if (helpBtn) {
+                helpBtn.addEventListener('click', showHelpModal);
+            }
         }
         
         // Show help modal
@@ -1330,7 +1375,7 @@
             // Find the latest (most recent) event
             const nextEvent = state.events.length > 0 ? state.events[state.events.length - 1] : null;
 
-         // Show/hide Events button in bottom nav and View All Events button
+         // Show/hide View All Events button
          const viewAllEventsSection = document.getElementById('view-all-events-section');
          
          // Get user's RSVP IDs
@@ -1339,80 +1384,101 @@
              : [];
          
          // Show View All Events button only when all events are responded to
-         if (state.events.length > 0) {
-             if (userRsvpIds.length >= state.events.length) {
+         if (viewAllEventsSection) {
+             if (state.events.length > 0 && userRsvpIds.length >= state.events.length) {
                  viewAllEventsSection.classList.remove('hidden');
              } else {
                  viewAllEventsSection.classList.add('hidden');
              }
-         } else {
-             viewAllEventsSection.classList.add('hidden');
          }
 
             if (!nextEvent) {
-                document.getElementById('event-title').textContent = 'No upcoming events';
-                document.getElementById('event-date').textContent = 'No events scheduled';
-                document.getElementById('event-time').textContent = '-';
-                document.getElementById('event-location').textContent = '-';
+                const eventTitle = document.getElementById('event-title');
+                const eventDate = document.getElementById('event-date');
+                const eventTime = document.getElementById('event-time');
+                const eventLocation = document.getElementById('event-location');
+                const rsvpSection = document.getElementById('rsvp-section');
+                const rsvpStatusSection = document.getElementById('rsvp-status-section');
+                const busPickupSection = document.getElementById('bus-pickup-section');
+                
+                if (eventTitle) eventTitle.textContent = 'No upcoming events';
+                if (eventDate) eventDate.textContent = 'No events scheduled';
+                if (eventTime) eventTime.textContent = '-';
+                if (eventLocation) eventLocation.textContent = '-';
                 // Hide RSVP buttons when no events
-                document.getElementById('rsvp-section').classList.add('hidden');
-                document.getElementById('rsvp-status-section').classList.add('hidden');
-                document.getElementById('bus-pickup-section').classList.add('hidden');
+                if (rsvpSection) rsvpSection.classList.add('hidden');
+                if (rsvpStatusSection) rsvpStatusSection.classList.add('hidden');
+                if (busPickupSection) busPickupSection.classList.add('hidden');
                 return;
             }
 
-            document.getElementById('event-title').textContent = nextEvent.title;
-            document.getElementById('event-date').textContent = formatDate(nextEvent.date);
-            document.getElementById('event-time').textContent = nextEvent.time;
-            document.getElementById('event-location').textContent = nextEvent.type;
+            const eventTitle = document.getElementById('event-title');
+            const eventDate = document.getElementById('event-date');
+            const eventTime = document.getElementById('event-time');
+            const eventLocation = document.getElementById('event-location');
+            
+            if (eventTitle) eventTitle.textContent = nextEvent.title;
+            if (eventDate) eventDate.textContent = formatDate(nextEvent.date);
+            if (eventTime) eventTime.textContent = nextEvent.time;
+            if (eventLocation) eventLocation.textContent = nextEvent.type;
             
             // Display outstation dates if available
             const outstationDatesSection = document.getElementById('outstation-dates-section');
+            const outstationDatesText = document.getElementById('outstation-dates-text');
             if (nextEvent.type === 'Outstation' && (nextEvent.departureDate || nextEvent.returnDate)) {
-                outstationDatesSection.classList.remove('hidden');
-                const outstationDatesText = document.getElementById('outstation-dates-text');
-                let datesHtml = '';
-                if (nextEvent.departureDate) {
-                    datesHtml += `<p class="font-body-lg text-body-lg text-on-surface">Departure: ${formatDate(nextEvent.departureDate)}</p>`;
+                if (outstationDatesSection) outstationDatesSection.classList.remove('hidden');
+                if (outstationDatesText) {
+                    let datesHtml = '';
+                    if (nextEvent.departureDate) {
+                        datesHtml += `<p class="font-body-lg text-body-lg text-on-surface">Departure: ${formatDate(nextEvent.departureDate)}</p>`;
+                    }
+                    if (nextEvent.returnDate) {
+                        datesHtml += `<p class="font-body-lg text-body-lg text-on-surface">Return to Bangalore: ${formatDate(nextEvent.returnDate)}</p>`;
+                    }
+                    outstationDatesText.innerHTML = datesHtml;
                 }
-                if (nextEvent.returnDate) {
-                    datesHtml += `<p class="font-body-lg text-body-lg text-on-surface">Return to Bangalore: ${formatDate(nextEvent.returnDate)}</p>`;
-                }
-                outstationDatesText.innerHTML = datesHtml;
             } else {
-                outstationDatesSection.classList.add('hidden');
+                if (outstationDatesSection) outstationDatesSection.classList.add('hidden');
             }
 
-            // Handle map preview for Bangalore events
-            const mapPreview = document.getElementById('map-preview');
-            const mapLink = document.getElementById('map-link');
-            const mapIframe = document.getElementById('map-iframe');
-            
-            if (nextEvent.type === 'Bangalore' && nextEvent.location) {
-                // Use admin-provided map link or create from location
-                const mapsUrl = nextEvent.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nextEvent.location)}`;
+        // Handle map preview for Bangalore events
+        const mapPreview = document.getElementById('map-preview');
+        const mapLink = document.getElementById('map-link');
+        const mapIframe = document.getElementById('map-iframe');
+        
+        if (nextEvent.type === 'Bangalore' && nextEvent.location) {
+            // Use admin-provided map link or create from location
+            const mapsUrl = nextEvent.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nextEvent.location)}`;
+            if (mapLink) {
                 mapLink.href = mapsUrl;
-                
-                // Create embedded map URL - use proper Google Maps embed format
-                // For embed, we use the simpler format that works without API key
-                // Handle short URLs (maps.app.goo.gl) by using the location query instead
-                let embedUrl;
-                if (nextEvent.mapLink && nextEvent.mapLink.includes('maps.app.goo.gl')) {
-                    // Short URL - use location query for embed
-                    embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(nextEvent.location)}&output=embed`;
-                } else if (nextEvent.mapLink) {
-                    // Regular URL - try to convert to embed format
-                    embedUrl = nextEvent.mapLink.replace('/maps/', '/maps?q=').split('&')[0] + '&output=embed';
-                } else {
-                    // No map link - use location query
-                    embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(nextEvent.location)}&output=embed`;
-                }
-                mapIframe.src = embedUrl;
-                
-                mapPreview.classList.remove('hidden');
+            }
+            
+            // Create embedded map URL - use proper Google Maps embed format
+            // For embed, we use the simpler format that works without API key
+            // Handle short URLs (maps.app.goo.gl) by using the location query instead
+            let embedUrl;
+            if (nextEvent.mapLink && nextEvent.mapLink.includes('maps.app.goo.gl')) {
+                // Short URL - use location query for embed
+                embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(nextEvent.location)}&output=embed`;
+            } else if (nextEvent.mapLink) {
+                // Regular URL - try to convert to embed format
+                embedUrl = nextEvent.mapLink.replace('/maps/', '/maps?q=').split('&')[0] + '&output=embed';
             } else {
+                // No map link - use location query
+                embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(nextEvent.location)}&output=embed`;
+            }
+            if (mapIframe) {
+                mapIframe.src = embedUrl;
+            }
+            
+            if (mapPreview) {
+                mapPreview.classList.remove('hidden');
+            }
+        } else {
+            if (mapPreview) {
                 mapPreview.classList.add('hidden');
             }
+        }
 
         // Check RSVP status
         const userRsvp = state.rsvps[state.user.uid] && state.rsvps[state.user.uid][nextEvent.id];
@@ -1443,54 +1509,60 @@
         
         if (userRsvp && userRsvp.status === 'attending') {
             // User is attending - show status
-            rsvpSection.classList.add('hidden');
-            rsvpStatusSection.classList.remove('hidden');
-            limitReachedSection.classList.add('hidden');
-            rsvpStatusText.textContent = 'You are attending this event';
-            rsvpStatusText.className = 'font-body-lg text-body-lg text-on-primary-fixed';
+            if (rsvpSection) rsvpSection.classList.add('hidden');
+            if (rsvpStatusSection) rsvpStatusSection.classList.remove('hidden');
+            if (limitReachedSection) limitReachedSection.classList.add('hidden');
+            if (rsvpStatusText) {
+                rsvpStatusText.textContent = 'You are attending this event';
+                rsvpStatusText.className = 'font-body-lg text-body-lg text-on-primary-fixed';
+            }
             
             // Show/hide edit button based on event date
             if (canEdit) {
-                editRsvpBtn.classList.remove('hidden');
+                if (editRsvpBtn) editRsvpBtn.classList.remove('hidden');
             } else {
-                editRsvpBtn.classList.add('hidden');
+                if (editRsvpBtn) editRsvpBtn.classList.add('hidden');
             }
         } else if (userRsvp && userRsvp.status === 'not-attending') {
             // User is not attending - check if limit reached
             if (isLimitReached) {
                 // Limit reached - show limit reached message
-                rsvpSection.classList.add('hidden');
-                rsvpStatusSection.classList.add('hidden');
-                limitReachedSection.classList.remove('hidden');
-                limitReachedText.textContent = `This event has reached its maximum limit of ${nextEvent.limit} attendees.`;
+                if (rsvpSection) rsvpSection.classList.add('hidden');
+                if (rsvpStatusSection) rsvpStatusSection.classList.add('hidden');
+                if (limitReachedSection) limitReachedSection.classList.remove('hidden');
+                if (limitReachedText) limitReachedText.textContent = `This event has reached its maximum limit of ${nextEvent.limit} attendees.`;
             } else {
                 // Not attending but limit not reached - show status with edit button
-                rsvpSection.classList.add('hidden');
-                rsvpStatusSection.classList.remove('hidden');
-                limitReachedSection.classList.add('hidden');
-                rsvpStatusText.textContent = 'You are not attending this event';
-                rsvpStatusText.className = 'font-body-lg text-body-lg text-on-primary-fixed';
+                if (rsvpSection) rsvpSection.classList.add('hidden');
+                if (rsvpStatusSection) rsvpStatusSection.classList.remove('hidden');
+                if (limitReachedSection) limitReachedSection.classList.add('hidden');
+                if (rsvpStatusText) {
+                    rsvpStatusText.textContent = 'You are not attending this event';
+                    rsvpStatusText.className = 'font-body-lg text-body-lg text-on-primary-fixed';
+                }
                 
                 // Show/hide edit button based on event date
                 if (canEdit) {
-                    editRsvpBtn.classList.remove('hidden');
+                    if (editRsvpBtn) editRsvpBtn.classList.remove('hidden');
                 } else {
-                    editRsvpBtn.classList.add('hidden');
+                    if (editRsvpBtn) editRsvpBtn.classList.add('hidden');
                 }
             }
         } else if (isLimitReached) {
             // Limit reached - show limit reached message
-            rsvpSection.classList.add('hidden');
-            rsvpStatusSection.classList.add('hidden');
-            limitReachedSection.classList.remove('hidden');
-            limitReachedText.textContent = `This event has reached its maximum limit of ${nextEvent.limit} attendees.`;
+            if (rsvpSection) rsvpSection.classList.add('hidden');
+            if (rsvpStatusSection) rsvpStatusSection.classList.add('hidden');
+            if (limitReachedSection) limitReachedSection.classList.remove('hidden');
+            if (limitReachedText) limitReachedText.textContent = `This event has reached its maximum limit of ${nextEvent.limit} attendees.`;
         } else {
             // User hasn't responded - show buttons
-            rsvpSection.classList.remove('hidden');
-            rsvpStatusSection.classList.add('hidden');
-            limitReachedSection.classList.add('hidden');
-            document.getElementById('attending-btn').classList.remove('selected');
-            document.getElementById('not-attending-btn').classList.remove('selected');
+            if (rsvpSection) rsvpSection.classList.remove('hidden');
+            if (rsvpStatusSection) rsvpStatusSection.classList.add('hidden');
+            if (limitReachedSection) limitReachedSection.classList.add('hidden');
+            const attendingBtn = document.getElementById('attending-btn');
+            const notAttendingBtn = document.getElementById('not-attending-btn');
+            if (attendingBtn) attendingBtn.classList.remove('selected');
+            if (notAttendingBtn) notAttendingBtn.classList.remove('selected');
         }
 
         // Handle bus pickup for outstation events
@@ -1538,11 +1610,16 @@
         }
 
         // Add edit RSVP button click handler
-        document.getElementById('edit-rsvp-btn').addEventListener('click', function() {
-            // Show the RSVP buttons again
-            document.getElementById('rsvp-section').classList.remove('hidden');
-            document.getElementById('rsvp-status-section').classList.add('hidden');
-        });
+        const editRsvpBtn = document.getElementById('edit-rsvp-btn');
+        if (editRsvpBtn) {
+            editRsvpBtn.addEventListener('click', function() {
+                // Show the RSVP buttons again
+                const rsvpSection = document.getElementById('rsvp-section');
+                const rsvpStatusSection = document.getElementById('rsvp-status-section');
+                if (rsvpSection) rsvpSection.classList.remove('hidden');
+                if (rsvpStatusSection) rsvpStatusSection.classList.add('hidden');
+            });
+        }
     }
 
     // Set RSVP status
@@ -1601,14 +1678,15 @@
         });
 
         if (status === 'attending' && currentEvent.type === 'Outstation') {
+            const busPickupSection = document.getElementById('bus-pickup-section');
             const busNotice = document.getElementById('bus-notice');
             const busSelect = document.getElementById('bus-pickup-select');
             const hasBusRoutes = state.busRoutes[currentEvent.id] && state.busRoutes[currentEvent.id].length > 0;
             
-            if (hasBusRoutes) {
-                document.getElementById('bus-pickup-section').classList.remove('hidden');
-                busNotice.classList.add('hidden');
-                busSelect.classList.remove('hidden');
+            if (hasBusRoutes && busPickupSection) {
+                busPickupSection.classList.remove('hidden');
+                if (busNotice) busNotice.classList.add('hidden');
+                if (busSelect) busSelect.classList.remove('hidden');
             }
         }
     }
