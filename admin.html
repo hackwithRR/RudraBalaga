@@ -1631,36 +1631,160 @@
             });
         }
 
-        // Take attendance - mark members as present
+        // Take attendance - opens a modal with Present/Absent checkboxes for all members of selected event
         function takeAttendance() {
             const eventId = document.getElementById('roster-event-select').value;
             if (!eventId) return;
 
-            // Current roster lists are rendered in loadRoster() from RSVP statuses
-            const presentMembers = [];
-            const absentMembers = [];
+            const event = state.events.find(e => e.id === eventId);
+            if (!event) return;
 
-            document.querySelectorAll('#attending-list li').forEach(li => {
-                const name = li.textContent;
-                if (name) presentMembers.push(name);
-            });
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
 
-            document.querySelectorAll('#not-attending-list li').forEach(li => {
-                const name = li.textContent;
-                if (name) absentMembers.push(name);
-            });
+                // Build attending + not-attending lists from RSVP state, as your roster does
+                const memberUids = Object.keys(state.rsvps || {});
+                const attendingUids = [];
+                const notAttendingUids = [];
 
-            const attendanceDoc = {
-                eventId,
-                eventTitle: state.events.find(e => e.id === eventId)?.title || '',
-                date: new Date().toISOString(),
-                present: presentMembers,
-                absent: absentMembers,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
+                memberUids.forEach(uid => {
+                    const rsvpForEvent = state.rsvps[uid]?.[eventId];
+                    if (!rsvpForEvent) return;
+                    if (rsvpForEvent.status === 'attending') attendingUids.push(uid);
+                    if (rsvpForEvent.status === 'not-attending') notAttendingUids.push(uid);
+                });
 
-            firebaseDb.collection('attendance').add(attendanceDoc).then(() => {
-                alert('Attendance saved (Present/Absent) successfully!');
+                // Render modal UI
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
+
+                const rowsHtml = [
+                    ...attendingUids.map(uid => {
+                        const u = users[uid] || {};
+                        const name = u.name || u.email || 'Unknown';
+                        return `
+                            <div class="flex items-center justify-between gap-3 p-3 bg-surface-container-high rounded-xl">
+                                <div class="min-w-0">
+                                    <div class="font-bold text-primary truncate">${name}</div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="attendance-present" data-uid="${uid}" checked>
+                                        <span>Present</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="attendance-absent" data-uid="${uid}">
+                                        <span>Absent</span>
+                                    </label>
+                                </div>
+                            </div>
+                        `;
+                    }),
+                    ...notAttendingUids.map(uid => {
+                        const u = users[uid] || {};
+                        const name = u.name || u.email || 'Unknown';
+                        return `
+                            <div class="flex items-center justify-between gap-3 p-3 bg-surface-container-high rounded-xl">
+                                <div class="min-w-0">
+                                    <div class="font-bold text-primary truncate">${name}</div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="attendance-present" data-uid="${uid}">
+                                        <span>Present</span>
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="checkbox" class="attendance-absent" data-uid="${uid}" checked>
+                                        <span>Absent</span>
+                                    </label>
+                                </div>
+                            </div>
+                        `;
+                    })
+                ].join('');
+
+                modal.innerHTML = `
+                    <div class="bg-white rounded-xl p-5 w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-headline-sm text-headline-sm text-primary">Attendance - ${event.title}</h3>
+                                <p class="text-on-surface-variant font-body-lg text-body-lg">Select Present/Absent and save.</p>
+                            </div>
+                            <button class="text-2xl text-on-surface-variant" id="close-attendance-modal">&times;</button>
+                        </div>
+
+                        <div class="space-y-3" id="attendance-checkbox-list">
+                            ${rowsHtml || '<div class="text-on-surface-variant">No members found for this event.</div>'}
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mt-5">
+                            <button id="cancel-attendance-modal" type="button" class="w-full h-[56px] bg-surface-container-high text-on-surface-variant rounded-xl font-bold text-body-lg">
+                                Cancel
+                            </button>
+                            <button id="save-attendance-modal" type="button" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg">
+                                Save Attendance
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+
+                // Make Present/Absent mutually exclusive per user
+                modal.querySelectorAll('.attendance-present, .attendance-absent').forEach(input => {
+                    input.addEventListener('change', e => {
+                        const uid = e.target.dataset.uid;
+                        if (e.target.classList.contains('attendance-present') && e.target.checked) {
+                            modal.querySelectorAll(`.attendance-absent[data-uid="${uid}"]`).forEach(cb => cb.checked = false);
+                        }
+                        if (e.target.classList.contains('attendance-absent') && e.target.checked) {
+                            modal.querySelectorAll(`.attendance-present[data-uid="${uid}"]`).forEach(cb => cb.checked = false);
+                        }
+                    });
+                });
+
+                const closeBtn = document.getElementById('close-attendance-modal');
+                const cancelBtn = document.getElementById('cancel-attendance-modal');
+                closeBtn.addEventListener('click', () => document.body.removeChild(modal));
+                cancelBtn.addEventListener('click', () => document.body.removeChild(modal));
+
+                document.getElementById('save-attendance-modal').addEventListener('click', () => {
+                    const present = [];
+                    const absent = [];
+
+                    modal.querySelectorAll('.attendance-present').forEach(cb => {
+                        if (cb.checked) present.push(cb.dataset.uid);
+                    });
+                    modal.querySelectorAll('.attendance-absent').forEach(cb => {
+                        if (cb.checked) absent.push(cb.dataset.uid);
+                    });
+
+                    // Store as userId list; your existing roster download expects names.
+                    // We'll also store present/absent as names for backward compatibility.
+                    const presentNames = present.map(uid => (users[uid]?.name || users[uid]?.email || 'Unknown'));
+                    const absentNames = absent.map(uid => (users[uid]?.name || users[uid]?.email || 'Unknown'));
+
+                    const attendanceDoc = {
+                        eventId,
+                        eventTitle: event.title,
+                        date: new Date().toISOString(),
+                        present: presentNames,
+                        absent: absentNames,
+                        presentUids: present,
+                        absentUids: absent,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    firebaseDb.collection('attendance').add(attendanceDoc).then(() => {
+                        document.body.removeChild(modal);
+                        alert('Attendance saved successfully!');
+                        // Optionally re-render roster counts by calling loadRoster again
+                        loadRoster();
+                    });
+                });
             });
         }
 
