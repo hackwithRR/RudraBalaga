@@ -499,8 +499,14 @@
             duration: 1.2,
             ease: "power3.out",
             onComplete: () => {
-                document.getElementById("app-content").style.pointerEvents = "auto";
-                document.getElementById("loader-panel").remove();
+                const appContent = document.getElementById("app-content");
+                if (appContent) {
+                    appContent.style.pointerEvents = "auto";
+                }
+                const loaderPanel = document.getElementById("loader-panel");
+                if (loaderPanel) {
+                    loaderPanel.remove();
+                }
                 initializeApp();
             }
         }, "-=1.0");
@@ -1324,27 +1330,24 @@
             // Find the latest (most recent) event
             const nextEvent = state.events.length > 0 ? state.events[state.events.length - 1] : null;
 
-            // Show/hide Events button in bottom nav and View All Events button
-            const eventsNavBtn = document.getElementById('events-nav-btn');
-            const viewAllEventsSection = document.getElementById('view-all-events-section');
-            
-            // Get user's RSVP IDs
-            const userRsvpIds = Object.keys(state.rsvps).length > 0 && state.rsvps[state.user.uid] 
-                ? Object.keys(state.rsvps[state.user.uid]) 
-                : [];
-            
-            if (state.events.length > 0) {
-                eventsNavBtn.classList.remove('hidden');
-                // Show View All Events button only when all events are responded to
-                if (userRsvpIds.length >= state.events.length) {
-                    viewAllEventsSection.classList.remove('hidden');
-                } else {
-                    viewAllEventsSection.classList.add('hidden');
-                }
-            } else {
-                eventsNavBtn.classList.add('hidden');
-                viewAllEventsSection.classList.add('hidden');
-            }
+         // Show/hide Events button in bottom nav and View All Events button
+         const viewAllEventsSection = document.getElementById('view-all-events-section');
+         
+         // Get user's RSVP IDs
+         const userRsvpIds = Object.keys(state.rsvps).length > 0 && state.rsvps[state.user.uid] 
+             ? Object.keys(state.rsvps[state.user.uid]) 
+             : [];
+         
+         // Show View All Events button only when all events are responded to
+         if (state.events.length > 0) {
+             if (userRsvpIds.length >= state.events.length) {
+                 viewAllEventsSection.classList.remove('hidden');
+             } else {
+                 viewAllEventsSection.classList.add('hidden');
+             }
+         } else {
+             viewAllEventsSection.classList.add('hidden');
+         }
 
             if (!nextEvent) {
                 document.getElementById('event-title').textContent = 'No upcoming events';
@@ -1532,16 +1535,6 @@
             }
         } else {
             busPickupSection.classList.add('hidden');
-        }
-
-        // Update attendees count
-        const eventAttendeesSection = document.getElementById('event-attendees-section');
-        const eventAttendees = document.getElementById('event-attendees');
-        
-        if (nextEvent.limit) {
-            eventAttendees.textContent = `Limit: ${nextEvent.limit} | Attending: ${attendingCount}`;
-        } else {
-            eventAttendees.textContent = `Attending: ${attendingCount}`;
         }
 
         // Add edit RSVP button click handler
