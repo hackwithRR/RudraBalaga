@@ -1,9 +1,9 @@
-56<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="kn">
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Login - Rudra Parayana</title>
+    <title>ಲಾಗಿನ್ - ರುದ್ರ ಪರಾಯಣ</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -133,7 +133,7 @@
     <!-- Help Button (Floating) -->
     <button id="help-btn" class="fixed bottom-20 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
         <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
-        <span class="font-label-lg text-label-lg">ಬೆಂಬದ್ದು</span>
+        <span class="font-label-lg text-label-lg kannada-text">ಸಹಾಯ</span>
     </button>
 
     <!-- Application Dashboard Content Container -->
@@ -275,22 +275,22 @@
             modal.innerHTML = `
                 <div class="bg-white rounded-xl p-6 w-full max-w-lg">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary">Help & Support</h3>
+                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ</h3>
                         <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
                     </div>
                     <div class="space-y-4">
                         <div class="p-4 bg-surface-container-high rounded-lg">
-                            <h4 class="font-bold text-primary mb-2">Need Help?</h4>
-                            <p class="text-on-surface font-body-lg text-body-lg">Contact an admin for assistance with:</p>
-                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1">
-                                <li>Login or account issues</li>
-                                <li>Event registration problems</li>
-                                <li>Bus pickup point selection</li>
-                                <li>Technical support</li>
+                            <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
+                            <p class="text-on-surface font-body-lg text-body-lg kannada-text">ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಆಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
+                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
+                                <li>ಲಾಗಿನ್ ಅಥವಾ ಖಾತ್ರಾ ಸಮಸ್ಯಾಲ್</li>
+                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
+                                <li>ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
+                                <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
                             </ul>
                         </div>
                         <div id="admins-list" class="space-y-2">
-                            <p class="text-center text-on-surface-variant">Loading admins...</p>
+                            <p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                         </div>
                     </div>
                 </div>
@@ -306,26 +306,26 @@
                     firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
                         const adminsList = document.getElementById('admins-list');
                         if (snapshot.empty) {
-                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant">No admins available</p>';
+                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಯಾವ ಅಡ್ಮಿನ್ ಲಭ್ಯವಿಲ್ಲ</p>';
                             return;
                         }
                         
-                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2">Contact an Admin:</p>';
+                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕಿಸಿ:</p>';
                         snapshot.forEach(doc => {
                             const admin = doc.data();
                             const phone = admin.phone || admin.email || 'N/A';
-                            const name = admin.name || 'Admin';
+                            const name = admin.name || 'ಅಡ್ಮಿನ್';
                             html += `
                                 <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
-                                    <span class="font-body-lg text-body-lg text-on-primary-fixed">${name}</span>
-                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg">${phone}</a>
+                                    <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
+                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg kannada-text">${phone}</a>
                                 </div>
                             `;
                         });
                         adminsList.innerHTML = html;
                     });
                 } catch (error) {
-                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant">Unable to load admin contacts</p>';
+                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</p>';
                 }
             }
         }
@@ -463,7 +463,7 @@
                 email: user.email || '',
                 phone: user.phoneNumber || '',
                 role: 'member',
-                name: user.displayName || 'Member',
+                name: user.displayName || 'ಭಕ್ತ',
                 authProvider: user.phoneNumber ? 'phone' : 'google',
                 userId: userId
             }).then(() => {

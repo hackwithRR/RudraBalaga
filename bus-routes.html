@@ -3,7 +3,7 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rudra Parayana - Bus Routes</title>
+    <title>ಬಸ್ ರೌಟ್ಸ್ - ರುದ್ರ ಪರಾಯಣ</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -130,11 +130,11 @@
                 <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container">
                     <span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
                 </a>
-                <h1 class="text-xl font-bold text-primary">Bus Routes</h1>
+                <h1 class="text-xl font-bold text-primary kannada-text">ಬಸ್ ರೌಟ್ಸ್</h1>
             </div>
             <div class="flex items-center gap-2">
                 <div class="text-right">
-                    <p id="user-name" class="text-sm font-medium text-on-surface">Welcome</p>
+                    <p id="user-name" class="text-sm font-medium text-on-surface kannada-text">ಸ್ವಾಗತ</p>
                     <p id="user-id" class="text-xs text-on-surface-variant hidden"></p>
                 </div>
                 <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
@@ -149,7 +149,7 @@
         <!-- Outstation Events List -->
         <section>
             <div id="outstation-events-list" class="space-y-4">
-                <p class="text-on-surface-variant">Loading outstation events...</p>
+                <p class="text-on-surface-variant kannada-text">ಔಟ್ಸ್ಟೇಷನ್ ಇವೆಂಟ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
             </div>
         </section>
     </main>
@@ -157,7 +157,7 @@
     <!-- Help Button (Floating) -->
     <button id="help-btn" class="fixed bottom-32 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
         <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
-        <span class="font-label-lg text-label-lg">ಸಹಾಯ</span>
+        <span class="font-label-lg text-label-lg kannada-text">ಸಹಾಯ</span>
     </button>
 
     <!-- BottomNavBar - Mobile First with Large Touch Targets -->
@@ -166,22 +166,22 @@
             <!-- Home -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="index.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="home">home</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Home</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="events.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="event">event</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Events</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಇವೆಂಟ್ಸ್</span>
             </a>
             <!-- Bus Routes (Active) -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl bg-primary-container text-on-primary-container transition-all duration-150 touch-active" href="bus-routes.html">
                 <span class="material-symbols-outlined text-3xl text-on-primary-container mb-1" data-icon="directions_bus" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
-                <span class="font-label-lg text-label-lg text-on-primary-container">Bus</span>
+                <span class="font-label-lg text-label-lg text-on-primary-container kannada-text">ಬಸ್</span>
             </a>
             <!-- Essentials -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="essentials.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="checklist">checklist</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Items</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಐಟಂಸ್</span>
             </a>
         </div>
     </nav>
@@ -219,7 +219,7 @@
         // Load user data
         function loadUserData(user) {
             // Set Google data as fallback
-            document.getElementById('user-name').textContent = user.displayName || user.email || 'Devotee';
+            document.getElementById('user-name').textContent = user.displayName || user.email || 'ಭಕ್ತ';
             if (user.photoURL) {
                 document.getElementById('profile-link').innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
             }
@@ -231,10 +231,10 @@
                         if (doc.exists) {
                             const userData = doc.data();
                             // Update user name in header
-                            document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'Devotee';
+                            document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'ಭಕ್ತ';
                             // Show user ID
                             if (userData.userId) {
-                                document.getElementById('user-id').textContent = `ID: ${userData.userId}`;
+                                document.getElementById('user-id').textContent = `ಐಡಿ: ${userData.userId}`;
                                 document.getElementById('user-id').classList.remove('hidden');
                             }
                             // Show profile picture in header
@@ -263,7 +263,7 @@
                 console.log('Firestore not available, using demo data');
                 // Demo data
                 state.events = [
-                    { id: 'demo-event-1', title: 'Rudra Abhishekam', date: '2026-07-15', time: '06:00', type: 'Outstation', location: 'ISKCON Temple, Bangalore' }
+                    { id: 'demo-event-1', title: 'ರುದ್ರ ಅಭಿಷೇಕಂ', date: '2026-07-15', time: '06:00', type: 'Outstation', location: 'ISKCON ದೇವಸ್ಥಾನ, ಬೆಂಗಳೂರು' }
                 ];
                 renderOutstationEvents();
             }
@@ -311,7 +311,7 @@
             const outstationEvents = state.events.filter(e => e.type === 'Outstation');
             
             if (outstationEvents.length === 0) {
-                outstationEventsList.innerHTML = '<p class="text-on-surface-variant">No outstation events found.</p>';
+                outstationEventsList.innerHTML = '<p class="text-on-surface-variant kannada-text">ಔಟ್ಸ್ಟೇಷನ್ ಇವೆಂಟ್ಸ್ ಕಂಡುಹಿದ್ದಲ್ಲಿಲ್ಲ.</p>';
                 return;
             }
 
@@ -355,27 +355,27 @@
                     routesHtml = `
                         <div class="mt-3 pt-3 border-t border-outline-variant">
                             <div class="flex justify-between items-center mb-2">
-                                <p class="font-label-lg text-label-lg text-on-surface-variant">Bus Pickup Points:</p>
-                                ${hasSelectedPickup ? `<button class="edit-pickup-btn touch-active text-primary font-label-md text-label-md" data-event-id="${e.id}">Edit</button>` : ''}
+                                <p class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ಸ್:</p>
+                                ${hasSelectedPickup ? `<button class="edit-pickup-btn touch-active text-primary font-label-md text-label-md kannada-text" data-event-id="${e.id}">ಬದಲಿಸಿ</button>` : ''}
                             </div>
                             ${hasSelectedPickup ? `
                                 <div class="mb-3">
-                                    <p class="font-body-lg text-body-lg text-primary font-bold mb-2">Your Selected Pickup Point:</p>
+                                    <p class="font-body-lg text-body-lg text-primary font-bold mb-2 kannada-text">ನಿಮ್ಮ ಆಯ್ಕೆ ಮಾಡಿದ ಪಿಕಪ್ ಪಾಯಿಂಟ್:</p>
                                     <div class="p-3 rounded-lg border-2 border-primary-container bg-primary-fixed-dim">
-                                        <p class="font-body-lg text-body-lg text-on-surface">${allRoutes.find(r => r.id === userRsvp.pickupPoint)?.point || 'Unknown'}</p>
+                                        <p class="font-body-lg text-body-lg text-on-surface kannada-text">${allRoutes.find(r => r.id === userRsvp.pickupPoint)?.point || 'ತಿದ್ದುಪಡೆಯಲಿಲ್ಲ'}</p>
                                         <p class="font-label-md text-label-md text-on-surface-variant">${allRoutes.find(r => r.id === userRsvp.pickupPoint)?.time || ''} (${allRoutes.find(r => r.id === userRsvp.pickupPoint)?.busName || ''})</p>
                                     </div>
                                 </div>
                             ` : `
                                 ${Object.entries(routesByBus).map(([busName, routes]) => `
                                     <div class="mb-3">
-                                        <p class="font-body-lg text-body-lg text-primary font-bold mb-2">${busName}</p>
+                                        <p class="font-body-lg text-body-lg text-primary font-bold mb-2 kannada-text">${busName}</p>
                                         <div class="space-y-2" data-event-id="${e.id}">
                                             ${routes.map(route => `
                                                 <label class="flex items-center gap-3 p-3 rounded-lg border-2 ${userRsvp && userRsvp.pickupPoint === route.id ? 'border-primary-container bg-primary-fixed-dim' : 'border-outline-variant bg-surface-container-lowest'} ${hasSelectedPickup ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}">
                                                     <input type="radio" name="pickup-${e.id}" value="${route.id}" data-event-id="${e.id}" data-pickup-point="${route.id}" class="bus-pickup-radio w-5 h-5 text-primary-container" ${userRsvp && userRsvp.pickupPoint === route.id ? 'checked' : ''} ${hasSelectedPickup ? 'disabled' : ''}>
                                                     <div class="flex-1">
-                                                        <p class="font-body-lg text-body-lg text-on-surface">${route.point}</p>
+                                                        <p class="font-body-lg text-body-lg text-on-surface kannada-text">${route.point}</p>
                                                         <p class="font-label-md text-label-md text-on-surface-variant">${route.time}</p>
                                                     </div>
                                                 </label>
@@ -390,9 +390,9 @@
                 
                 return `
                     <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm" data-event-id="${e.id}">
-                        <h4 class="font-bold text-primary text-lg mb-2">${e.title}</h4>
-                        <p class="text-on-surface font-body-lg text-body-lg">${formatDate(e.date)} at ${e.time}</p>
-                        <p class="text-on-surface-variant font-body-lg text-body-lg">${e.location}</p>
+                        <h4 class="font-bold text-primary text-lg mb-2 kannada-text">${e.title}</h4>
+                        <p class="text-on-surface font-body-lg text-body-lg kannada-text">${formatDate(e.date)} ರಂದು ${e.time} ಗಂಟೆಗೆ</p>
+                        <p class="text-on-surface-variant font-body-lg text-body-lg kannada-text">${e.location}</p>
                         ${routesHtml}
                     </div>
                 `;
@@ -450,7 +450,7 @@
                             <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
                             <p class="text-on-surface font-body-lg text-body-lg kannada-text">ದಯವಿಟ್ಟು ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
                             <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
-                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
+                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
                                 <li>ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
                                 <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
                                 <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
@@ -481,7 +481,7 @@
                         snapshot.forEach(doc => {
                             const admin = doc.data();
                             const phone = admin.phone || admin.email || 'N/A';
-                            const name = admin.name || 'Admin';
+                            const name = admin.name || 'ಅಡ್ಮಿನ್';
                             html += `
                                 <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
                                     <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
@@ -503,8 +503,7 @@
         // Format date for display
         function formatDate(dateString) {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('en-US', options);
+            return new Date(dateString).toLocaleDateString('kn-IN', options);
         }
     </script>
 </body>
-</html>

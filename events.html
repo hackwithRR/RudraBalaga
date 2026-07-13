@@ -1,9 +1,9 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="kn">
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rudra Parayana - Events History</title>
+    <title>ಇವೆಂಟ್ಸ್ ಇತಿಹಾಸ - ರುದ್ರ ಪರಾಯಣ</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -130,11 +130,11 @@
                 <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container">
                     <span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
                 </a>
-                <h1 class="text-xl font-bold text-primary">Events History</h1>
+                <h1 class="text-xl font-bold text-primary kannada-text">ಇವೆಂಟ್ಸ್ ಇತಿಹಾಸ</h1>
             </div>
             <div class="flex items-center gap-2">
                 <div class="text-right">
-                    <p id="user-name" class="text-sm font-medium text-on-surface">Welcome</p>
+                    <p id="user-name" class="text-sm font-medium text-on-surface kannada-text">ಸ್ವಾಗತ</p>
                     <p id="user-id" class="text-xs text-on-surface-variant hidden"></p>
                 </div>
                 <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
@@ -149,7 +149,7 @@
         <!-- Events List -->
         <section>
             <div id="events-list" class="space-y-4">
-                <p class="text-on-surface-variant">Loading events...</p>
+                <p class="text-on-surface-variant kannada-text">ಇವೆಂಟ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
             </div>
         </section>
     </main>
@@ -157,7 +157,7 @@
     <!-- Help Button (Floating) -->
     <button id="help-btn" class="fixed bottom-32 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
         <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
-        <span class="font-label-lg text-label-lg">ಸಹಾಯ</span>
+        <span class="font-label-lg text-label-lg kannada-text">ಸಹಾಯ</span>
     </button>
 
     <!-- BottomNavBar - Mobile First with Large Touch Targets -->
@@ -166,22 +166,22 @@
             <!-- Home -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="index.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="home">home</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Home</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events (Active) -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl bg-primary-container text-on-primary-container transition-all duration-150 touch-active" href="events.html">
                 <span class="material-symbols-outlined text-3xl text-on-primary-container mb-1" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
-                <span class="font-label-lg text-label-lg text-on-primary-container">Events</span>
+                <span class="font-label-lg text-label-lg text-on-primary-container kannada-text">ಇವೆಂಟ್ಸ್</span>
             </a>
             <!-- Bus Routes -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="bus-routes.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="directions_bus">directions_bus</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Bus</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಬಸ್</span>
             </a>
             <!-- Essentials -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="essentials.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="checklist">checklist</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Items</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಐಟಂಸ್</span>
             </a>
         </div>
     </nav>
@@ -219,7 +219,7 @@
         // Load user data
         function loadUserData(user) {
             // Set Google data as fallback
-            document.getElementById('user-name').textContent = user.displayName || user.email || 'Devotee';
+            document.getElementById('user-name').textContent = user.displayName || user.email || 'ಭಕ್ತ';
             if (user.photoURL) {
                 document.getElementById('profile-link').innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
             }
@@ -231,10 +231,10 @@
                         if (doc.exists) {
                             const userData = doc.data();
                             // Update user name in header
-                            document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'Devotee';
+                            document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'ಭಕ್ತ';
                             // Show user ID
                             if (userData.userId) {
-                                document.getElementById('user-id').textContent = `ID: ${userData.userId}`;
+                                document.getElementById('user-id').textContent = `ಐಡಿ: ${userData.userId}`;
                                 document.getElementById('user-id').classList.remove('hidden');
                             }
                             // Show profile picture in header
@@ -263,7 +263,7 @@
                 console.log('Firestore not available, using demo data');
                 // Demo data
                 state.events = [
-                    { id: 'demo-event-1', title: 'Rudra Abhishekam', date: '2026-07-15', time: '06:00', type: 'Bangalore', location: 'ISKCON Temple, Bangalore' }
+                    { id: 'demo-event-1', title: 'ರುದ್ರ ಅಭಿಷೇಕಂ', date: '2026-07-15', time: '06:00', type: 'ಬೆಂಗಳೂರು', location: 'ISKCON ದೇವಸ್ಥಾನ, ಬೆಂಗಳೂರು' }
                 ];
                 renderEvents();
             }
@@ -317,7 +317,7 @@
             const eventsList = document.getElementById('events-list');
             
             if (state.events.length === 0) {
-                eventsList.innerHTML = '<p class="text-on-surface-variant">No events found.</p>';
+                eventsList.innerHTML = '<p class="text-on-surface-variant kannada-text">ಯಾವುದೇನು ಇವೆಂಟ್ಸ್ ಕಂಡುಹಿದ್ದಲ್ಲಿಲ್ಲ.</p>';
                 return;
             }
 
@@ -339,13 +339,13 @@
                 // Determine status display
                 let status, statusColor;
                 if (userRsvp) {
-                    status = userRsvp.status === 'attending' ? 'Attending' : 'Not Attending';
+                    status = userRsvp.status === 'attending' ? 'ಹಾಜರಾಗಿದ್ದೀರಿ' : 'ಹಾಜರಾಗಿಲ್ಲ';
                     statusColor = userRsvp.status === 'attending' ? 'text-secondary' : 'text-error';
                 } else if (isLimitReached) {
-                    status = 'Event Limit Reached';
+                    status = 'ಇವೆಂಟ್ ಸಮಾಪ್ತಿಯಾಗಿದೆ';
                     statusColor = 'text-error';
                 } else {
-                    status = 'Not Responded';
+                    status = 'ಪ್ರತಿಕ್ರಿಯೆ ಇಲ್ಲ';
                     statusColor = 'text-on-surface-variant';
                 }
                 
@@ -368,12 +368,12 @@
                     if (selectedRoute) {
                         busRoutesHtml = `
                             <div class="mt-3 pt-3 border-t border-outline-variant">
-                                <p class="font-label-lg text-label-lg text-on-surface-variant mb-2">Your Bus Pickup Point:</p>
+                                <p class="font-label-lg text-label-lg text-on-surface-variant mb-2 kannada-text">ನಿಮ್ಮ ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್:</p>
                                 <div class="p-3 rounded-lg border-2 border-primary-container bg-primary-fixed-dim">
-                                    <p class="font-body-lg text-body-lg text-on-surface">${selectedRoute.point}</p>
+                                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">${selectedRoute.point}</p>
                                     <p class="font-label-md text-label-md text-on-surface-variant">${selectedRoute.time} (${selectedRoute.busName})</p>
                                 </div>
-                                <p class="text-xs text-on-surface-variant mt-2 italic">Pickup point selected. <a href="bus-routes.html" class="text-primary font-bold">Change in Bus Routes</a></p>
+                                <p class="text-xs text-on-surface-variant mt-2 italic kannada-text">ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ ಮಾಡಲ್ಪಟ್ಟಿದೆ. <a href="bus-routes.html" class="text-primary font-bold kannada-text">ಬಸ್ ರೌಟ್ಸ್‌ನಲ್ಲಿ ಬದಲಿಸಿ</a></p>
                             </div>
                         `;
                     }
@@ -388,7 +388,7 @@
                             <div class="mt-3 grid grid-cols-1 gap-2">
                                 <button class="edit-rsvp-btn touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="edit">
                                     <span class="material-symbols-outlined mr-1" data-icon="edit" style="font-variation-settings: 'FILL' 1;">edit</span>
-                                    Change My Response
+                                    <span class="kannada-text">ನನ್ನ ಉತ್ತರವನ್ನು ಬದಲಿಸಿ</span>
                                 </button>
                             </div>
                         `;
@@ -397,36 +397,36 @@
                     // Limit reached - show message instead of buttons
                     rsvpButtonsHtml = `
                         <div class="mt-3 p-3 bg-error-container rounded-lg text-center">
-                            <p class="font-body-lg text-body-lg text-on-error-container font-bold">Event Limit Reached</p>
-                            <p class="font-body-lg text-body-lg text-on-error-container mt-1">This event has reached its maximum limit of ${e.limit} attendees.</p>
+                            <p class="font-body-lg text-body-lg text-on-error-container font-bold kannada-text">ಇವೆಂಟ್ ಸಮಾಪ್ತಿಯಾಗಿದೆ</p>
+                            <p class="font-body-lg text-body-lg text-on-error-container mt-1 kannada-text">ಈ ಇವೆಂಟ್‌ನ ಗರಿಷ್ಠ ಸಂಖ್ಯೆ ${e.limit} ಗಳಷ್ಟು ಸಮಾಪ್ತಿಯಾಗಿದೆ.</p>
                         </div>
                     `;
                 } else if (canEdit) {
                     // User hasn't responded and limit not reached - show buttons
                     rsvpButtonsHtml = `
                         <div class="mt-3 grid grid-cols-2 gap-2">
-                            <button class="edit-rsvp-btn touch-active w-full bg-primary-container text-on-primary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="attending">Attending</button>
-                            <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending">Not Attending</button>
+                            <button class="edit-rsvp-btn touch-active w-full bg-primary-container text-on-primary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="attending"><span class="kannada-text">ಹಾಜರಾಗಿದ್ದೀರಿ</span></button>
+                            <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗಿಲ್ಲ</span></button>
                         </div>
                     `;
                 }
                 
                 return `
                     <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm" data-event-id="${e.id}">
-                        <h4 class="font-bold text-primary text-lg mb-2">${e.title}</h4>
-                        <p class="text-on-surface font-body-lg text-body-lg">${formatDate(e.date)} at ${e.time}</p>
-                        <p class="text-on-surface-variant font-body-lg text-body-lg">${e.type} - ${e.location}</p>
+                        <h4 class="font-bold text-primary text-lg mb-2 kannada-text">${e.title}</h4>
+                        <p class="text-on-surface font-body-lg text-body-lg kannada-text">${formatDate(e.date)} ರಂದು ${e.time} ಗಂಟೆಗೆ</p>
+                        <p class="text-on-surface-variant font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' ? 'ಔಟ್ಸ್ಟೇಷನ್' : 'ಬೆಂಗಳೂರು'} - ${e.location}</p>
                         ${e.type === 'Outstation' && (e.departureDate || e.returnDate) ? `
                             <div class="mt-2 p-3 bg-secondary-fixed rounded-lg border-2 border-secondary-container">
-                                <p class="font-label-lg text-label-lg text-secondary mb-1">Outstation Dates</p>
-                                ${e.departureDate ? `<p class="font-body-lg text-body-lg text-on-surface">Departure: ${formatDate(e.departureDate)}</p>` : ''}
-                                ${e.returnDate ? `<p class="font-body-lg text-body-lg text-on-surface">Return to Bangalore: ${formatDate(e.returnDate)}</p>` : ''}
+                                <p class="font-label-lg text-label-lg text-secondary mb-1 kannada-text">ಔಟ್ಸ್ಟೇಷನ್ ತಾರೆಗಳು</p>
+                                ${e.departureDate ? `<p class="font-body-lg text-body-lg text-on-surface kannada-text">ಹೊಸದಾಗಿ: ${formatDate(e.departureDate)}</p>` : ''}
+                                ${e.returnDate ? `<p class="font-body-lg text-body-lg text-on-surface kannada-text">ಮರಳಿಸುವ ತಾರೆ: ${formatDate(e.returnDate)}</p>` : ''}
                             </div>
                         ` : ''}
-                        ${e.limit ? `<p class="text-on-surface-variant font-label-md text-label-md mt-1">Limit: ${e.limit} | Attending: ${attendingCount}</p>` : ''}
+                        ${e.limit ? `<p class="text-on-surface-variant font-label-md text-label-md mt-1 kannada-text">ಮಿತಿ: ${e.limit} | ಹಾಜರಾಗಿದ್ದವರು: ${attendingCount}</p>` : ''}
                         <div class="mt-3 pt-3 border-t border-outline-variant">
-                            <p class="font-label-lg text-label-lg text-on-surface-variant">Your Response:</p>
-                            <p class="font-body-lg text-body-lg ${statusColor}">${status}</p>
+                            <p class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆ:</p>
+                            <p class="font-body-lg text-body-lg ${statusColor} kannada-text">${status}</p>
                             ${rsvpButtonsHtml}
                         </div>
                         ${busRoutesHtml}
@@ -497,7 +497,7 @@
                 
                 if (attendingCount >= event.limit) {
                     // Show limit reached alert
-                    alert(`Sorry, this event has reached its maximum limit of ${event.limit} attendees.`);
+                    alert(`ಕ್ಷಮಿಸಿ, ಈ ಇವೆಂಟ್‌ನ ಗರಿಷ್ಠ ಸಂಖ್ಯೆ ${event.limit} ಗಳಷ್ಟು ಸಮಾಪ್ತಿಯಾಗಿದೆ.`);
                     return;
                 }
             }
@@ -516,7 +516,7 @@
                 toast.innerHTML = `
                     <div class="flex items-center justify-center gap-3">
                         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                        <span class="font-body-lg text-body-lg">${status === 'attending' ? 'You are attending!' : 'You are not attending.'}</span>
+                        <span class="font-body-lg text-body-lg kannada-text">${status === 'attending' ? 'ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ!' : 'ನೀವು ಹಾಜರಾಗಿಲ್ಲ.'}</span>
                     </div>
                 `;
                 document.body.appendChild(toast);
@@ -541,7 +541,7 @@
                             <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
                             <p class="text-on-surface font-body-lg text-body-lg kannada-text">ದಯವಿಟ್ಟು ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
                             <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
-                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
+                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
                                 <li>ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
                                 <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
                                 <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
@@ -572,7 +572,7 @@
                         snapshot.forEach(doc => {
                             const admin = doc.data();
                             const phone = admin.phone || admin.email || 'N/A';
-                            const name = admin.name || 'Admin';
+                            const name = admin.name || 'ಅಡ್ಮಿನ್';
                             html += `
                                 <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
                                     <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
@@ -594,7 +594,7 @@
         // Format date for display
         function formatDate(dateString) {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('en-US', options);
+            return new Date(dateString).toLocaleDateString('kn-IN', options);
         }
     </script>
 </body>

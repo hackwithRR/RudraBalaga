@@ -4,11 +4,11 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rudra Parayana - Member Dashboard</title>
+    <title>ರುದ್ರ ಪರಾಯಣ - ಸಭಿಕೆದರು ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
       tailwind.config = {
@@ -80,15 +80,15 @@
                     "stack-xs": "0.5rem"
             },
             "fontFamily": {
-                    "body-md": ["Inter"],
-                    "chant-text": ["Inter"],
-                    "body-lg": ["Inter"],
-                    "label-lg": ["Inter"],
-                    "headline-lg": ["Inter"],
-                    "headline-lg-mobile": ["Inter"],
-                    "headline-sm": ["Inter"],
-                    "label-md": ["Inter"],
-                    "headline-md": ["Inter"]
+                "body-md": ["Noto Sans Kannada", "Inter"],
+                "chant-text": ["Noto Sans Kannada", "Inter"],
+                "body-lg": ["Noto Sans Kannada", "Inter"],
+                "label-lg": ["Noto Sans Kannada", "Inter"],
+                "headline-lg": ["Noto Sans Kannada", "Inter"],
+                "headline-lg-mobile": ["Noto Sans Kannada", "Inter"],
+                "headline-sm": ["Noto Sans Kannada", "Inter"],
+                "label-md": ["Noto Sans Kannada", "Inter"],
+                "headline-md": ["Noto Sans Kannada", "Inter"]
             },
             "fontSize": {
                     "body-md": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
@@ -125,6 +125,9 @@
             stroke-dasharray: 1000;
             stroke-dashoffset: 1000;
         }
+        .kannada-text {
+            line-height: 1.8;
+        }
     </style>
 </head>
 <body class="font-body-md text-body-md pb-32">
@@ -134,8 +137,8 @@
         
         <!-- Top Status Bar -->
         <div class="w-full flex justify-between items-center text-[9px] tracking-[0.4em] font-bold text-stone-400 pt-4">
-            <div>SACRED ALIGNMENT // GEN V</div>
-            <div id="load-state" class="text-right text-[#ff5722]">AUM NAMAH SHIVAYA</div>
+            <div>ಪವಿತ್ರ ಸಮಜ್ಞಾನ // ಜನರೇಷನ್ ೫</div>
+            <div id="load-state" class="text-right text-[#ff5722]">ಓಂ ನಮಃ ಶಿವಾಯ</div>
         </div>
 
         <!-- Central Iconic Frame -->
@@ -206,7 +209,7 @@
             <div class="w-16 h-[1px] bg-stone-200 relative overflow-hidden">
                 <div id="bar-meter" class="absolute inset-y-0 left-0 w-0 bg-[#ff5722] shadow-[0_0_8px_#ff5722]"></div>
             </div>
-            <span class="text-[8px] tracking-[0.3em] font-bold text-stone-400 uppercase">ASCENDING TO LIGHT</span>
+            <span class="text-[8px] tracking-[0.3em] font-bold text-stone-400 uppercase">ದೀವ್ಯತೆಗೆ ಹೋಮಿಗೆ</span>
         </div>
     </div>
 
@@ -215,11 +218,11 @@
         <div class="flex justify-between items-center px-4 h-16">
             <div class="flex items-center gap-3">
                 <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
-                <h1 class="text-xl font-bold text-primary">ರುದ್ರ ಬಲಗ</h1>
+                <h1 class="text-xl font-bold text-primary kannada-text">ರುದ್ರ ಬಲಗ</h1>
             </div>
             <div class="flex items-center gap-2">
                 <div class="text-right">
-<p id="user-name" class="text-sm font-medium text-on-surface">ಸ್ವಾಗತ</p>
+<p id="user-name" class="text-sm font-medium text-on-surface kannada-text">ಸ್ವಾಗತ</p>
                     <p id="user-id" class="text-xs text-on-surface-variant hidden"></p>
                 </div>
                 <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
@@ -233,8 +236,7 @@
     <main id="app-content" class="pt-20 px-margin-mobile space-y-stack-lg max-w-2xl mx-auto opacity-0">
         <!-- Welcome Section -->
         <section class="mt-stack-md">
-<p class="text-on-surface-variant font-label-lg text-label-lg">ಸ್ವಾಗತ, ಭಕ್ತರೇ</p>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">ನಿಮ್ಮ ಆಧ್ಯಾತ್ಮಿಕ ಪ್ರಯಾಣ</h2>
+<p class="text-on-surface-variant font-label-lg text-label-lg kannada-text">ಸ್ವಾಗತ, ಭಕ್ತರೇ</p>
         </section>
 
         <!-- Announcements Section -->
@@ -243,12 +245,12 @@
                 <div class="flex justify-between items-center gap-2 mb-4">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-secondary-container" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
-                        <span class="font-label-lg text-label-lg text-secondary-container uppercase tracking-wider">Announcements</span>
+                        <span class="font-label-lg text-label-lg text-secondary-container uppercase tracking-wider kannada-text">ಘೋಷಣೆಗಳು</span>
                     </div>
-                    <button id="view-all-announcements" class="touch-active text-secondary-container font-label-md text-label-md underline">View All</button>
+                    <button id="view-all-announcements" class="touch-active text-secondary-container font-label-md text-label-md underline kannada-text">ಎಲ್ಲಾವನ್ನು ನೋಡಿರಿ</button>
                 </div>
                 <div id="announcements-list" class="space-y-3">
-                    <p class="text-on-surface-variant">Loading announcements...</p>
+                    <p class="text-on-surface-variant kannada-text">ಘೋಷಣೆಗಳು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                 </div>
             </div>
         </section>
@@ -258,17 +260,17 @@
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="material-symbols-outlined text-secondary" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
-                    <span class="font-label-lg text-label-lg text-secondary uppercase tracking-wider">Upcoming Event</span>
+                    <span class="font-label-lg text-label-lg text-secondary uppercase tracking-wider kannada-text">ಮುಂದಿನ ಇವೆಂಟ್</span>
                 </div>
-                <h3 id="event-title" class="font-headline-md text-headline-md mb-2 text-on-surface">Loading...</h3>
+                <h3 id="event-title" class="font-headline-md text-headline-md mb-2 text-on-surface kannada-text">ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</h3>
                 <div class="space-y-4 my-6">
                     <div class="flex items-center gap-4">
                         <div class="bg-surface-container-high p-3 rounded-lg">
                             <span class="material-symbols-outlined text-primary" data-icon="calendar_today">calendar_today</span>
                         </div>
                         <div>
-                            <p class="text-on-surface-variant font-label-md text-label-md">Date</p>
-                            <p id="event-date" class="font-body-lg text-body-lg font-bold">Loading...</p>
+                            <p class="text-on-surface-variant font-label-md text-label-md kannada-text">ತಾರೆ</p>
+                            <p id="event-date" class="font-body-lg text-body-lg font-bold kannada-text">ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
@@ -276,8 +278,8 @@
                             <span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
                         </div>
                         <div>
-                            <p class="text-on-surface-variant font-label-md text-label-md">Time</p>
-                            <p id="event-time" class="font-body-lg text-body-lg font-bold">Loading...</p>
+                            <p class="text-on-surface-variant font-label-md text-label-md kannada-text">ಸಮಯ</p>
+                            <p id="event-time" class="font-body-lg text-body-lg font-bold kannada-text">ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
@@ -285,15 +287,15 @@
                             <span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
                         </div>
                     <div>
-                        <p class="text-on-surface-variant font-label-md text-label-md">Type / Location</p>
-                        <p id="event-location" class="font-body-lg text-body-lg font-bold">Loading...</p>
+                        <p class="text-on-surface-variant font-label-md text-label-md kannada-text">ಪ್ರಕಾರ / ಸ್ಥಳ</p>
+                        <p id="event-location" class="font-body-lg text-body-lg font-bold kannada-text">ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                     </div>
                 </div>
                 
                 <!-- Outstation Dates Section (Hidden by default) -->
                 <div id="outstation-dates-section" class="hidden mb-4">
                     <div class="p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container">
-                        <p class="font-label-lg text-label-lg text-secondary mb-2">Outstation Event Dates</p>
+                        <p class="font-label-lg text-label-lg text-secondary mb-2 kannada-text">ಔಟ್ಸ್ಟೇಷನ್ ಇವೆಂಟ್ ತಾರೆಗಳು</p>
                         <div id="outstation-dates-text"></div>
                     </div>
                 </div>
@@ -304,21 +306,21 @@
                         <div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden">
                             <iframe id="map-iframe" class="w-full h-full" loading="lazy" allowfullscreen></iframe>
                         </div>
-                        <p class="text-center text-on-surface-variant font-label-md text-label-md mt-2">Tap to open in Google Maps</p>
+                        <p class="text-center text-on-surface-variant font-label-md text-label-md mt-2 kannada-text">ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್‌ನಲ್ಲಿ ತೆರೆದುಕೊಳ್ಳಿ</p>
                     </a>
                 </div>
 
                 <!-- RSVP Section -->
                 <div id="rsvp-section" class="space-y-4 pt-4 border-t border-outline-variant">
-                    <p class="text-center font-label-lg text-label-lg text-on-surface mb-2">Will you be attending?</p>
+                    <p class="text-center font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ನೀವು ಹಾಜರಾಗಲಿದ್ದಾರೆಯಾನು?</p>
                     <div class="grid grid-cols-1 gap-4">
-                        <button id="attending-btn" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg">
+                        <button id="attending-btn" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                             <span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                            Attending
+                            ಹಾಜರಾಗಿದ್ದೀರಿ
                         </button>
-                        <button id="not-attending-btn" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-5 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg">
+                        <button id="not-attending-btn" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-5 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                             <span class="material-symbols-outlined" data-icon="cancel">cancel</span>
-                            Not Attending
+                            ಹಾಜರಾಗಿಲ್ಲ
                         </button>
                     </div>
                 </div>
@@ -326,19 +328,19 @@
                 <!-- Limit Reached Section (Hidden by default) -->
                 <div id="limit-reached-section" class="hidden space-y-4 pt-4 border-t border-outline-variant">
                     <div class="p-4 bg-error-container rounded-xl text-center">
-                        <p class="font-body-lg text-body-lg text-on-error-container font-bold">Event Limit Reached</p>
-                        <p id="limit-reached-text" class="font-body-lg text-body-lg text-on-error-container mt-1"></p>
+                        <p class="font-body-lg text-body-lg text-on-error-container font-bold kannada-text">ಇವೆಂಟ್ ಸಮಾಪ್ತಿಯಾಗಿದೆ</p>
+                        <p id="limit-reached-text" class="font-body-lg text-body-lg text-on-error-container mt-1 kannada-text"></p>
                     </div>
                 </div>
                 
                 <!-- RSVP Status Section (Hidden by default) -->
                 <div id="rsvp-status-section" class="hidden space-y-4 pt-4 border-t border-outline-variant">
                     <div class="p-4 bg-primary-fixed rounded-xl text-center">
-                        <p id="rsvp-status-text" class="font-body-lg text-body-lg text-on-primary-fixed"></p>
+                        <p id="rsvp-status-text" class="font-body-lg text-body-lg text-on-primary-fixed kannada-text"></p>
                     </div>
-                    <button id="edit-rsvp-btn" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-5 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg">
+                    <button id="edit-rsvp-btn" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-5 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                         <span class="material-symbols-outlined" data-icon="edit">edit</span>
-                        Change My Response
+                        ನನ್ನ ಉತ್ತರವನ್ನು ಬದಲಿಸಿ
                     </button>
                 </div>
             </div>
@@ -346,9 +348,9 @@
 
          <!-- View All Events Button (Shown when all events are responded to) -->
          <section id="view-all-events-section" class="hidden">
-             <a href="events.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg">
+             <a href="events.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                  <span class="material-symbols-outlined" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
-                 View All Events
+                 ಎಲ್ಲಾರು ಇವೆಂಟ್ಸ್ ನೋಡಿರಿ
              </a>
          </section>
 
@@ -357,11 +359,11 @@
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="material-symbols-outlined text-secondary" data-icon="directions_bus" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
-                    <span class="font-label-lg text-label-lg text-secondary uppercase tracking-wider">Bus Pickup Point</span>
+                    <span class="font-label-lg text-label-lg text-secondary uppercase tracking-wider kannada-text">ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್</span>
                 </div>
                 <div id="bus-notice" class="hidden p-4 bg-[#fff3e0] border border-primary-container rounded-xl text-primary text-center mb-3"></div>
-                <select id="bus-pickup-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                    <option value="">Select your Bus Pickup Point</option>
+                <select id="bus-pickup-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg kannada-text">
+                    <option value="" class="kannada-text">ನಿಮ್ಮ ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆಮಾಡಿ</option>
                 </select>
             </div>
         </section>
@@ -370,23 +372,23 @@
         <section class="grid grid-cols-1 gap-stack-md">
             <!-- App Name in Kannada -->
             <div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 text-center">
-                <h4 class="font-headline-sm text-headline-sm text-primary mb-2">ರುದ್ರ ಬಲಗ</h4>
-                <p class="text-on-surface-variant font-label-lg text-label-lg">Rudra Parayana</p>
+                <h4 class="font-headline-sm text-headline-sm text-primary mb-2 kannada-text">ರುದ್ರ ಬಲಗ</h4>
+                <p class="text-on-surface-variant font-label-lg text-label-lg kannada-text">ರುದ್ರ ಪರಾಯಣ</p>
             </div>
             <!-- Quick Access -->
             <div class="grid grid-cols-1 gap-stack-md">
-                <button id="view-scripts-btn" class="touch-active bg-surface-container border border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center gap-2 text-center">
+                <button id="view-scripts-btn" class="touch-active bg-surface-container border border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center gap-2 text-center kannada-text">
                     <span class="material-symbols-outlined text-primary text-4xl" data-icon="menu_book">menu_book</span>
-                    <span class="font-label-lg text-label-lg">View Scripts</span>
+                    <span class="font-label-lg text-label-lg kannada-text">ಸ್ಕ್ರಿಪ್ಟ್ಸ್ ನೋಡಿರಿ</span>
                 </button>
             </div>
         </section>
 
         <!-- Admin Access Button (Hidden by default, shown only for admins) -->
         <section>
-            <a id="admin-link" class="hidden touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg" href="admin.html">
+            <a id="admin-link" class="hidden touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text" href="admin.html">
                 <span class="material-symbols-outlined" data-icon="admin_panel_settings" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
-                Admin Panel
+                ಅಡ್ಮಿನ್ ಪ್ಯಾನ್ಲ್
             </a>
         </section>
     </main>
@@ -394,7 +396,7 @@
     <!-- Help Button (Floating) -->
     <button id="help-btn" class="fixed bottom-32 right-4 z-40 flex items-center justify-center gap-2 h-14 px-5 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active transition-all duration-300 hover:scale-105 hover:shadow-xl">
         <span class="material-symbols-outlined text-2xl" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
-        <span class="font-label-lg text-label-lg">ಸಹಾಯ</span>
+        <span class="font-label-lg text-label-lg kannada-text">ಸಹಾಯ</span>
     </button>
 
     <!-- BottomNavBar - Mobile First with Large Touch Targets -->
@@ -403,22 +405,22 @@
             <!-- Home (Active) -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl bg-primary-container text-on-primary-container transition-all duration-150 touch-active" href="index.html">
                 <span class="material-symbols-outlined text-3xl text-on-primary-container mb-1" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
-                <span class="font-label-lg text-label-lg text-on-primary-container">Home</span>
+                <span class="font-label-lg text-label-lg text-on-primary-container kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="events.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="event">event</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Events</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಇವೆಂಟ್ಸ್</span>
             </a>
             <!-- Bus Routes -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="bus-routes.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="directions_bus">directions_bus</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Bus</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಬಸ್</span>
             </a>
             <!-- Essentials -->
             <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="essentials.html">
                 <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="checklist">checklist</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant">Items</span>
+                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಐಟಂಸ್</span>
             </a>
         </div>
     </nav>
@@ -453,9 +455,9 @@
                   document.getElementById("bar-meter").style.width = progress + "%";
                   
                   if(progress > 20 && progress < 65) {
-                      document.getElementById("load-state").textContent = "MANIFESTING DIVINE MATRIX";
+                      document.getElementById("load-state").textContent = "ದಿವ್ಯ ಮ್ಯಾಟ್ರಿಕ್ಸ್ ರಚನೆ";
                   } else if(progress >= 65) {
-                      document.getElementById("load-state").textContent = "LOCKING AXIAL RADIALS";
+                      document.getElementById("load-state").textContent = "ಅಕ್ಷಗಳನ್ನು ಸ್ಥಿರಪಡಿಸುತ್ತಿದೆ";
                   }
               }
           }, "-=0.8");
@@ -466,7 +468,7 @@
             duration: 0.5,
             ease: "power2.out",
             onStart: () => {
-                document.getElementById("load-state").textContent = "TRISHUL MOUNTED";
+                document.getElementById("load-state").textContent = "ತ್ರಿಶುಲ್ ಸ್ಥಾಪಿತ";
             }
         }, "-=0.4")
         .to("#bindu", {
@@ -534,7 +536,7 @@
         // Load user data
         function loadUserData(user) {
             // Set Google data as fallback
-            document.getElementById('user-name').textContent = user.displayName || user.email || 'Devotee';
+            document.getElementById('user-name').textContent = user.displayName || user.email || 'ಭಕ್ತ';
             if (user.photoURL) {
                 document.getElementById('profile-link').innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
             }
@@ -546,10 +548,10 @@
                         if (doc.exists) {
                             const userData = doc.data();
                             // Update user name in header (Firestore first, then Google)
-                            document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'Devotee';
+                            document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'ಭಕ್ತ';
                             // Show user ID
                             if (userData.userId) {
-                                document.getElementById('user-id').textContent = `ID: ${userData.userId}`;
+                                document.getElementById('user-id').textContent = `ಐಡಿ: ${userData.userId}`;
                                 document.getElementById('user-id').classList.remove('hidden');
                             }
                             // Show profile picture in header (Firestore first, then Google)
@@ -583,7 +585,7 @@
                 console.log('Firestore not available, using demo data');
                 // Demo data
                 state.events = [
-                    { id: 'demo-event-1', title: 'Rudra Abhishekam', date: '2026-07-15', time: '06:00', type: 'Bangalore', location: 'ISKCON Temple, Bangalore' }
+                    { id: 'demo-event-1', title: 'ರುದ್ರ ಅಭಿಷೇಕಂ', date: '2026-07-15', time: '06:00', type: 'ಬೆಂಗಳೂರು', location: 'ISKCON ದೇವಸ್ಥಾನ, ಬೆಂಗಳೂರು' }
                 ];
                 renderEvents();
             }
@@ -639,7 +641,7 @@
                 console.log('Firestore not available, using demo data');
                 // Demo data
                 const announcements = [
-                    { id: 'demo-announcement-1', title: 'Welcome to Rudra Balaga', content: 'Thank you for joining our spiritual community!' }
+                    { id: 'demo-announcement-1', title: 'ರುದ್ರ ಬಲಗಕ್ಕೆ ಸ್ವಾಗತ', content: 'ನಮ್ಮ ಆಧ್ಯಾತ್ಮಿಕ ಸಮುದಾಯದಲ್ಲಿ ಸೇರಿಕೆದರಿಂದ ಧನ್ಯವಾದ!' }
                 ];
                 state.allAnnouncements = announcements;
                 renderAnnouncements(announcements.slice(0, 1));
@@ -655,9 +657,9 @@
                 announcementsSection.classList.remove('hidden');
                 announcementsList.innerHTML = announcements.map(a => `
                     <div class="p-4 bg-white rounded-lg border border-outline-variant">
-                        <h4 class="font-bold text-primary text-lg mb-2">${a.title}</h4>
+                        <h4 class="font-bold text-primary text-lg mb-2 kannada-text">${a.title}</h4>
                         ${a.image ? `<img src="${a.image}" class="w-full h-48 object-cover rounded-lg mb-3" alt="Announcement image">` : ''}
-                        <p class="text-on-surface font-body-lg text-body-lg">${a.content}</p>
+                        <p class="text-on-surface font-body-lg text-body-lg kannada-text">${a.content}</p>
                     </div>
                 `).join('');
             } else {
@@ -685,22 +687,22 @@
             modal.innerHTML = `
                 <div class="bg-white rounded-xl p-6 w-full max-w-lg">
                     <div class="flex justify-between items-center mb-4">
-<h3 class="font-headline-sm text-headline-sm text-primary">ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ</h3>
+<h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ</h3>
                         <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
                     </div>
                     <div class="space-y-4">
                         <div class="p-4 bg-surface-container-high rounded-lg">
-<h4 class="font-bold text-primary mb-2">ಸಹಾಯ ಬೇಕೇ?</h4>
-<p class="text-on-surface font-body-lg text-body-lg">ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಆಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
-                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1">
-                                <li>Event registration issues</li>
-                                <li>Bus pickup point selection</li>
-                                <li>Account or profile problems</li>
-                                <li>Technical support</li>
+<h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
+<p class="text-on-surface font-body-lg text-body-lg kannada-text">ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
+                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
+                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
+                                <li>ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
+                                <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
+                                <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
                             </ul>
                         </div>
                         <div id="admins-list" class="space-y-2">
-                            <p class="text-center text-on-surface-variant">Loading admins...</p>
+                            <p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                         </div>
                     </div>
                 </div>
@@ -716,26 +718,26 @@
                     firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
                         const adminsList = document.getElementById('admins-list');
                         if (snapshot.empty) {
-                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant">No admins available</p>';
+                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಯಾವ ಅಡ್ಮಿನ್ ಲಭ್ಯವಿಲ್ಲ</p>';
                             return;
                         }
                         
-                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2">Contact an Admin:</p>';
+                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕಿಸಿ:</p>';
                         snapshot.forEach(doc => {
                             const admin = doc.data();
                             const phone = admin.phone || admin.email || 'N/A';
-                            const name = admin.name || 'Admin';
+                            const name = admin.name || 'ಅಡ್ಮಿನ್';
                             html += `
                                 <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
-                                    <span class="font-body-lg text-body-lg text-on-primary-fixed">${name}</span>
-                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg">${phone}</a>
+                                    <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
+                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg kannada-text">${phone}</a>
                                 </div>
                             `;
                         });
                         adminsList.innerHTML = html;
                     });
                 } catch (error) {
-                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant">Unable to load admin contacts</p>';
+                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</p>';
                 }
             }
         }
@@ -747,17 +749,17 @@
             modal.innerHTML = `
                 <div class="bg-white rounded-xl p-6 w-full max-w-lg">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary">Sacred Scripts</h3>
+                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಕ್ರೆಡ್ ಸ್ಕ್ರಿಪ್ಟ್ಸ್</h3>
                         <button id="close-scripts-modal" class="text-2xl text-on-surface-variant">&times;</button>
                     </div>
                     <div class="space-y-4">
-                        <button id="rudra-chamakam-btn" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg">
+                        <button id="rudra-chamakam-btn" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                             <span class="material-symbols-outlined" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
-                            Rudra Chamakam
+                            ರುದ್ರ ಚಮಕಮ್
                         </button>
-                        <button id="rudra-namakam-btn" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg">
+                        <button id="rudra-namakam-btn" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                             <span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
-                            Rudra Namakam
+                            ರುದ್ರ ನಮಕಮ್
                         </button>
                     </div>
                 </div>
@@ -788,7 +790,7 @@
             modal.innerHTML = `
                 <div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary">Rudra Chamakam</h3>
+                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ರುದ್ರ ಚಮಕಮ್</h3>
                         <button id="close-chamakam" class="text-2xl text-on-surface-variant">&times;</button>
                     </div>
                     <div class="flex justify-center gap-4 mb-4">
@@ -799,8 +801,8 @@
                             <span class="material-symbols-outlined" data-icon="add">add</span>
                         </button>
                     </div>
-                    <div id="chamakam-content" class="space-y-4 text-on-surface" style="font-size: ${fontSize}px; line-height: 1.8;">
-                        <p class="text-center text-on-surface-variant">ಓಂ ಅಗ್ನಾ॑ವಿಷ್ಣೂ ಸ॒ಜೋಷ॑ಸೇ॒ಮಾವ॑ರ್ಧಂತು ವಾಂ॒ ಗಿರಃ॑ ।
+                    <div id="chamakam-content" class="space-y-4 text-on-surface kannada-text" style="font-size: ${fontSize}px; line-height: 1.8;">
+                        <p class="text-center text-on-surface-variant kannada-text">ಓಂ ಅಗ್ನಾ॑ವಿಷ್ಣೂ ಸ॒ಜೋಷ॑ಸೇ॒ಮಾವ॑ರ್ಧಂತು ವಾಂ॒ ಗಿರಃ॑ ।
 ದ್ಯು॒ಮ್ನೈರ್ವಾಜೇ॑ಭಿ॒ರಾಗ॑ತಮ್ ।
 ವಾಜ॑ಶ್ಚ ಮೇ ಪ್ರಸ॒ವಶ್ಚ॑ ಮೇ॒
 ಪ್ರಯ॑ತಿಶ್ಚ ಮೇ॒ ಪ್ರಸಿ॑ತಿಶ್ಚ ಮೇ
@@ -818,170 +820,166 @@
 ಆಯು॑ಶ್ಚ ಮೇ ಜ॒ರಾ ಚ॑ ಮ
 ಆ॒ತ್ಮಾ ಚ॑ ಮೇ ತ॒ನೂಶ್ಚ॑ ಮೇ॒
 ಶರ್ಮ॑ ಚ ಮೇ॒ ವರ್ಮ॑ ಚ॒ ಮೇಽಂಗಾ॑ನಿ ಚ ಮೇ॒ಽಸ್ಥಾನಿ॑ ಚ ಮೇ॒
-ಪರೂಗ್ಂ॑ಷಿ ಚ ಮೇ॒ ಶರೀ॑ರಾಣಿ ಚ ಮೇ ॥ 1 ॥
+ಪರೂಗ್ಂ॑ಷಿ ಚ ಮೇ॒ ಶರೀ॑ರಾಣಿ ಚ ಮೇ ॥ 1 ॥</p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            const content = document.getElementById('chamakam-content');
+            
+            document.getElementById('close-chamakam').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            document.getElementById('increase-font-chamakam').addEventListener('click', () => {
+                fontSize = Math.min(fontSize + 2, 32);
+                content.style.fontSize = fontSize + 'px';
+            });
+            
+            document.getElementById('decrease-font-chamakam').addEventListener('click', () => {
+                fontSize = Math.max(fontSize - 2, 12);
+                content.style.fontSize = fontSize + 'px';
+            });
+        }
+        
+        // Show Rudra Namakam
+        function showNamakam() {
+            let fontSize = 18; // Default font size in pixels
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ರುದ್ರ ನಮಕಮ್</h3>
+                        <button id="close-namakam" class="text-2xl text-on-surface-variant">&times;</button>
+                    </div>
+                    <div class="flex justify-center gap-4 mb-4">
+                        <button id="decrease-font-namakam" class="touch-active w-12 h-12 rounded-full bg-surface-container flex items-center justify-center">
+                            <span class="material-symbols-outlined" data-icon="remove">remove</span>
+                        </button>
+                        <button id="increase-font-namakam" class="touch-active w-12 h-12 rounded-full bg-surface-container flex items-center justify-center">
+                            <span class="material-symbols-outlined" data-icon="add">add</span>
+                        </button>
+                    </div>
+                    <div id="namakam-content" class="space-y-4 text-on-surface kannada-text" style="font-size: ${fontSize}px; line-height: 1.8;">
+                        <p class="text-center text-on-surface-variant kannada-text">ಕೃಷ್ಣ ಯಜುರ್ವೇದೀಯ ತೈತ್ತಿರೀಯ ಸಂಹಿತಾ
+ಚತುರ್ಥಂ-ವೈಁಶ್ವದೇವಂ ಕಾಂಡಂ ಪಂಚಮಃ ಪ್ರಪಾಠಕಃ
 
-ಜೈಷ್ಠ್ಯಂ॑ ಚ ಮ॒ ಆಧಿ॑ಪತ್ಯಂ ಚ ಮೇ
-ಮ॒ನ್ಯುಶ್ಚ॑ ಮೇ॒ ಭಾಮ॑ಶ್ಚ॒ ಮೇಽಮ॑ಶ್ಚ॒ ಮೇಽಂಭ॑ಶ್ಚ ಮೇ
-ಜೇ॒ಮಾ ಚ॑ ಮೇ ಮಹಿ॒ಮಾ ಚ॑ ಮೇ
-ವರಿ॒ಮಾ ಚ॑ ಮೇ ಪ್ರಥಿ॒ಮಾ ಚ॑ ಮೇ
-ವ॒ರ್​ಷ್ಮಾ ಚ॑ ಮೇ ದ್ರಾಘು॒ಯಾ ಚ॑ ಮೇ
-ವೃ॒ದ್ಧಂ ಚ॑ ಮೇ॒ ವೃದ್ಧಿ॑ಶ್ಚ ಮೇ
-ಸ॒ತ್ಯಂ ಚ॑ ಮೇ ಶ್ರ॒ದ್ಧಾ ಚ॑ ಮೇ॒
-ಜಗ॑ಚ್ಚ ಮೇ॒ ಧನಂ॑ ಚ ಮೇ॒
-ವಶ॑ಶ್ಚ ಮೇ॒ ತ್ವಿಷಿ॑ಶ್ಚ ಮೇ
-ಕ್ರೀ॒ಡಾ ಚ॑ ಮೇ॒ ಮೋದ॑ಶ್ಚ ಮೇ
-ಜಾ॒ತಂ ಚ॑ ಮೇ ಜನಿ॒ಷ್ಯಮಾ॑ಣಂ ಚ ಮೇ
-ಸೂ॒ಕ್ತಂ ಚ॑ ಮೇ ಸುಕೃ॒ತಂ ಚ॑ ಮೇ
-ವಿ॒ತ್ತಂ ಚ॑ ಮೇ॒ ವೇದ್ಯಂ॑ ಚ ಮೇ
-ಭೂ॒ತಂ ಚ॑ ಮೇ ಭವಿ॒ಷ್ಯಚ್ಚ॑ ಮೇ
-ಸು॒ಗಂ ಚ॑ ಮೇ ಸು॒ಪಥಂ॑ ಚ ಮ
-ಋ॒ದ್ಧಂ ಚ॑ ಮ॒ ಋದ್ಧಿ॑ಶ್ಚ ಮೇ
-ಕೢ॒ಪ್ತಂ ಚ॑ ಮೇ॒ ಕೢಪ್ತಿ॑ಶ್ಚ ಮೇ
-ಮ॒ತಿಶ್ಚ॑ ಮೇ ಸುಮ॒ತಿಶ್ಚ॑ ಮೇ ॥ 2 ॥
+ಓಂ ನಮೋ ಭಗವತೇ॑ ರುದ್ರಾ॒ಯ ॥
+ನಮ॑ಸ್ತೇ ರುದ್ರ ಮ॒ನ್ಯವ॑ ಉ॒ತೋತ॒ ಇಷ॑ವೇ॒ ನಮಃ॑ ।
+ನಮ॑ಸ್ತೇ ಅಸ್ತು॒ ಧನ್ವ॑ನೇ ಬಾ॒ಹುಭ್ಯಾಂತ ತೆ॒ ನಮಃ॑ ॥
 
-ಶಂ ಚ॑ ಮೇ॒ ಮಯ॑ಶ್ಚ ಮೇ
-ಪ್ರಿ॒ಯಂ ಚ॑ ಮೇಽನುಕಾ॒ಮಶ್ಚ॑ ಮೇ॒ ಕಾಮ॑ಶ್ಚ ಮೇ
-ಸೌಮನ॒ಸಶ್ಚ॑ ಮೇ ಭ॒ದ್ರಂ ಚ॑ ಮೇ॒
-ಶ್ರೇಯ॑ಶ್ಚ ಮೇ॒ ವಸ್ಯ॑ಶ್ಚ ಮೇ॒
-ಯಶ॑ಶ್ಚ ಮೇ॒ ಭಗ॑ಶ್ಚ ಮೇ॒ ದ್ರವಿ॑ಣಂ ಚ ಮೇ
-ಯಂ॒ತಾ ಚ॑ ಮೇ ಧ॒ರ್ತಾ ಚ॑ ಮೇ॒
-ಕ್ಷೇಮ॑ಶ್ಚ ಮೇ॒ ಧೃತಿ॑ಶ್ಚ ಮೇ॒
-ವಿಶ್ವಂ॑ ಚ ಮೇ॒ ಮಹ॑ಶ್ಚ ಮೇ
-ಸಂ॒​ವಿಁಚ್ಚ॑ ಮೇ॒ ಜ್ಞಾತ್ರಂ॑ ಚ ಮೇ॒
-ಸೂಶ್ಚ॑ ಮೇ ಪ್ರ॒ಸೂಶ್ಚ॑ ಮೇ॒
-ಸೀರಂ॑ ಚ ಮೇ ಲ॒ಯಶ್ಚ॑ ಮ
-ಋ॒ತಂ ಚ॑ ಮೇ॒ಽಮೃತಂ॑ ಚ ಮೇಽಯ॒ಕ್ಷ್ಮಂ ಚ॒ ಮೇಽನಾ॑ಮಯಚ್ಚ ಮೇ
-ಜೀ॒ವಾತು॑ಶ್ಚ ಮೇ ದೀರ್ಘಾಯು॒ತ್ವಂ ಚ॑ ಮೇಽನಮಿ॒ತ್ರಂ ಚ॒ ಮೇಽಭ॑ಯಂ ಚ ಮೇ
-ಸು॒ಗಂ ಚ॑ ಮೇ॒ ಶಯ॑ನಂ ಚ ಮೇ
-ಸೂ॒ಷಾ ಚ॑ ಮೇ ಸು॒ದಿನಂ॑ ಚ ಮೇ ॥ 3 ॥
+ಯಾ ತು ಇಷುಃ ಶಿವತಮಾ ಶಿವಂ ಬಭೂವ ತೆ ಧನುಃ ।
+ಶಿವಾ ಶರವ್ಯಾ ಯಾ ತವ ತಯಾ ನೋ ರುದ್ರ ಮೃಡಯ ।
 
-ಊರ್ಕ್ಚ॑ ಮೇ ಸೂ॒ನೃತಾ॑ ಚ ಮೇ॒
-ಪಯ॑ಶ್ಚ ಮೇ॒ ರಸ॑ಶ್ಚ ಮೇ
-ಘೃ॒ತಂ ಚ॑ ಮೇ॒ ಮಧು॑ ಚ ಮೇ॒
-ಸಗ್ಧಿ॑ಶ್ಚ ಮೇ॒ ಸಪೀ॑ತಿಶ್ಚ ಮೇ
-ಕೃ॒ಷಿಶ್ಚ॑ ಮೇ॒ ವೃಷ್ಟಿ॑ಶ್ಚ ಮೇ॒
-ಜೈತ್ರಂ॑ ಚ ಮ॒ ಔದ್ಭಿ॑ದ್ಯಂ ಚ ಮೇ
-ರ॒ಯಿಶ್ಚ॑ ಮೇ॒ ರಾಯ॑ಶ್ಚ ಮೇ
-ಪು॒ಷ್ಟಂ ಚ॑ ಮೇ॒ ಪುಷ್ಟಿ॑ಶ್ಚ ಮೇ
-ವಿ॒ಭು ಚ॑ ಮೇ ಪ್ರ॒ಭು ಚ॑ ಮೇ
-ಬ॒ಹು ಚ॑ ಮೇ॒ ಭೂಯ॑ಶ್ಚ ಮೇ
-ಪೂ॒ರ್ಣಂ ಚ॑ ಮೇ ಪೂ॒ರ್ಣತ॑ರಂ ಚ॒ ಮೇಽಕ್ಷಿ॑ತಿಶ್ಚ ಮೇ॒ ಕೂಯ॑ವಾಶ್ಚ॒ ಮೇಽನ್ನಂ॑ ಚ॒ ಮೇಽಕ್ಷು॑ಚ್ಚ ಮೇ
-ವ್ರೀ॒ಹಯ॑ಶ್ಚ ಮೇ॒ ಯವಾ᳚ಶ್ಚ ಮೇ॒
-ಮಾಷಾ᳚ಶ್ಚ ಮೇ॒ ತಿಲಾ᳚ಶ್ಚ ಮೇ
-ಮು॒ದ್ಗಾಶ್ಚ॑ ಮೇ ಖ॒ಲ್ವಾ᳚ಶ್ಚ ಮೇ
-ಗೋ॒ಧೂಮಾ᳚ಶ್ಚ ಮೇ ಮ॒ಸುರಾ᳚ಶ್ಚ ಮೇ
-ಪ್ರಿ॒ಯಂಗ॑ವಶ್ಚ॒ ಮೇಽಣ॑ವಶ್ಚ ಮೇ
-ಶ್ಯಾ॒ಮಾಕಾ᳚ಶ್ಚ ಮೇ ನೀ॒ವಾರಾ᳚ಶ್ಚ ಮೇ ॥ 4 ॥
+ಯಾ ತೆ ರುದ್ರ ಶಿವಾ ತನೂರಘೋರಾಽಪಾಪಕಾಶಿನೀ ।
+ತಯಾ ನಸ್ತನುವಾ ಶಂತಮಯಾ ಗಿರಿಶಂತಾಭಿಚಾಕಶೀಹಿ ॥
 
-ಅಶ್ಮಾ॑ ಚ ಮೇ॒ ಮೃತ್ತಿ॑ಕಾ ಚ ಮೇ
-ಗಿ॒ರಯ॑ಶ್ಚ ಮೇ॒ ಪರ್ವ॑ತಾಶ್ಚ ಮೇ॒
-ಸಿಕ॑ತಾಶ್ಚ ಮೇ॒ ವನ॒ಸ್ಪತ॑ಯಶ್ಚ ಮೇ॒
-ಹಿರ॑ಣ್ಯಂ ಚ॒ ಮೇಽಯ॑ಶ್ಚ ಮೇ॒
-ಸೀಸಂ॑ ಚ॒ ಮೇ ತ್ರಪು॑ಶ್ಚ ಮೇ
-ಶ್ಯಾ॒ಮಂ ಚ॑ ಮೇ ಲೋ॒ಹಂ ಚ॑ ಮೇ॒ಽಗ್ನಿಶ್ಚ॑ ಮ॒
-ಆಪ॑ಶ್ಚ ಮೇ ವೀ॒ರುಧ॑ಶ್ಚ ಮ॒ ಓಷ॑ಧಯಶ್ಚ ಮೇ
-ಕೃಷ್ಟಪ॒ಚ್ಯಂ ಚ॑ ಮೇಽಕೃಷ್ಟಪ॒ಚ್ಯಂ ಚ॑ ಮೇ
-ಗ್ರಾ॒ಮ್ಯಾಶ್ಚ॑ ಮೇ ಪ॒ಶವ॑ ಆರ॒ಣ್ಯಾಶ್ಚ॑ ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪಂತಾಂ
-ವಿ॒ತ್ತಂ ಚ॑ ಮೇ॒ ವಿತ್ತಿ॑ಶ್ಚ ಮೇ
-ಭೂ॒ತಂ ಚ॑ ಮೇ॒ ಭೂತಿ॑ಶ್ಚ ಮೇ॒
-ವಸು॑ ಚ ಮೇ ವಸ॒ತಿಶ್ಚ॑ ಮೇ॒
-ಕರ್ಮ॑ ಚ ಮೇ॒ ಶಕ್ತಿ॑ಶ್ಚ॒ ಮೇಽರ್ಥ॑ಶ್ಚ ಮ॒
-ಏಮ॑ಶ್ಚ ಮ॒ ಇತಿ॑ಶ್ಚ ಮೇ॒ ಗತಿ॑ಶ್ಚ ಮೇ ॥ 5 ॥
+ಯಾಮಿಷುಂ ಗಿರಿಶಂತ ಹಸ್ತೆ ಬಿಭರ್ಷ್ಯಸ್ತವೇ ।
+ಶಿವಾಂ ಗಿರಿತ್ರ ತಾಂ ಕುರು ಮಾ ಹಿಗ್ಂಸೀಃ ಪುರುಷಂ ಜಗತ್ ॥
 
-ಅ॒ಗ್ನಿಶ್ಚ॑ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ಸೋಮ॑ಶ್ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ
-ಸವಿ॒ತಾ ಚ॑ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ಸರ॑ಸ್ವತೀ ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ
-ಪೂ॒ಷಾ ಚ॑ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ಬೃಹ॒ಸ್ಪತಿ॑ಶ್ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ
-ಮಿ॒ತ್ರಶ್ಚ॑ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ವರು॑ಣಶ್ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ತ್ವಷ್ಠಾ॑ ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ
-ಧಾ॒ತಾ ಚ॑ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ವಿಷ್ಣು॑ಶ್ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒ಽಶ್ವಿನೌ॑ ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ
-ಮ॒ರುತ॑ಶ್ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ವಿಶ್ವೇ॑ ಚ ಮೇ ದೇ॒ವಾ ಇಂದ್ರ॑ಶ್ಚ ಮೇ
-ಪೃಥಿ॒ವೀ ಚ॑ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒ಽಂತರಿ॑ಕ್ಷಂ ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ದ್ಯೌಶ್ಚ॑ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ॒
-ದಿಶ॑ಶ್ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ
-ಮೂ॒ರ್ಧಾ ಚ॑ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ
-ಪ್ರ॒ಜಾಪ॑ತಿಶ್ಚ ಮ॒ ಇಂದ್ರ॑ಶ್ಚ ಮೇ ॥ 6 ॥
+ಶಿವೇನ ವಚಸಾ ತ್ವಾ ಗಿರಿಶಾಚ್ಛಾ ವದಾಮಸಿ ।
+ಯಥಾ ನಃ ಸರ್ವಮಿಜ್ಜಗದಯಕ್ಷ್ಮಂ ಸುಮನಾ ಅಸತ್ ॥
 
-ಅ॒ಗ್ಂ॒ಶುಶ್ಚ॑ ಮೇ ರ॒ಶ್ಮಿಶ್ಚ॒ ಮೇಽದಾ᳚ಭ್ಯಶ್ಚ॒ ಮೇಽಧಿ॑ಪತಿಶ್ಚ ಮ
-ಉಪಾ॒ಗ್ಂ॒ಶುಶ್ಚ॑ ಮೇಽಂತರ್ಯಾ॒ಮಶ್ಚ॑ ಮ
-ಐಂದ್ರವಾಯ॒ವಶ್ಚ॑ ಮೇ ಮೈತ್ರಾವರು॒ಣಶ್ಚ॑ ಮ
-ಆಶ್ವಿ॒ನಶ್ಚ॑ ಮೇ ಪ್ರತಿಪ್ರ॒ಸ್ಥಾನ॑ಶ್ಚ ಮೇ
-ಶು॒ಕ್ರಶ್ಚ॑ ಮೇ ಮಂ॒ಥೀ ಚ॑ ಮ
-ಆಗ್ರಯ॒ಣಶ್ಚ॑ ಮೇ ವೈಶ್ವದೇ॒ವಶ್ಚ॑ ಮೇ
-ಧ್ರು॒ವಶ್ಚ॑ ಮೇ ವೈಶ್ವಾನ॒ರಶ್ಚ॑ ಮ
-ಋತುಗ್ರ॒ಹಾಶ್ಚ॑ ಮೇಽತಿಗ್ರಾ॒ಹ್ಯಾ᳚ಶ್ಚ ಮ
-ಐಂದ್ರಾ॒ಗ್ನಶ್ಚ॑ ಮೇ ವೈಶ್ವದೇ॒ವಶ್ಚ॑ ಮೇ
-ಮರುತ್ವ॒ತೀಯಾ᳚ಶ್ಚ ಮೇ ಮಾಹೇಂ॒ದ್ರಶ್ಚ॑ ಮ
-ಆದಿ॒ತ್ಯಶ್ಚ॑ ಮೇ ಸಾವಿ॒ತ್ರಶ್ಚ॑ ಮೇ
-ಸಾರಸ್ವ॒ತಶ್ಚ॑ ಮೇ ಪೌ॒ಷ್ಣಶ್ಚ॑ ಮೇ
-ಪಾತ್ನೀವ॒ತಶ್ಚ॑ ಮೇ ಹಾರಿಯೋಜ॒ನಶ್ಚ॑ ಮೇ ॥ 7 ॥
+ಅಧ್ಯವೋಚದಧಿವಕ್ತಾ ಪ್ರಥಮೋ ದೈವ್ಯೋ ಭಿಷಕ್ ।
+ಅಹೀಗ್ಶ್ಚ ಸರ್ವಾಂಜಂಭಯನ್-ಥ್ಸರ್ವಾಂಚ ಯಾತುಧಾನ್ಯಃ ॥
 
-ಇ॒ಧ್ಮಶ್ಚ॑ ಮೇ ಬ॒ರ್॒ಹಿಶ್ಚ॑ ಮೇ॒
-ವೇದಿ॑ಶ್ಚ ಮೇ॒ ದಿಷ್ಣಿ॑ಯಾಶ್ಚ ಮೇ॒
-ಸ್ರುಚ॑ಶ್ಚ ಮೇ ಚಮ॒ಸಾಶ್ಚ॑ ಮೇ॒
-ಗ್ರಾವಾ॑ಣಶ್ಚ ಮೇ॒ ಸ್ವರ॑ವಶ್ಚ ಮ
-ಉಪರ॒ವಾಶ್ಚ॑ ಮೇಽಧಿ॒ಷವ॑ಣೇ ಚ ಮೇ
-ದ್ರೋಣಕಲ॒ಶಶ್ಚ॑ ಮೇ ವಾಯ॒ವ್ಯಾ॑ನಿ ಚ ಮೇ
-ಪೂತ॒ಭೃಚ್ಚ॑ ಮ ಆಧವ॒ನೀಯ॑ಶ್ಚ ಮ॒
-ಆಗ್ನೀ᳚ಧ್ರಂ ಚ ಮೇ ಹವಿ॒ರ್ಧಾನಂ॑ ಚ ಮೇ
-ಗೃ॒ಹಾಶ್ಚ॑ ಮೇ॒ ಸದ॑ಶ್ಚ ಮೇ ಪುರೋ॒ಡಾಶಾ᳚ಶ್ಚ ಮೇ
-ಪಚ॒ತಾಶ್ಚ॑ ಮೇಽವಭೃ॒ಥಶ್ಚ॑ ಮೇ ಸ್ವಗಾಕಾ॒ರಶ್ಚ॑ ಮೇ ॥ 8 ॥
+ಅಸೌ ಯಸ್ತಾಮ್ರೋ ಅರುಣ ಉತ ಬಭ್ರುಸ್ಸುಮಂಗಲಃ ।
+ಯೇ ಚೇಮಾಗ್ಂ ರುದ್ರಾ ಅಭಿತೋ ದಿಕ್ಷು ಶ್ರಿತಾಃ ಸಹಸ್ರಶೋಽವೈಷಾಗ್ಂ ಹೇಡ ಈಮಹೇ ॥
 
-ಅ॒ಗ್ನಿಶ್ಚ॑ ಮೇ ಘ॒ರ್ಮಶ್ಚ॑ ಮೇ॒ಽರ್ಕಶ್ಚ॑ ಮೇ॒
-ಸೂರ್ಯ॑ಶ್ಚ ಮೇ ಪ್ರಾ॒ಣಶ್ಚ॑ ಮೇಽಶ್ವಮೇ॒ಧಶ್ಚ॑ ಮೇ
-ಪೃಥಿ॒ವೀ ಚ॒ ಮೇಽದಿ॑ತಿಶ್ಚ ಮೇ॒ ದಿತಿ॑ಶ್ಚ ಮೇ॒
-ದ್ಯೌಶ್ಚ॑ ಮೇ॒ ಶಕ್ವ॑ರೀರಂ॒ಗುಲ॑ಯೋ॒ ದಿಶ॑ಶ್ಚ ಮೇ
-ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪಂತಾ॒ಮೃಕ್ಚ॑ ಮೇ॒
-ಸಾಮ॑ ಚ ಮೇ॒ ಸ್ತೋಮ॑ಶ್ಚ ಮೇ॒
-ಯಜು॑ಶ್ಚ ಮೇ ದೀ॒ಕ್ಷಾ ಚ॑ ಮೇ॒
-ತಪ॑ಶ್ಚ ಮ ಋ॒ತುಶ್ಚ॑ ಮೇ
-ವ್ರ॒ತಂ ಚ॑ ಮೇಽಹೋರಾ॒ತ್ರಯೋ᳚ರ್ವೃ॒ಷ್ಟ್ಯಾ ಬೃ॑ಹದ್ರಥಂತ॒ರೇ ಚ॑ ಮೇ
-ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪೇತಾಮ್ ॥ 9 ॥
+ಅಸೌ ಯೋಽವಸರ್ಪತಿ ನೀಲಗ್ರೀವೋ ವಿಲೋಹಿತಃ ।
+ಉತೈನಂ ಗೋಪಾ ಅದೃಶನ್ನದೃಶನ್ನುದಹಾರ್ಯಃ ।
+ಉತೈನಂ-ವಿಁಶ್ವಾ ಭೂತಾನಿ ಸ ದೃಷ್ಟೋ ಮೃಡಯಾತಿ ನಃ ॥
 
-ಗರ್ಭಾ᳚ಶ್ಚ ಮೇ ವ॒ತ್ಸಾಶ್ಚ॑ ಮೇ॒
-ತ್ರ್ಯವಿ॑ಶ್ಚ ಮೇ ತ್ರ್ಯ॒ವೀಚ॑ ಮೇ
-ದಿತ್ಯ॒ವಾಟ್ ಚ॑ ಮೇ ದಿತ್ಯೌ॒ಹೀ ಚ॑ ಮೇ॒
-ಪಂಚಾ॑ವಿಶ್ಚ ಮೇ ಪಂಚಾ॒ವೀ ಚ॑ ಮೇ
-ತ್ರಿವ॒ತ್ಸಶ್ಚ॑ ಮೇ ತ್ರಿವ॒ತ್ಸಾ ಚ॑ ಮೇ
-ತುರ್ಯ॒ವಾಟ್ ಚ॑ ಮೇ ತುರ್ಯೌ॒ಹೀ ಚ॑ ಮೇ
-ಪಷ್ಠ॒ವಾಟ್ ಚ॑ ಮೇ ಪಷ್ಠೌ॒ಹೀ ಚ॑ ಮ
-ಉ॒ಕ್ಷಾ ಚ॑ ಮೇ ವ॒ಶಾ ಚ॑ ಮ
-ಋಷ॒ಭಶ್ಚ॑ ಮೇ ವೇ॒ಹಚ್ಚ॑ ಮೇಽನ॒ಡ್ವಾಂಚ॑ ಮೇ
-ಧೇ॒ನುಶ್ಚ॑ ಮ॒ ಆಯು॑ರ್ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಂ
-ಪ್ರಾ॒ಣೋ ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಮಪಾ॒ನೋ ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಂ
-ವ್ಯಾ॒ನೋ ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಂ॒
-ಚಕ್ಷು॑ರ್ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾ॒ಗ್॒ ಶ್ರೋತ್ರಂ॑-ಯಁ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಂ॒
-ಮನೋ॑ ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಂ॒
-ವಾಗ್ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಮಾ॒ತ್ಮಾ ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಂ
-ಯ॒ಜ್ಞೋ ಯ॒ಜ್ಞೇನ॑ ಕಲ್ಪತಾಮ್ ॥ 10 ॥
+ನಮೋಽಸ್ತು ನೀಲಗ್ರೀವಾಯ ಸಹಸ್ರಾಕ್ಷಾಯ ಮೀಢುಷೇ ।
+ಅಥೋ ಯೇ ಅಸ್ಯ ಸತ್ವಾನೋಽಹಂ ತೆಭ್ಯೋಽಕರ್ನಮಃ ॥
 
-ಏಕಾ॑ ಚ ಮೇ ತಿ॒ಸ್ರಶ್ಚ॑ ಮೇ॒
-ಪಂಚ॑ ಚ ಮೇ ಸ॒ಪ್ತ ಚ॑ ಮೇ॒
-ನವ॑ ಚ ಮ॒ ಏಕಾ॑ದಶ ಚ ಮೇ॒
-ತ್ರಯೋ॑ದಶ ಚ ಮೇ॒ ಪಂಚ॑ದಶ ಚ ಮೇ
-ಸ॒ಪ್ತದ॑ಶ ಚ ಮೇ॒ ನವ॑ದಶ ಚ ಮ॒
-ಏಕ॑ವಿಗ್ಂಶತಿಶ್ಚ ಮೇ॒ ತ್ರಯೋ॑ವಿಗ್ಂಶತಿಶ್ಚ ಮೇ॒
-ಪಂಚ॑ವಿಗ್ಂಶತಿಶ್ಚ ಮೇ ಸ॒ಪ್ತವಿಗ್ಂ॑ಶತಿಶ್ಚ ಮೇ॒
-ನವ॑ವಿಗ್ಂಶತಿಶ್ಚ ಮ॒ ಏಕ॑ತ್ರಿಗ್ಂಶಚ್ಚ ಮೇ॒
-ತ್ರಯ॑ಸ್ತ್ರಿಗ್ಂಶಚ್ಚ ಮೇ॒ ಚತ॑ಸ್ರಶ್ಚ ಮೇ॒ಽಷ್ಟೌ ಚ॑ ಮೇ॒
-ದ್ವಾದ॑ಶ ಚ ಮೇ॒ ಷೋಡ॑ಶ ಚ ಮೇ
-ವಿಗ್ಂಶ॒ತಿಶ್ಚ॑ ಮೇ॒ ಚತು॑ರ್ವಿಗ್ಂಶತಿಶ್ಚ ಮೇ॒ಽಷ್ಟಾವಿಗ್ಂ॑ಶತಿಶ್ಚ ಮೇ॒
-ದ್ವಾತ್ರಿಗ್ಂ॑ಶಚ್ಚ ಮೇ॒ ಷಟ್-ತ್ರಿಗ್ಂ॑ಶಚ್ಚ ಮೇ
-ಚತ್ವಾರಿ॒ಗ್ಂ॒ಶಚ್ಚ॑ ಮೇ॒ ಚತು॑ಶ್ಚತ್ವಾರಿಗ್ಂಶಚ್ಚ ಮೇ॒ಽಷ್ಟಾಚ॑ತ್ವಾರಿಗ್ಂಶಚ್ಚ ಮೇ॒
-ವಾಜ॑ಶ್ಚ ಪ್ರಸ॒ವಶ್ಚಾ॑ಪಿ॒ಜಶ್ಚ॒
-ಕ್ರತು॑ಶ್ಚ॒ ಸುವ॑ಶ್ಚ ಮೂ॒ರ್ಧಾ ಚ॒
-ವ್ಯಶ್ನಿ॑ಯಶ್ಚಾಂತ್ಯಾಯ॒ನಶ್ಚಾಂತ್ಯ॑ಶ್ಚ
-ಭೌವ॒ನಶ್ಚ॒ ಭುವ॑ನ॒ಶ್ಚಾಧಿ॑ಪತಿಶ್ಚ ॥ 11 ॥
+ಪ್ರಮುಂಚ ಧನ್ವನಸ್ತವಮುಭಯೋರಾರ್ತ್ನಿ ಯೋರ್ಜ್ಯಾಮ್ ।
+ಯಾಶ್ಚ ತೆ ಹಸ್ತೆ ಇಷವಃ ಪರಾ ತಾ ಭಗವೋ ವಪ ॥
 
-ಓಂ ಇಡಾ॑ ದೇವ॒ಹೂ-ರ್ಮನು॑ರ್ಯಜ್ಞ॒ನೀ-ರ್ಬೃಹ॒ಸ್ಪತಿ॑ರುಕ್ಥಾಮ॒ದಾನಿ॑
-ಶಗ್ಂಸಿಷ॒ದ್ವಿಶ್ವೇ॑ ದೇ॒ವಾಃ ಸೂ᳚ಕ್ತ॒ವಾಚಃ॒ ಪೃಥಿ॑ವಿಮಾತ॒ರ್ಮಾ
-ಮಾ॑ ಹಿಗ್ಂಸೀ॒ರ್ಮಧು॑ ಮನಿಷ್ಯೇ॒ ಮಧು॑ ಜನಿಷ್ಯೇ॒
-ಮಧು॑ ವಕ್ಷ್ಯಾಮಿ॒ ಮಧು॑ ವದಿಷ್ಯಾಮಿ॒
+ಅವತತ್ಯ ಧನುಸ್ತವಗ್ಂ ಸಹಸ್ರಾಕ್ಷ ಶತೇಷುಧೇ ।
+ನಿಶೀರ್ಯ ಶಲ್ಯಾನಾಂ ಮುಖಾ ಶಿವೋ ನಃ ಸುಮನಾ ಭವ ॥
+
+ವಿಜ್ಯಂ ಧನುಃ ಕಪರ್ದಿನೋ ವಿಶಲ್ಯೋಬಾಣವಾಗ್ಂ ಉತ ।
+ಅನೇಶನ್ನಸ್ಯೇಷವ ಆಭುರಸ್ಯ ನಿಷಂಗಥಿಃ ॥
+
+ಯಾ ತೆ ಹೇತಿರ್ಮೀಢುಷ್ಟಮಹಸ್ತೆ ಬಭೂವ ತೆ ಧನುಃ ।
+ತಯಾಽಸ್ಮಾನ್, ವಿಶ್ವತಸ್ತ್ವಮಯಕ್ಷ್ಮಯಾ ಪರಿಬ್ಭುಜ ॥
+
+ನಮೋಸ್ತೇ ಅಸ್ತ್ವಾಯುಧಾಯಾನಾತತಾಯ ಧೃಷ್ಣವೇ ।
+ಉಭಾಭ್ಯಾಂತ ತೆ ನಮೋ ಬಾಹುಭ್ಯಾಂ ತವ ಧನ್ವನೆ ॥
+
+ಪರಿ ತೆ ಧನ್ವನೋ ಹೇತಿರಸ್ಮಾನ್ ವೃಣಕ್ತು ವಿಶ್ವತಃ ।
+ಅಥೋ ಯ ಇಷುಧಿಸ್ತವಾರೇ ಅಸ್ಮನ್ನಿಧೇಹಿ ತಮ್ ॥ 1 ॥
+
+ಶ್ರೀ ಶಂಭವೇ ನಮಃ ॥
+ನಮೋಸ್ತೇ ಅಸ್ತು ಭಗವನ್-ವಿಶ್ವೇಶ್ವರಾಯ ಮಹಾದೇವಾಯ ತ್ರ್ಯಂಬಕಾಯ ತ್ರಿಪುರಾಂತಕಾಯ ತ್ರಿಕಾಗ್ನಿಕಾಲಾಯ ಕಾಲಾಗ್ನಿರುದ್ರಾಯ ನೀಲಕಂಠಾಯ ಮೃತ್ಯುಂಜಯಾಯ ಸರ್ವೇಶ್ವರಾಯ ಸದಾಶಿವಾಯ [ಶಂಕರಾಯ] ಶ್ರೀಮನ್-ಮಹಾದೇವಾಯನಮಃ ।
+
+ನಮೋಂ ಹಿರಣ್ಯ ಬಾಹವೇ ಸೇನಾಂಯೇ ದಿಶಾಂ ಚ ಪತಯೇ ನಮೋಂ ವೃಕ್ಷೇಭ್ಯೋ ಹರಿಕೇಶೇಭ್ಯಃ ಪಶೂನಾಂ ಪತಯೇ ನಮಃ ಸಸ್ಪಿಂಜರಾಯ ತ್ವಿಷೀಮತೇ ಪಥೀನಾಂ ಪತಯೇ ನಮೋಂ ಬಭ್ಲುಶಾಯ ವಿವ್ಯಾಧಿನೆಽನ್ನಾಂ ಪತಯೇ ನಮೋಂ ಹರಿಕೇಶಾಯೋಪವೀತಿನೆ ಪುಷ್ಟಾನಾಂ ಪತಯೇ ನಮೋಂ ಭವಸ್ಯ ಹೇತ್ಯೈ ಜಗತಾಂ ಪತಯೇ ನಮೋಂ ರುದ್ರಾಯಾತತಾವಿನೆ ಕ್ಷೇತ್ರಾಣಾಂ ಪತಯೇ ನಮೋಂ ಸೂತಾಯಾಹಂತಿಯಾಯ ವನಾನಾಂ ಪತಯೇ ನಮೋಂ ರೋಹಿತಾಯ ಸ್ಥಪತಯೇ ವೃಕ್ಷಾಣಾಂ ಪತಯೇ ನಮೋಂ ಮಂತ್ರಿಣೆ ವಾಣಿಜಾಯ ಕಕ್ಷಾಣಾಂ ಪತಯೇ ನಮೋಂ ಭುವಂತಯೇ ವಾರಿವಸ್ಕೃತಾ-ಯೌಷಧೀನಾಂ ಪತಯೇ ನಮೋಂ ಉಚ್ಚೈರ್ಘೋಷಾಯಾಕ್ರಂದಯತೇ ಪತ್ತೀನಾಂ ಪತಯೇ ನಮಃ ಕೃತ್ಸ್ನವೀತಾಯ ಧಾವತೆ ಸತ್ತ್ವನಾಂ ಪತಯೇ ನಮಃ ॥ 2 ॥
+
+ನಮಃ ಸಹಮಾನಾಯ ನಿವ್ಯಾಧಿನ ಆವ್ಯಾಧಿನೀನಾಂ ಪತಯೇ ನಮಃ ಕಕುಭಾಯ ನಿಷಂಗಿಣೆಽಸ್ತೇನಾಂ ಪತಯೇ ನಮೋಂ ನಿಷಂಗಿಣ ಇಷುಧಿಮತೆ ತಸ್ಕರಾಣಾಂ ಪತಯೇ ನಮೋಂ ವಂಚತೆ ಪರಿವಂಚತೆ ಸ್ತಾಯೂನಾಂ ಪತಯೇ ನಮೋಂ ನಿಚೇರವೆ ಪರಿಚರಾಯಾರಣ್ಯಾನಾಂ ಪತಯೇ ನಮಃ ಸೃಕಾವಿಭ್ಯೋ ಜಿಘಾಗ್ಂಸದ್ಭ್ಯೋ ಮುಷ್ಣತಾಂ ಪತಯೇ ನಮೋಂ ಉಸಿಮದ್ಭ್ಯೋ ನಕ್ತಂಚರದ್ಭ್ಯಃ ಪ್ರಕೃಂತಾನಾಂ ಪತಯೇ ನಮೋಂ ಉಷ್ಣೀಷಿಣೆ ಗಿರಿಚರಾಯ ಕುಲುಂಚಾನಾಂ ಪತಯೇ ನಮೋಂ ಇಷುಮದ್ಭ್ಯೋ ಧನ್ವಾವಿಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಆತನ್-ವಾಣಿಬ್ಯಹಃ ಪ್ರತಿದಧಾನೆಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಆಯಚ್ಛದ್ಭ್ಯೋ ವಿಸೃಜದ್ಭ್ಯಹ್ಸ್ಚ ವೋ ನಮೋಂ ಆತ್ಮದ್ಭ್ಯೋಂ ವಿದ್ಯದ್ಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಆಸೀನೆಭ್ಯೋಂ ಶಯಾನೆಭ್ಯಶ್ಚ ವೋ ನಮಃ ಸ್ವಪದ್ಭ್ಯೋಂ ಜಾಗ್ರದ್ಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಸ್ತಿಷ್ಠದ್ಭ್ಯೋಂ ಧಾವದ್ಭ್ಯಶ್ಚ ವೋ ನಮಃ ಸಭಾಭ್ಯಹ್ಸ್ಚ ಸಭಾಪತಿಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಅಶ್ವೇಭ್ಯೋಂಽಶ್ವಪತಿಭ್ಯಶ್ಚ ವೋ ನಮಃ ॥ 3 ॥
+
+ನಮೋಂ ಆವ್ಯಾಧಿನೀಭ್ಯೋಂ ವಿವಿಧ್ಯಂತೀಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಉಗಣಾಭ್ಯಸ್ತೃಗ್ಂ-ಹತೀಭ್ಯಹ್ಸ್ಚ ವೋ ನಮೋಂ ಗೃತ್ಸೆಭ್ಯೋಂ ಗೃತ್ಸಪತಿಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ವ್ರಾತೆಭ್ಯಹ್ಸ್ಚ ವ್ರಾತಪತಿಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಗಣೆಭ್ಯೋಂ ಗಣಪತಿಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ವಿರೂಪೆಭ್ಯೋಂ ವಿಶ್ವರೂಪೆಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಮಹದ್ಭ್ಯಹ್ಸ್ಚ, ಕ್ಷುಲ್ಲಕೆಭ್ಯಹ್ಸ್ಚ ವೋ ನಮೋಂ ರಥಿಭ್ಯೋಂಽರಥೆಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ರಥೇಭ್ಯೋಂ ರಥಪತಿಭ್ಯಶ್ಚ ವೋ ನಮಃ ಸೇನಾಭ್ಯಹ್ಸ್ಚ ಸೇನಾನಿಭ್ಯಶ್ಚ ವೋ ನಮಃ ಕ್ಷತ್ತೃಭ್ಯಹ್ಸ್ಚ ಸಂಗ್ರಹೀತೃಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ತಕ್ಷಭ್ಯೋಂ ರಥಕಾರೆಭ್ಯಶ್ಚ ವೋ ನಮಃ ಕುಲಾಲೆಭ್ಯಹ್ಸ್ಚ ಕರ್ಮಾರೆಭ್ಯಶ್ಚ ವೋ ನಮಃ ಪುಂಜಿಷ್ಟೆಭ್ಯೋಂ ನಿಷಾದೆಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಇಷುಕೃದ್ಭ್ಯೋಂ ಧನ್ವಕೃದ್ಭ್ಯಶ್ಚ ವೋ ನಮೋಂ ಮೃಗಯುಭ್ಯಹ್ಸ್ಚ ಶ್ವನಿಭ್ಯಶ್ಚ ವೋ ನಮೋ-ಶ್ವಭ್ಯಹ್ಸ್ಚ ಶ್ವಪತಿಭ್ಯಶ್ಚ ವೋ ನಮಃ ॥ 4 ॥
+
+ನಮೋಂ ಭವಾಯ ಚ ರುದ್ರಾಯ ಚ ನಮಃ ಶರವಾಯ ಚ ಪಶುಪತಯೇ ಚ ನಮೋಂ ನೀಲಗ್ರೀವಾಯ ಚ ಶಿತಿಕಂಠಾಯ ಚ ನಮಃ ಕಪರ್ದಿನೆಯಹ್ಸ್ಚ ಚ ವ್ಯುಪ್ತಕೇಶಾಯ ಚ ನಮಃ ಸಹಸ್ರಾಕ್ಷಾಯಹ್ಸ್ಚ ದ ಶತಧನ್ವನೆಯಹ್ಸ್ಚ ನಮೋಂ ಗಿರಿಶಾಯಹ್ಸ್ಚ ಶಿಪಿವಿಷ್ಟಾಯಹ್ಸ್ಚ ನಮೋಂ ಮೀಢುಷ್ಟಮಾಯಹ್ಸ್ಚ ಇಷುಮತೆ ನಮೋಂ ಹ್ರಸ್ವಾಯಹ್ಸ್ಚ ವಾಮನಾಯಹ್ಸ್ಚ ನಮೋಂ ಬೃಹತಯೇಯಹ್ಸ್ಚ ವರ್ಷೀಯಸೇಯಹ್ಸ್ಚ ನಮೋಂ ವೃದ್ಧಾಯಹ್ಸ್ಚ ಸಂವೃಧ್ವನೆಯಹ್ಸ್ಚ ನಮೋಂ ಅಗ್ರಿಯಾಯ ಚ ಪ್ರಥಮಾಯಹ್ಸ್ಚ ನಮೋಂ ಆಶವೆಯಹ್ಸ್ಚ ಆಜಿರಾಯಹ್ಸ್ಚ ನಮಃ ಶೀಘ್ರಿಯಾಯಹ್ಸ್ಚ ಶೀಭ್ಯಾಯಹ್ಸ್ಚ ನಮೋಂ ಊರ್ಮ್ಯಾಯ ಚ ಅವಸ್ವನ್ಯಾಯಹ್ಸ್ಚ ನಮಃ ಸ್ರೋತಸ್ಯಾಯಹ್ಸ್ಚ ದ್ವೀಪ್ಯಾಯಹ್ಸ್ಚ ನಮೋಂ ಸಹಸ್ರಶೋ ಯೇ ರುದ್ರಾ ಅಧಿಭೂಮ್ಯಾಮ್ ತೆಷಾಗ್ಂ ಸಹಸ್ರಯೋಜನೆಽವಧನ್ವಾನಿ ತನ್ಮಸಿ ನಮೋಂ ರುದ್ರಾಯಹ್ಸ್ಚ ವಿಷ್ಣವೇಯಹ್ಸ್ಚ ಮಾ ನಃ ಸಹಾಯತೇ ಮಾ ತೆ ನಮಃ ಪರಾಚೀರ್ದಶ್ ದಕ್ಷಿಣಾ ದಶ ಪ್ರತೀಚೀರ್ದಶ-ದಿಚೀರ್ದಶ ಉದ್ಧಸ್ತೆಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ದ್ವಿಷ್ಮೋ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ತೆ ದಿವಸ್ಮಿಷ್ಟೇಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ಸದಾಶಿವೋಂ ॥ 5 ॥
+
+ನಮೋಂ ಜ್ಯೇಷ್ಠಾಯ ಚ ಕನಿಷ್ಠಾಯ ಚ ನಮಃ ಪೂರ್ವಜಾಯ ಚಾಪರಜಾಯ ಚ ನಮೋಂ ಮಧ್ಯಮಾಯ ಚಾಪಗಲ್ಭಾಯ ಚ ನಮೋಂ ಜಘನ್ಯಾಯ ಚ ಬುಧ್ನಿಯಾಯ ಚ ನಮಃ ಸೋಭ್ಯಾಯ ಚ ಪ್ರತಿಸರ್ಯಾಯ ಚ ನಮೋಂ ಯಾಮ್ಯಾಯ ಚ ಕ್ಷೇಮ್ಯಾಯ ಚ ನಮೋಂ ಉರ್ವರ್ಯಾಯ ಚ ಖಲ್ಯಾಯ ಚ ನಮಃ ಶ್ಲೋಕ್ಯಾಯ ಚಾಽವಸಾನ್ಯಾಯ ಚ ನಮೋಂ ವನ್ಯಾಯ ಚ ಕಕ್ಷ್ಯಾಯ ಚ ನಮಃ ಶ್ರವಾಯ ಚ ಪ್ರತಿಶ್ರವಾಯ ಚ ನಮೋಂ ಆಶುಷೇಣಾಯ ಚಾಶುರಥಾಯ ಚ ನಮಃ ಶೂರಾಯ ಚಾವಭಿಂದತೆ ಚ ನಮೋಂ ವರ್ಮಿಣೆಯಹ್ಸ್ಚ ವರೂಥಿನೆಯಹ್ಸ್ಚ ನಮೋಂ ಬಿಲ್ಮಿನೆಯಹ್ಸ್ಚ ಕವಿನೆಯಹ್ಸ್ಚ ನಮಃ ಶ್ರುತಾಯ ಚ ಶ್ರುತಸೇನಾಯಹ್ಸ್ಚ ನಮೋಂ ದಂಡುಭ್ಯಾಯ ಚಾಹನನ್ಯಾಯ ಚ ನಮೋಂ ಧೃಷ್ಣವೇಯಹ್ಸ್ಚ ಪ್ರಮೃಶಾಯಹ್ಸ್ಚ ನಮೋಂ ದೂತಾಯ ಚಾಪ್ರಹಿತಾಯ ಚ ನಮೋಂ ನಿಷಂಗಿಣೆಯಹ್ಸ್ಚ ಇಷುಧಿಮತೆಯಹ್ಸ್ಚ ನಮೋಂ ತೀಕ್ಷ್ಣೇಷ್ವೇ ಚಾಯುಧಿನೆಯಹ್ಸ್ಚ ನಮಃ ಸ್ವಾಯುಧಾಯಹ್ಸ್ಚ ಸುಧನ್ವನೆಯಹ್ಸ್ಚ ನಮಃ ಸೃತ್ಯಾಯಹ್ಸ್ಚ ಪಥ್ಯಾಯ ಚ ನಮಃ ಕಾಟ್ಯಾಯ ಚ ನೀಪ್ಯಾಯ ಚ ನಮಃ ಸೂದ್ಯಾಯ ಚ ಸರಸ್ಯಾಯ ಚ ನಮೋಂ ನಾದ್ಯಾಯ ಚ ವೈಶಂತಾಯ ಚ ನಮಃ ಕೂಪ್ಯಾಯ ಚಾವಟ್ಯಾಯ ಚ ನಮೋಂ ವರ್ಷ್ಯಾಯ ಚಾವರ್ಷ್ಯಾಯ ಚ ನಮೋಂ ಮೇಘ್ಯಾಯ ಚ ವಿದ್ಯುತ್ಯಾಯ ಚ ನಮ ಈಧ್ರಿಯಾಯ ಚಾತಪ್ಯಾಯ ಚ ನಮೋಂ ವಾತ್ಯಾಯ ಚ ರೇಷ್ಮಿಯಾಯ ಚ ನಮೋಂ ವಾಸ್ತುಪ್ಯಾಯ ಚ ವಾಸ್ತುಪಾಯ ಚ ನಮೋಂ ಸಹಸ್ತಾಣಿ ಸಹಸ್ಧಾ ಬಾಹುವಸ್ತವ ಹೇತಯಃ ತಾಸಾಮೀಶಾನೋ ಭಗವಃ ಪರಾಚೀರ್ದಶ ದಕ್ಷಿಣಾ ದಶ ಪ್ರತೀಚೀರ್ದಶ-ದಿಚೀರ್ದಶ ಉದ್ಧಸ್ತೆಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ತೆ ದಿವಸ್ಮಿಷ್ಟೆಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ಸದಾಶಿವೋಂ ॥ 6 ॥
+
+ನಮೋಂ ಜ್ಯೇಷ್ಠಾಯ ಚ ಕನಿಷ್ಠಾಯ ಚ ನಮಃ ಪೂರ್ವಜಾಯ ಚಾಪರಜಾಯ ಚ ನಮೋಂ ಮಧ್ಯಮಾಯ ಚಾಪಗಲ್ಭಾಯ ಚ ನಮೋಂ ಜಘನ್ಯಾಯ ಚ ಬುಧ್ನಿಯಾಯ ಚ ನಮಃ ಸೋಭ್ಯಾಯ ಚ ಪ್ರತಿಸರ್ಯಾಯ ಚ ನಮೋಂ ಯಾಮ್ಯಾಯ ಚ ಕ್ಷೇಮ್ಯಾಯ ಚ ನಮೋಂ ಉರ್ವರ್ಯಾಯ ಚ ಖಲ್ಯಾಯ ಚ ನಮಃ ಶ್ಲೋಕ್ಯಾಯ ಚಾಽವಸಾನ್ಯಾಯ ಚ ನಮೋಂ ವನ್ಯಾಯ ಚ ಕಕ್ಷ್ಯಾಯ ಚ ನಮಃ ಶ್ರವಾಯ ಚ ಪ್ರತಿಶ್ರವಾಯ ಚ ನಮೋಂ ಆಶುಷೇಣಾಯ ಚಾಶುರಥಾಯ ಚ ನಮಃ ಶೂರಾಯ ಚಾವಭಿಂದತೆ ಚ ನಮೋಂ ವರ್ಮಿಣೆಯಹ್ಸ್ಚ ವರೂಥಿನೆಯಹ್ಸ್ಚ ನಮೋಂ ಬಿಲ್ಮಿನೆಯಹ್ಸ್ಚ ಕವಿನೆಯಹ್ಸ್ಚ ನಮಃ ಶ್ರುತಾಯ ಚ ಶ್ರುತಸೇನಾಯಹ್ಸ್ಚ ನಮೋಂ ದಂಡುಭ್ಯಾಯ ಚಾಹನನ್ಯಾಯ ಚ ನಮೋಂ ಧೃಷ್ಣವೇಯಹ್ಸ್ಚ ಪ್ರಮೃಶಾಯಹ್ಸ್ಚ ನಮೋಂ ದೂತಾಯ ಚಾಪ್ರಹಿತಾಯ ಚ ನಮೋಂ ನಿಷಂಗಿಣೆಯಹ್ಸ್ಚ ಇಷುಧಿಮತೆಯಹ್ಸ್ಚ ನಮೋಂ ತೀಕ್ಷ್ಣೇಷ್ವೇ ಚಾಯುಧಿನೆಯಹ್ಸ್ಚ ನಮಃ ಸ್ವಾಯುಧಾಯಹ್ಸ್ಚ ಸುಧನ್ವನೆಯಹ್ಸ್ಚ ನಮಃ ಸೃತ್ಯಾಯಹ್ಸ್ಚ ಪಥ್ಯಾಯ ಚ ನಮಃ ಕಾಟ್ಯಾಯ ಚ ನೀಪ್ಯಾಯ ಚ ನಮಃ ಸೂದ್ಯಾಯ ಚ ಸರಸ್ಯಾಯ ಚ ನಮೋಂ ನಾದ್ಯಾಯ ಚ ವೈಶಂತಾಯ ಚ ನಮಃ ಕೂಪ್ಯಾಯ ಚಾವಟ್ಯಾಯ ಚ ನಮೋಂ ವರ್ಷ್ಯಾಯ ಚಾವರ್ಷ್ಯಾಯ ಚ ನಮೋಂ ಮೇಘ್ಯಾಯ ಚ ವಿದ್ಯುತ್ಯಾಯ ಚ ನಮ ಈಧ್ರಿಯಾಯ ಚಾತಪ್ಯಾಯ ಚ ನಮೋಂ ವಾತ್ಯಾಯ ಚ ರೇಷ್ಮಿಯಾಯ ಚ ನಮೋಂ ವಾಸ್ತುಪ್ಯಾಯ ಚ ವಾಸ್ತುಪಾಯ ಚ ನಮೋಂ ಸಹಸ್ತಾಣಿ ಸಹಸ್ಧಾ ಬಾಹುವಸ್ತವ ಹೇತಯಃ ತಾಸಾಮೀಶಾನೋ ಭಗವಃ ಪರಾಚೀರ್ದಶ ದಕ್ಷಿಣಾ ದಶ ಪ್ರತೀಚೀರ್ದಶ-ದಿಚೀರ್ದಶ ಉದ್ಧಸ್ತೆಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ತೆ ದಿವಸ್ಮಿಷ್ಟೆಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ಸದಾಶಿವೋಂ ॥ 7 ॥
+
+ನಮಃ ಸೋಮಾಯ ಚ ರುದ್ರಾಯ ಚ ನಮೋಸ್ತಾಮ್ರಾಯ ಚಾರುಣಾಯ ಚ ನಮಃ ಶಂಗಾಯ ಚ ಪಶುಪತಯೇ ಚ ನಮೋಂ ಉಗ್ರಾಯ ಚ ಭೀಮಾಯ ಚ ನಮೋಂ ಅಗ್ರೇವಧಾಯ ಚ ದೂರೇವಧಾಯ ಚ ನಮೋಂ ಹಂತ್ರೆ ಚ ಹನೀಯಸೇ ಚ ನಮೋಂ ವೃಕ್ಷೇಭ್ಯೋಂ ಹರಿಕೇಶೇಭ್ಯೋಂ ನಮೋಸ್ತಾರಾಯಂ ನಮಶ್ಶಂಭವೆಯಹ್ಸ್ಚ ಮಯೋಭವೆಯಹ್ಸ್ಚ ನಮಃ ಶಂಕರಾಯಹ್ಸ್ಚ ಮಯಸ್ಕರಾಯಹ್ಸ್ಚ ನಮಃ ಶಿವಾಯಹ್ಸ್ಚ ಶಿವತರಾಯ ಚ ನಮೋಸ್ತೀರ್ಥ್ಯಾಯ ಚ ಕೂಲ್ಯಾಯ ಚ ನಮಃ ಪಾರ್ಯಾಯ ಚಾವಾರ್ಯಾಯ ಚ ನಮಃ ಪ್ರತರಣಾಯ ಚ ಓಟ್ತರಣಾಯ ಚ ನಮೋಂ ಆತಾರ್ಯಾಯ ಚಾಲಾದ್ಯಾಯ ಚ ನಮಃ ಶಷ್ಪ್ಯಾಯ ಚ ಫೇನ್ಯಾಯ ಚ ನಮಃ ಸಿಕ್ಯಾಯ ಚ ಪ್ರವಾಹ್ಯಾಯ ಚ ನಮೋಂ ಇರಿಣ್ಯಾಯ ಚ ಪ್ರಪಥ್ಯಾಯ ಚ ನಮಃ ಕಿಗ್ಂಶಿಲಾಯ ಚ ಕ್ಷಯಣಾಯ ಚ ನಮಃ ಕಪರ್ದಿನೆಯಹ್ಸ್ಚ ಪುಲಸ್ತಯೇ ಚ ನಮೋಂ ಗೋಷ್ಠ್ಯಾಯ ಚ ಗೃಹ್ಯಾಯ ಚ ನಮೋಸ್ತಲ್ಪ್ಯಾಯ ಚ ಗೇಹ್ಯಾಯ ಚ ನಮಃ ಕಾಟ್ಯಾಯ ಚ ಗಹ್ವರೆಷ್ಠಾಯ ಚ ನಮೋಂ ಹ್ರದ್ಯಾಯ ಚ ನಿವೇಷ್ಪ್ಯಾಯ ಚ ನಮಃ ಪಾಗ್ಂ ಸ್ವಯಸ್ಯಾಯ ಚ ರಜಸ್ಯಾಯ ಚ ನಮಃ ಶುಷ್ಕ್ಯಾಯ ಚ ಹರಿತ್ಯಾಯ ಚ ನಮೋಂ ಲೋಪ್ಯಾಯ ಚೋಲಪ್ಯಾಯ ಚ ನಮೋಂ ಊರ್ವ್ಯಾಯ ಚ ಸೂರ್ಮ್ಯಾಯ ಚ ನಮಃ ಪರ್ಣ್ಯಾಯ ಚ ಪರ್ಣಶದ್ಯಾಯ ಚ ನಮೋಂ ಉಪಗುರಮಾಣಾಯ ಚಾಭಿಘ್ನತೆ ಚ ನಮೋಂ ಆಖ್ಖಿದತೆ ಚ ಪ್ರಖ್ಖಿದತೆ ಚ ನಮೋಂ ವಃ ಕಿರಿಕೆಭ್ಯೋಂ ದೇವಾನಾಂ ಹೃದಯೇಭ್ಯೋಂ ನಮೋಂ ವಿಕ್ಷೀಣಕೆಭ್ಯೋಂ ನಮೋಂ ವಿಚಿನ್ವತ್ಕೆಭ್ಯೋಂ ನಮೋಂ ಆನಿರ್ ಹತೆಭ್ಯೋಂ ನಮೋಂ ಆಮೀವತ್ಕೆಭ್ಯಹ್ಸ್ಚ ತೆ ದಿವಸ್ಮಿಷ್ಟೆಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ಸದಾಶಿವೋಂ ॥ 8 ॥
+
+ನಮೋಂ ಬಹವಾಯ ಚ ರುದ್ರಾಯ ಚ ನಮಃ ಶರವಾಯ ಚ ಪಶುಪತಯೇ ಚ ನಮೋಂ ನೀಲಗ್ರೀವಾಯ ಚ ಶಿತಿಕಂಠಾಯ ಚ ನಮಃ ಕಪರ್ದಿನೆಯಹ್ಸ್ಚ ಚ ವ್ಯುಪ್ತಕೇಶಾಯ ಚ ನಮಃ ಸಹಸ್ರಾಕ್ಷಾಯ ಚ ದ ಶತಧನ್ವನೆಯಹ್ಸ್ಚ ನಮೋಂ ಗಿರಿಶಾಯಹ್ಸ್ಚ ಶಿಪಿವಿಷ್ಟಾಯಹ್ಸ್ಚ ನಮೋಂ ಮೀಢುಷ್ಟಮಾಯಹ್ಸ್ಚ ಇಷುಮತೆಯಹ್ಸ್ಚ ನಮೋಂ ಹ್ರಸ್ವಾಯಹ್ಸ್ಚ ವಾಮನಾಯಹ್ಸ್ಚ ನಮೋಂ ಬೃಹತಯೇಯಹ್ಸ್ಚ ವರ್ಷೀಯಸೇಯಹ್ಸ್ಚ ನಮೋಂ ವೃದ್ಧಾಯಹ್ಸ್ಚ ಸಂವೃಧ್ವನೆಯಹ್ಸ್ಚ ನಮೋಂ ಅಗ್ರಿಯಾಯ ಚ ಪ್ರಥಮಾಯಹ್ಸ್ಚ ನಮೋಂ ಆಶವೆಯಹ್ಸ್ಚ ಆಜಿರಾಯಹ್ಸ್ಚ ನಮಃ ಶೀಘ್ರಿಯಾಯಹ್ಸ್ಚ ಶೀಭ್ಯಾಯ ಚ ನಮೋಂ ಊರ್ಮ್ಯಾಯ ಚ ಅವಸ್ವನ್ಯಾಯ ಚ ನಮಃ ಸ್ರೋತಸ್ಯಾಯಹ್ಸ್ಚ ದ್ವೀಪ್ಯಾಯ ಚ ನಮೋಂ ಸಹಸ್ತಾಣಿ ಸಹಸ್ಧಾ ಬಾಹುವಸ್ತವ ಹೇತಯಃ ತಾಸಾಮೀಶಾನೋ ಭಗವಃ ಪರಾಚೀರ್ದಶ ದಕ್ಷಿಣಾ ದಶ ಪ್ರತೀಚೀರ್ದಶ-ದಿಚೀರ್ದಶ ಉದ್ಧಸ್ತೆಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ತೆ ದಿವಸ್ಮಿಷ್ಟೆಭ್ಯೋಂ ನಮೋಂತೆ ನಹಿ ಯಶ್ಚ ನೋ ದ್ವೇಷ್ಟಿ ತಂ-ವೋಁ ಜಂಭೆ ದಧಾಮಿ ಸದಾಶಿವೋಂ ॥ 9 ॥
+
+ದೃಪೆ ಅಂಧಸಸ್ಪತೆ ದರಿದ್ರನ್ನೀಲಲೋಹಿತ ।
+ಏಷಾಂ ಪುರುಷಾಣಾಮೇಷಾಂ ಪಶೂಣಾಂ ಮಾ ಭೇರ್ಮಾಽರೋ ಮೋ ಏಷಾಂ ಕಿಂಚನಾಂಮತ್ ।
+
+ಯಾ ತೆ ರುದ್ರ ಶಿವಾ ತನೂಃ ಶಿವಾ ವಿಶ್ವಾಹಿಷಜೀ ।
+ಶಿವಾ ರುದ್ರಸ್ಯ ಭೇಷಜೀ ತಯಾ ನೋ ಮೃಡ ಜೀವಸೆಽ ॥
+
+ಇಮಾಗ್ಂ ರುದ್ರಾಯ ತವಸೆ ಕಪರ್ದಿನೆಽ ಕ್ಷಯದ್ವೀರಾಯ ಪ್ರಭರಾಮಹೆ ಮತಿಮ್ ।
+ಯಥಾ ನಶ್ಶಮಸದ್ದ್ವಿಪದೆ ಚತುಷ್ಪದೆ ವಿಶ್ವಂ ಪುಷ್ಟಂ ಗ್ರಾಮೆ ಅಸ್ಮಿನ್ನನಾತುರಮ್ ।
+
+ಮೃಡಾ ನೋ ರುದ್ರೋತ ನೋ ಮಯಸ್ಕೃಧಿ ಕ್ಷಯದ್ವೀರಾಯ ನಮಸಾ ವಿಧೇಮ ತೆ ।
+ಯಚ್ಛಂ ಚ ಯೋಶ್ಚ ಮನುರಾಯಜೆ ಪಿತಾ ತದಶ್ಯಾಮಂ ತವ ರುದ್ರ ಪ್ರಣೀತೌ ।
+
+ಮಾ ನೋ ಮಹಾಂತಮುತ ಮಾ ನೋ ಅರ್ಭಕಂ ಮಾ ನ ಉಕ್ಷಂತಮುತ ಮಾ ನೋ ಉಕ್ಷಿತಮ್ ।
+ಮಾ ನೋಽವಧೀಃ ಪಿತರಂ ಮೋತ ಮಾತರಂ ಪ್ರಿಯಾ ಮಾ ನಸ್ತನುವೋ ರುದ್ರ ರೀರಿಷಃ ।
+
+ಮಾ ನಸ್ತೋಕೆ ತನಯೆ ಮಾ ನ ಆಯುಷಿ ಮಾ ನೋ ಗೋಷು ಮಾ ನೋ ಅಶ್ವೇಷು ರೀರಿಷಃ ।
+ವೀರಾನ್ಮಾ ನೋ ರುದ್ರ ಭಾಮಿತೋಽವಧೀರ್ಹವಿಷ್ಮಂತೋತ ನಮಸಾ ವಿಧೇಮ ತೆ ।
+
+ಆರಾತೆ ಗೋಷಣ ಉತ ಪೂರುಷಣ ಕ್ಷಯದ್ವೀರಾಯ ಸುಮ್ನಮಸೆ ತೆ ಅಸ್ತು ।
+ರಕ್ಷಾ ಚ ನೋ ಅಧಿ ಚ ದೇವ ಬ್ರೂಹ್ಯಧಾ ಚ ನಃ ಶರ್ಮ್ ಯಚ್ಛ ದ್ವಿಬರ್ಹಾಃ ।
+
+ಸ್ತುಹಿ ಶ್ರುತಂ ಗರ್ತಸದಂ-ಯುಂವಾನಂ ಮೃಗನ್ನ ಭೀಮಮುಪಹತ್ನುಮುಗ್ರಮ್ ।
+ಮೃಡಾ ಜರಿತ್ರೆ ರುದ್ರ ಸ್ತವಾನೋ ಅನ್ಯಂತೆ ಅಸ್ಮನ್ನಿವಪಂತು ಸೇನಾಃ ।
+
+ಪರಿಣೋ ರುದ್ರಸ್ಯ ಹೇತಿರ್ವೃಣಕ್ತು ಪರಿ ತೆಷಸ್ಯ ದರ್ಮತಿ ರಘಾಯೋಃ ।
+ಅವ ಸ್ತಿರಾ ಮಘವದ್ಭ್ಯಸ್ತನುಷ್ವ ಮೀಢ್ವಸ್ತೋಕಾಯ ತನಯಾಯ ಮೃಡಯ ।
+
+ಮೀಢ್ವಷ್ಟಮ್ ಶಿವತಮ ಶಿವೋ ನಃ ಸುಮನಾ ಭವ ।
+ಪರಮೇ ವೃಕ್ಷ ಆಯುಧನ್ನಿಧಾನಿ ಕೃತಿಂ-ವಂಸಾಂ ಆಚರ ಪಿನಾಕಂ ಬಿಭ್ರದಾಗಹಿ ।
+
+ವಿಕಿರಿದ್ ವಿಲೋಹಿತ್ ನಮಸ್ತೆ ಅಸ್ತು ಭಗವಃ ।
+ಯಾಸ್ತೆ ಸಹಸ್ರಗ್ಂ ಹೇತಯೋಂ ನ್ಯಮಸ್ಮನ್ನಿವಪಂತು ತಾಃ ।
+
+ಸಹಸ್ತಾಣಿ ಸಹಸ್ಧಾ ಬಾಹುವಸ್ತವ ಹೇತಯಃ ।
+ತಾಸಾಮೀಶಾನೋ ಭಗವಃ ಪರಾಚೀರ್ದಶ ಮುಖಾ ಕೃಧಿ ॥ 10 ॥
+
+ಸಹಸ್ತಾಣಿ ಸಹಸ್ರಶೋ ಯೇ ರುದ್ರಾ ಅಧಿಭೂಮ್ಯಾಮ್ ।
+ತೆಷಾಗ್ಂ ಸಹಸ್ರಯೋಜನೆಽವಧನ್ವಾನಿ ತನ್ಮಸಿ ।
+
+ಅಸ್ಮಿನ್ಮಹತ್ಯರ್ಣೇಽಂತರಿಕ್ಷೆ ಭವಾ ಅಧಿ ।
+ನೀಲಗ್ರೀವಾಃ ಶಿತಿಕಂಠಾಃ ಶರ್ವಾ ಅಧಃ, ಕ್ಷಮಾಚರಾಃ ।
+
+ನೀಲಗ್ರೀವಾಃ ಶಿತಿಕಂಠಾ ದಿವಗ್ಂ ರುದ್ರಾ ಉಪಶ್ರಿತಾಃ ।
+ಯೇ ವೃಕ್ಷೇಷು ಸಸ್ಪಿಂಜರಾ ನೀಲಗ್ರೀವಾ ವಿಲೋಹಿತಾಃ ।
+
+ಯೇ ಭೂತಾನಾಮಧಿಪತಯೋ ವಿಶಿಖಾಸಃ ಕಪರ್ದಿನಃ ।
+ಯೇ ಅನ್ನೇಷು ವಿವಿಧ್ಯಂತಿ ಪಾತ್ರೆಷು ಪಿಬತೋ ಜನಾನ್ ।
 ಮಧು॑ಮತೀಂ ದೇ॒ವೇಭ್ಯೋ॒ ವಾಚ॒ಮುದ್ಯಾಸಗ್ಂಶುಶ್ರೂಷೇ॒ಣ್ಯಾಂ᳚
 ಮನು॒ಷ್ಯೇ᳚ಭ್ಯ॒ಸ್ತಂ
 ಮಾ॑ ದೇ॒ವಾ ಅ॑ವಂತು ಶೋ॒ಭಾಯೈ॑ ಪಿ॒ತರೋಽನು॑ಮದಂತು ॥
