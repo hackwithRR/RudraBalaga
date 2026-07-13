@@ -2010,16 +2010,7 @@
             }
 
             const buses = state.busRoutes[eventId] || [];
-            const allRoutes = [];
-            buses.forEach(bus => {
-                if (bus.routes) {
-                    bus.routes.forEach(route => {
-                        allRoutes.push({ ...route, busName: bus.name });
-                    });
-                }
-            });
-
-            if (allRoutes.length === 0) {
+            if (!buses.length) {
                 routesContainer.innerHTML = '<p class="text-on-surface-variant">No bus routes configured for this event.</p>';
                 return;
             }
@@ -2030,39 +2021,64 @@
                     users[doc.id] = doc.data();
                 });
 
-                let html = '';
-                allRoutes.forEach(route => {
-                    const routeUsers = [];
-                    Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
-                        const rsvp = rsvpData[eventId];
-                        if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
-                            const user = users[uid] || {};
-                            routeUsers.push({
-                                name: user.name || user.email || 'Unknown',
-                                phone: user.phone || 'N/A'
-                            });
-                        }
-                    });
+                // Precompute member lists by pickupPoint
+                const pickupPointMembers = {}; // pickupPointId -> [{name, phone}]
+                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                    const rsvp = rsvpData[eventId];
+                    if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint) {
+                        if (!pickupPointMembers[rsvp.pickupPoint]) pickupPointMembers[rsvp.pickupPoint] = [];
+                        const user = users[uid] || {};
+                        pickupPointMembers[rsvp.pickupPoint].push({
+                            name: user.name || user.email || 'Unknown',
+                            phone: user.phone || 'N/A'
+                        });
+                    }
+                });
 
+                let html = '';
+
+                // Format requested:
+                // event
+                // --> route (bus)
+                //     --> pickup point
+                //         --> members
+                buses.forEach(bus => {
                     html += `
                         <div class="border-2 border-outline-variant rounded-xl p-4 mb-4">
-                            <div class="flex justify-between items-center mb-2">
-                                <h5 class="font-bold text-primary text-lg">${route.point}</h5>
-                                <span class="text-on-surface-variant font-body-lg text-body-lg">${route.time} (${route.busName})</span>
+                            <div class="mb-2">
+                                <h5 class="font-bold text-primary text-lg">${bus.name}</h5>
+                                <p class="text-on-surface-variant font-body-lg text-body-lg">--> route</p>
                             </div>
-                            <p class="text-on-surface-variant font-body-lg text-body-lg mb-2">Members: ${routeUsers.length}</p>
-                            ${routeUsers.length > 0 ? `
-                                <ul class="space-y-1 mb-3">
-                                    ${routeUsers.map(u => `<li class="p-2 bg-surface-container-high rounded-lg font-body-lg text-body-lg">${u.name} - ${u.phone}</li>`).join('')}
-                                </ul>
-                            ` : ''}
-                        </div>
                     `;
+
+                    if (bus.routes && bus.routes.length) {
+                        bus.routes.forEach(route => {
+                            const members = pickupPointMembers[route.id] || [];
+                            html += `
+                                <div class="ml-3 mt-3">
+                                    <div class="font-bold text-secondary">--> ${route.point}</div>
+                                    <div class="text-on-surface-variant font-body-lg text-body-lg">${route.time}</div>
+                                    <div class="ml-3 mt-2">
+                                        ${members.length ? `
+                                            ${members.map(m => `
+                                                <div class="p-2 bg-surface-container-high rounded-lg font-body-lg text-body-lg mb-2">--> ${m.name} - ${m.phone}</div>
+                                            `).join('')}
+                                        ` : `<div class="text-on-surface-variant font-body-lg text-body-lg">--> No members selected</div>`}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html += `<p class="text-on-surface-variant">No pickup points for this route.</p>`;
+                    }
+
+                    html += `</div>`;
                 });
 
                 routesContainer.innerHTML = html;
             });
         }
+
 
         function downloadBusRoutesSelectedMembersPDF() {
             const eventId = document.getElementById('bus-routes-selected-members-event-select').value;
@@ -2077,6 +2093,20 @@
                     users[doc.id] = doc.data();
                 });
 
+                // Precompute members by pickup point for quick rendering
+                const pickupPointMembers = {}; // pickupPointId -> [{name, phone}]
+                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                    const rsvp = rsvpData[eventId];
+                    if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint) {
+                        if (!pickupPointMembers[rsvp.pickupPoint]) pickupPointMembers[rsvp.pickupPoint] = [];
+                        const user = users[uid] || {};
+                        pickupPointMembers[rsvp.pickupPoint].push({
+                            name: user.name || user.email || 'Unknown',
+                            phone: user.phone || 'N/A'
+                        });
+                    }
+                });
+
                 let html = `
                     <!DOCTYPE html>
                     <html>
@@ -2086,11 +2116,12 @@
                             body { font-family: Arial, sans-serif; margin: 20px; }
                             h1 { color: #ff5722; text-align: center; }
                             h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
-                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-                            th { background-color: #ff5722; color: white; }
-                            tr:nth-child(even) { background-color: #f9f9f9; }
                             .header { text-align: center; margin-bottom: 20px; }
+                            .block { margin-bottom: 18px; }
+                            .route { font-weight: 700; margin-top: 10px; }
+                            .pickup { margin-left: 18px; font-weight: 700; }
+                            .members { margin-left: 36px; white-space: pre-wrap; }
+                            .meta { color: #444; font-size: 12px; }
                         </style>
                     </head>
                     <body>
@@ -2101,22 +2132,28 @@
                         </div>
                 `;
 
+                html += `<div class="block"><div>event</div></div>`;
+
                 buses.forEach(bus => {
-                    html += `<h3>${bus.name}</h3><table><tr><th>Pickup Point</th><th>Time</th><th>Members</th></tr>`;
+                    html += `
+                        <div class="block">
+                            <div class="route">--> ${bus.name}</div>
+                    `;
+
                     if (bus.routes) {
                         bus.routes.forEach(route => {
-                            const routeUsers = [];
-                            Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
-                                const rsvp = rsvpData[eventId];
-                                if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
-                                    const user = users[uid] || {};
-                                    routeUsers.push(user.name || user.email || 'Unknown');
-                                }
-                            });
-                            html += `<tr><td>${route.point}</td><td>${route.time}</td><td>${routeUsers.join(', ') || 'None'}</td></tr>`;
+                            const members = pickupPointMembers[route.id] || [];
+                            html += `
+                                <div class="pickup">&nbsp;&nbsp;--> ${route.point}</div>
+                                <div class="meta" style="margin-left:36px;">${route.time}</div>
+                                <div class="members">
+                                    ${members.length ? members.map(m => `&nbsp;&nbsp;&nbsp;&nbsp;--> ${m.name} - ${m.phone}`).join('<br>') : '&nbsp;&nbsp;&nbsp;&nbsp;--> No members selected'}
+                                </div>
+                            `;
                         });
                     }
-                    html += '</table>';
+
+                    html += `</div>`;
                 });
 
                 html += '</body></html>';
@@ -2152,11 +2189,12 @@
                             body { font-family: Arial, sans-serif; margin: 20px; }
                             h1 { color: #ff5722; text-align: center; }
                             h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
-                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-                            th { background-color: #ff5722; color: white; }
-                            tr:nth-child(even) { background-color: #f9f9f9; }
                             .header { text-align: center; margin-bottom: 20px; }
+                            .eventBlock { margin-bottom: 22px; }
+                            .route { font-weight: 700; }
+                            .pickup { margin-left: 18px; font-weight: 700; }
+                            .meta { color: #444; font-size: 12px; }
+                            .members { margin-left: 36px; white-space: pre-wrap; }
                         </style>
                     </head>
                     <body>
@@ -2168,26 +2206,50 @@
 
                 outstationEvents.forEach(event => {
                     const buses = state.busRoutes[event.id] || [];
-                    html += `<h3>${event.title} - ${formatDate(event.date)}</h3><table><tr><th>Bus</th><th>Pickup Point</th><th>Time</th><th>Members</th></tr>`;
 
-                    buses.forEach(bus => {
-                        if (bus.routes) {
-                            bus.routes.forEach(route => {
-                                const routeUsers = [];
-                                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
-                                    const rsvp = rsvpData[event.id];
-                                    if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint === route.id) {
-                                        const user = users[uid] || {};
-                                        routeUsers.push(user.name || user.email || 'Unknown');
-                                    }
-                                });
-
-                                html += `<tr><td>${bus.name}</td><td>${route.point}</td><td>${route.time}</td><td>${routeUsers.length}</td></tr>`;
+                    // Build pickup point -> members for this event
+                    const pickupPointMembers = {};
+                    Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                        const rsvp = rsvpData[event.id];
+                        if (rsvp && rsvp.status === 'attending' && rsvp.pickupPoint) {
+                            if (!pickupPointMembers[rsvp.pickupPoint]) pickupPointMembers[rsvp.pickupPoint] = [];
+                            const user = users[uid] || {};
+                            pickupPointMembers[rsvp.pickupPoint].push({
+                                name: user.name || user.email || 'Unknown',
+                                phone: user.phone || 'N/A'
                             });
                         }
                     });
 
-                    html += '</table>';
+                    html += `
+                        <div class="eventBlock">
+                            <h3>${event.title} - ${formatDate(event.date)}</h3>
+                            <div>event</div>
+                    `;
+
+                    buses.forEach(bus => {
+                        html += `
+                            <div style="margin-top:10px;">
+                                <div class="route">--> ${bus.name}</div>
+                        `;
+
+                        if (bus.routes) {
+                            bus.routes.forEach(route => {
+                                const members = pickupPointMembers[route.id] || [];
+                                html += `
+                                    <div class="pickup">&nbsp;&nbsp;--> ${route.point}</div>
+                                    <div class="meta" style="margin-left:36px;">${route.time}</div>
+                                    <div class="members">
+                                        ${members.length ? members.map(m => `&nbsp;&nbsp;&nbsp;&nbsp;--> ${m.name} - ${m.phone}`).join('<br>') : '&nbsp;&nbsp;&nbsp;&nbsp;--> No members selected'}
+                                    </div>
+                                `;
+                            });
+                        }
+
+                        html += `</div>`;
+                    });
+
+                    html += `</div>`;
                 });
 
                 html += '</body></html>';
