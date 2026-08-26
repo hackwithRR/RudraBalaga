@@ -16,6 +16,19 @@ const paymentConfig = {
   appName: "Rudra Balaga"
 };
 
+// Donation payment details (UPI is reused from paymentConfig; bank transfer is funnel-specific).
+const donationConfig = {
+  appName: paymentConfig.appName,
+  upiId: paymentConfig.upiId,
+  bankTransfer: {
+    bankName: "State Bank of India",
+    accountName: "Rudra Balaga",
+    accountNumber: "00000000000000000",
+    ifscCode: "SBIN0000000"
+  },
+  note: "Thank you for your generous donation. Payment is non-refundable."
+};
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -27,3 +40,4 @@ window.firebaseAuth = auth;
 window.firebaseDb = db;
 window.firebaseStorage = storage;
 window.paymentConfig = paymentConfig;
+window.donationConfig = donationConfig;

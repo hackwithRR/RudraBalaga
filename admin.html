@@ -578,6 +578,10 @@
                     <span class="material-symbols-outlined text-3xl mb-1">payments</span>
                     <span>Event Payments</span>
                 </button>
+                <button id="donations-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
+                    <span class="material-symbols-outlined text-3xl mb-1">volunteer_activism</span>
+                    <span>Donations</span>
+                </button>
             </div>
         </section>
         
@@ -617,6 +621,23 @@
                 <div id="payments-summary" class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4"></div>
                 <div id="payments-list" class="space-y-3 mt-4">
                     <p class="text-on-surface-variant">Select an event to review payments.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donations Tab Content (Hidden by default) -->
+        <section id="donations-content" class="tab-content hidden">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="font-headline-sm text-headline-sm text-primary">Donations</h3>
+                        <p class="text-on-surface-variant text-sm mt-1">Review donation proofs and approve or reject them. Shows who donated how much.</p>
+                    </div>
+                    <span class="material-symbols-outlined text-secondary text-3xl">volunteer_activism</span>
+                </div>
+                <div id="donations-summary" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+                <div id="donations-list" class="space-y-3 mt-4">
+                    <p class="text-on-surface-variant">Loading donations...</p>
                 </div>
             </div>
         </section>
@@ -1477,6 +1498,11 @@
             const paymentsEventSelect = document.getElementById('payments-event-select');
             if (paymentsEventSelect) paymentsEventSelect.addEventListener('change', loadPaymentReview);
 
+            const donationsTab = document.getElementById('donations-tab');
+            if (donationsTab) donationsTab.addEventListener('click', () => {
+                switchTab('donations');
+            });
+
             // Event edit form
             const editEventForm = document.getElementById('edit-event-form');
             if (editEventForm) {
@@ -1882,6 +1908,8 @@
             document.getElementById('event-history-tab').classList.add('tab-inactive');
             document.getElementById('event-payments-tab').classList.remove('tab-active');
             document.getElementById('event-payments-tab').classList.add('tab-inactive');
+            document.getElementById('donations-tab').classList.remove('tab-active');
+            document.getElementById('donations-tab').classList.add('tab-inactive');
             
             // Add active class to selected tab
             if (tab === 'add-event') {
@@ -1909,6 +1937,10 @@
             } else if (tab === 'event-payments') {
                 document.getElementById('event-payments-tab').classList.add('tab-active');
                 document.getElementById('event-payments-tab').classList.remove('tab-inactive');
+            } else if (tab === 'donations') {
+                document.getElementById('donations-tab').classList.add('tab-active');
+                document.getElementById('donations-tab').classList.remove('tab-inactive');
+                loadDonations();
             }
             
             // Update tab content
@@ -1920,6 +1952,7 @@
             document.getElementById('announcements-content').classList.toggle('hidden', tab !== 'announcements');
             document.getElementById('event-history-content').classList.toggle('hidden', tab !== 'event-history');
             document.getElementById('event-payments-content').classList.toggle('hidden', tab !== 'event-payments');
+            document.getElementById('donations-content').classList.toggle('hidden', tab !== 'donations');
         }
         
         // Load and display event history
@@ -2448,6 +2481,77 @@
 
                 list.querySelectorAll('.view-payment-proof').forEach(button => button.addEventListener('click', () => showPaymentReviewModal(eventId, button.dataset.userId, event, records.find(record => record.uid === button.dataset.userId))));
             });
+        }
+
+        // Load and display donations (who donated how much)
+        function loadDonations() {
+            const list = document.getElementById('donations-list');
+            const summary = document.getElementById('donations-summary');
+            if (!list) return;
+            list.innerHTML = '<p class="text-on-surface-variant">Loading donations...</p>';
+            firebaseDb.collection('donations').orderBy('submittedAt', 'desc').get().then(snapshot => {
+                const donations = [];
+                snapshot.forEach(doc => {
+                    donations.push({ id: doc.id, ...doc.data() });
+                });
+
+                const pending = donations.filter(d => d.paymentStatus === 'PENDING_APPROVAL');
+                const approved = donations.filter(d => d.paymentStatus === 'APPROVED');
+                const totalApproved = approved.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+                const totalAll = donations.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+
+                summary.innerHTML = [['Pending', pending.length], ['Approved', approved.length], ['Total Approved ₹', `₹${totalApproved}`], ['Total Donated ₹', `₹${totalAll}`]].map(([label, value]) => `<div class="p-3 rounded-xl bg-surface-container-high border border-outline-variant"><p class="text-xs uppercase tracking-wide text-on-surface-variant">${label}</p><p class="font-bold text-lg text-primary">${value}</p></div>`).join('');
+
+                if (!donations.length) {
+                    list.innerHTML = '<p class="text-on-surface-variant">No donations yet.</p>';
+                    return;
+                }
+
+                list.innerHTML = donations.map(donation => {
+                    const d = donation;
+                    const name = d.name || d.email || d.uid || 'Anonymous';
+                    const contact = d.phone || d.email || 'No contact';
+                    const statusLabel = d.paymentStatus || 'NONE';
+                    const statusClass = statusLabel === 'APPROVED' ? 'bg-green-100 text-green-800' : statusLabel === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-800' : statusLabel === 'REJECTED' ? 'bg-red-100 text-red-700' : 'bg-surface-container-high text-on-surface-variant';
+                    const amountText = `₹${Number(d.amount) || 0}`;
+                    return `<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 rounded-xl border border-outline-variant bg-white">
+                        <div>
+                            <p class="font-bold text-on-surface">${name} <span class="text-primary">· ${amountText}</span></p>
+                            <p class="text-sm text-on-surface-variant">${contact}</p>
+                            <p class="text-sm text-on-surface-variant mt-1">${d.submittedAt?.toDate ? d.submittedAt.toDate().toLocaleString() : 'Date not available'}</p>
+                            ${d.utrNumber ? `<p class="text-sm text-on-surface-variant mt-1">UTR: <span class="select-all">${d.utrNumber}</span></p>` : ''}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${statusClass}">${statusLabel === 'PENDING_APPROVAL' ? 'PENDING' : statusLabel}</span>
+                            ${d.screenshotBase64 || d.screenshotUrl ? `<button class="view-donation-proof touch-active px-3 py-2 rounded-lg bg-primary-container text-on-primary-container font-bold" data-donation-id="${d.id}">View Proof</button>` : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+
+                list.querySelectorAll('.view-donation-proof').forEach(button => button.addEventListener('click', () => {
+                    const donation = donations.find(d => d.id === button.dataset.donationId);
+                    if (donation) showDonationReviewModal(donation);
+                }));
+            }).catch(error => {
+                console.error('Error loading donations:', error);
+                list.innerHTML = '<p class="text-on-surface-variant">Failed to load donations. The donations collection may not exist yet.</p>';
+            });
+        }
+
+        // Show donation proof review modal with approve/reject
+        function showDonationReviewModal(donation) {
+            const modal = document.createElement('div');
+            modal.className = 'payment-review-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4';
+            modal.innerHTML = `<div class="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center gap-3 mb-4"><div><h3 class="font-headline-sm text-headline-sm text-primary">Donation Proof</h3><p class="text-on-surface-variant">${donation.name || donation.email || donation.uid || 'Anonymous'}</p></div><button id="close-donation-review" class="text-2xl text-on-surface-variant">&times;</button></div><img src="${donation.screenshotBase64 || donation.screenshotUrl}" alt="Donation transaction screenshot" class="w-full max-h-[55vh] object-contain rounded-lg border border-outline-variant bg-surface-container-high"><div class="grid grid-cols-2 gap-3 mt-4"><div class="p-3 rounded-lg bg-surface-container-high"><p class="text-xs text-on-surface-variant">Donation amount</p><p class="font-bold text-primary">₹${Number(donation.amount) || 0}</p></div><div class="p-3 rounded-lg bg-surface-container-high"><p class="text-xs text-on-surface-variant">UTR / reference</p><p class="font-bold break-all">${donation.utrNumber || 'Not provided'}</p></div></div><div class="grid gap-2 mt-4 p-3 rounded-lg bg-surface-container-high"><p class="text-xs text-on-surface-variant">Submitted at</p><p class="font-bold">${donation.submittedAt?.toDate ? donation.submittedAt.toDate().toLocaleString() : 'Not available'}</p></div><p class="text-sm text-on-surface-variant mt-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${donation.paymentStatus === 'APPROVED' ? 'bg-green-100 text-green-800' : donation.paymentStatus === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-700'}">${donation.paymentStatus || 'NONE'}</span></p><div class="grid grid-cols-2 gap-3 mt-5"><button id="reject-donation" class="h-12 rounded-lg bg-error-container text-on-error-container font-bold">Reject Donation</button><button id="approve-donation" class="h-12 rounded-lg bg-primary-container text-on-primary-container font-bold">Approve Donation</button></div></div>`;
+            document.body.appendChild(modal);
+            document.getElementById('close-donation-review').onclick = () => modal.remove();
+            const updateStatus = status => firebaseDb.collection('donations').doc(donation.id).update({
+                paymentStatus: status,
+                reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                reviewedBy: state.user?.uid || null
+            }).then(() => { modal.remove(); loadDonations(); });
+            document.getElementById('approve-donation').onclick = () => updateStatus('APPROVED');
+            document.getElementById('reject-donation').onclick = () => updateStatus('REJECTED');
         }
 
         function showPaymentReviewModal(eventId, userId, event, record) {

@@ -796,6 +796,24 @@
                 animation-duration: 0.01ms !important;
             }
         }
+
+        /* --- Responsive payment (donation) modal --- */
+        .payment-modal-backdrop { background: rgba(36, 27, 22, 0.68) !important; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); overscroll-behavior: contain; padding: 0.75rem; }
+        @media (min-width: 480px) { .payment-modal-backdrop { padding: 1.25rem; } }
+        .payment-modal { border: 1px solid #e7d9ce; border-radius: 1.25rem !important; box-shadow: 0 28px 80px rgba(36, 27, 22, 0.28); max-height: calc(100vh - 1.5rem); }
+        @supports (height: 100dvh) { .payment-modal { max-height: calc(100dvh - 1.5rem); } }
+        .payment-modal::-webkit-scrollbar { width: 6px; }
+        .payment-modal::-webkit-scrollbar-thumb { background: #dbc2b0; border-radius: 999px; }
+        .payment-modal-header { position: sticky; top: 0; z-index: 10; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(6px); padding: 1rem 1.25rem 0.85rem; border-bottom: 1px solid #e7d9ce; }
+        @media (min-width: 480px) { .payment-modal-header { padding: 1.25rem 1.5rem 1rem; } }
+        .payment-modal-body { padding: 1rem 1.25rem 1.25rem; overflow-y: auto; }
+        @media (min-width: 480px) { .payment-modal-body { padding: 1.25rem 1.5rem 1.5rem; } }
+        .payment-method-icon { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 0.7rem; background: #ffe8cc; color: #8f4e00; flex-shrink: 0; }
+        .payment-disclaimer { display: flex; gap: 0.65rem; align-items: flex-start; border: 1px solid #ebcf99; border-radius: 0.75rem; background: #fff8e8; color: #765315; }
+        .payment-modal input[type='file'] { padding-top: 0.7rem; font-size: 0.9rem; width: 100%; }
+        .payment-modal input[type='text'], .payment-modal input[type='number'] { font-size: 16px; }
+        .payment-step-label { display: inline-flex; align-items: center; gap: 0.5rem; }
+        .payment-step-num { display: inline-flex; align-items: center; justify-content: center; width: 1.35rem; height: 1.35rem; border-radius: 999px; background: #8f4e00; color: #ffffff; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
     </style>
 </head>
 <body class="font-body-md text-body-md pb-32">
@@ -1005,6 +1023,14 @@
                 <h4 class="font-headline-sm text-headline-sm text-primary mb-2 kannada-text">ರುದ್ರ ಬಲಗ</h4>
                 <p class="text-on-surface-variant font-label-lg text-label-lg kannada-text">ರುದ್ರ ಪರಾಯಣ</p>
             </div>
+            <!-- Donate Section -->
+            <div id="donate-section" class="text-center">
+                <button id="donate-btn" type="button" class="touch-active w-full flex items-center justify-center gap-3 h-16 rounded-xl bg-[linear-gradient(135deg,#8f1d1d,#c45a16)] text-white font-bold text-body-lg shadow-lg transition-transform duration-150 active:scale-[0.98]">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span>
+                    <span class="kannada-text">ಧರ್ಮಾರ್ಥ ದೇಣಿಗೆ ನೀಡಿ — Donate</span>
+                </button>
+                <p class="text-xs text-center text-on-surface-variant mt-2 kannada-text">ನಿಮ್ಮ ಉದಾರ ದೇಣಿಗೆಯು ಸಮುದಾಯದ ಸೇವೆಗಳಿಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ</p>
+            </div>
             <!-- Quick Access -->
             <div class="grid grid-cols-1 gap-stack-md">
                 <button id="view-scripts-btn" class="touch-active bg-surface-container border border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center gap-2 text-center kannada-text">
@@ -1066,7 +1092,8 @@
             events: [],
             rsvps: {},
             busRoutes: {},
-            user: null
+            user: null,
+            userData: null
         };
 
         // Loading animation
@@ -1196,6 +1223,7 @@
                     firebaseDb.collection('users').doc(user.uid).onSnapshot(doc => {
                         if (doc.exists) {
                             const userData = doc.data();
+                            state.userData = userData;
                             // Update user name in header (Firestore first, then Google)
                             document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'ಭಕ್ತ';
                             // Update greeting with the member's name
@@ -1352,12 +1380,158 @@
             document.getElementById('view-all-announcements').addEventListener('click', showAllAnnouncements);
             document.getElementById('announcements-collapsed-bar').addEventListener('click', showAllAnnouncements);
             document.getElementById('view-scripts-btn').addEventListener('click', showScriptsModal);
+            // Donate button
+            document.getElementById('donate-btn').addEventListener('click', showDonationModal);
             // Events nav button now links to events.html directly
             
             // Help button
             document.getElementById('help-btn').addEventListener('click', showHelpModal);
         }
         
+// Show donation payment modal
+        function showDonationModal() {
+            const appName = window.donationConfig?.appName || window.paymentConfig?.appName || 'Rudra Balaga';
+            const upiId = window.donationConfig?.upiId || window.paymentConfig?.upiId || 'YOUR_UPI_ID@bank';
+            const bankTransfer = (window.donationConfig && window.donationConfig.bankTransfer) || {};
+            const donationNote = window.donationConfig?.note || 'Thank you for your generous donation. Payment is non-refundable.';
+            const donorName = (state.userData && state.userData.name) || state.user?.displayName || state.user?.email || '';
+            const donorEmail = state.user?.email || '';
+            const donorPhone = (state.userData && state.userData.phone) || '';
+            const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(appName)}&am=${encodeURIComponent('0.00')}&cu=INR&tn=${encodeURIComponent(`DONATION_${state.user?.uid || 'anon'}_${Date.now()}`)}`;
+            const bankTransferHtml = bankTransfer.accountNumber ? `
+                        <div class="rounded-xl bg-surface-container-high border border-outline-variant overflow-hidden">
+                            <button type="button" id="toggle-bank-details" class="w-full flex items-center justify-between gap-2 px-4 py-3 text-left">
+                                <span class="flex items-center gap-2 font-label-lg text-label-lg text-primary"><span class="material-symbols-outlined">account_balance</span>Pay by bank transfer</span>
+                                <span id="bank-details-chevron" class="material-symbols-outlined text-on-surface-variant transition-transform">expand_more</span>
+                            </button>
+                            <div id="bank-details-body" class="hidden px-4 pb-4 space-y-1 text-sm text-on-surface-variant">
+                                <p>Bank: <strong class="text-on-surface">${bankTransfer.bankName || 'Not specified'}</strong></p>
+                                <p>Account holder: <strong class="text-on-surface">${bankTransfer.accountName || 'Not specified'}</strong></p>
+                                <p class="break-all">Account number: <strong class="text-on-surface select-all">${bankTransfer.accountNumber}</strong></p>
+                                <p>IFSC: <strong class="text-on-surface select-all">${bankTransfer.ifscCode || 'Not specified'}</strong></p>
+                            </div>
+                        </div>` : '';
+            const modal = document.createElement('div');
+            modal.className = 'payment-modal-backdrop fixed inset-0 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="payment-modal bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-full">
+                    <div class="payment-modal-header flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="payment-method-icon material-symbols-outlined">volunteer_activism</span>
+                            <div class="min-w-0">
+                                <h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Donation</h3>
+                                <p class="text-sm text-on-surface-variant truncate">Rudra Balaga • ಧರ್ಮಾರ್ಥ ದೇಣಿಗೆ</p>
+                            </div>
+                        </div>
+                        <button id="close-payment-modal" aria-label="Close" class="shrink-0 w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xl leading-none">&times;</button>
+                    </div>
+                    <div class="payment-modal-body space-y-3 sm:space-y-4">
+                        <div class="rounded-xl bg-secondary-fixed border border-secondary-container p-4">
+                            <label for="donation-amount" class="font-label-md text-label-md text-secondary uppercase tracking-wider">Your donation amount (₹)</label>
+                            <input id="donation-amount" type="number" min="1" step="1" inputmode="numeric" required class="w-full h-14 mt-1 px-4 rounded-xl border-2 border-primary-container bg-white text-2xl font-bold text-primary" placeholder="Enter amount">
+                            <p class="text-on-surface-variant text-sm mt-2 kannada-text">${donationNote}</p>
+                        </div>
+                        ${bankTransferHtml}
+                        <div class="payment-disclaimer p-3 text-sm">
+                            <span class="material-symbols-outlined shrink-0" style="font-size:18px;">info</span>
+                            <p>Please enter the exact amount you paid so we can verify your donation.</p>
+                        </div>
+                        <div>
+                            <p class="payment-step-label font-label-lg text-label-lg text-on-surface mb-2"><span class="payment-step-num">1</span>Choose a payment method</p>
+                            <div class="grid grid-cols-1 min-[420px]:grid-cols-2 gap-2.5">
+                                <button type="button" id="cancel-payment-modal" class="touch-active h-14 rounded-xl bg-surface-container-high text-on-surface-variant font-bold flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined">arrow_back</span>No, go back
+                                </button>
+                                <a href="${upiUrl}" id="donation-upi-link" class="touch-active h-14 rounded-xl bg-primary-container text-on-primary-container font-bold flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined">account_balance_wallet</span>Pay via GPay / UPI
+                                </a>
+                            </div>
+                        </div>
+                        <form id="payment-proof-form" class="space-y-3 pt-4 border-t border-outline-variant">
+                            <p class="payment-step-label font-label-lg text-label-lg text-on-surface"><span class="payment-step-num">2</span>Submit your payment proof</p>
+                            <div>
+                                <label for="payment-screenshot" class="block font-label-md text-label-md text-on-surface mb-1.5">Transaction screenshot <span class="text-error">*</span></label>
+                                <input id="payment-screenshot" type="file" accept="image/*" required class="w-full px-3 py-2.5 rounded-xl border border-outline-variant text-on-surface bg-white">
+                            </div>
+                            <div>
+                                <label for="payment-utr" class="block font-label-md text-label-md text-on-surface mb-1.5">UTR / Transaction reference</label>
+                                <input id="payment-utr" type="text" inputmode="numeric" class="w-full h-12 px-3 rounded-xl border border-outline-variant text-on-surface bg-white" placeholder="Recommended">
+                            </div>
+                            <button type="submit" class="touch-active w-full h-14 rounded-xl bg-secondary-container text-on-secondary-container font-bold flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">upload_file</span>Submit donation proof
+                            </button>
+                            <p id="payment-upload-status" class="text-sm text-on-surface-variant"></p>
+                        </form>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+            const upiLink = document.getElementById('donation-upi-link');
+            const amountInput = document.getElementById('donation-amount');
+            function updateUpiUrl() {
+                const amt = Number(amountInput.value || 0).toFixed(2);
+                upiLink.href = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(appName)}&am=${encodeURIComponent(amt)}&cu=INR&tn=${encodeURIComponent(`DONATION_${state.user?.uid || 'anon'}_${Date.now()}`)}`;
+            }
+            amountInput.addEventListener('input', updateUpiUrl);
+            // Close when tapping the backdrop
+            modal.addEventListener('click', (clickEvent) => {
+                if (clickEvent.target === modal) modal.remove();
+            });
+            // Toggle collapsible bank details
+            const toggleBankBtn = document.getElementById('toggle-bank-details');
+            if (toggleBankBtn) {
+                toggleBankBtn.onclick = () => {
+                    document.getElementById('bank-details-body')?.classList.toggle('hidden');
+                    const chevron = document.getElementById('bank-details-chevron');
+                    if (chevron) chevron.style.transform = chevron.style.transform === 'rotate(180deg)' ? '' : 'rotate(180deg)';
+                };
+            }
+            document.getElementById('close-payment-modal').onclick = () => modal.remove();
+            document.getElementById('cancel-payment-modal').onclick = () => modal.remove();
+            document.getElementById('payment-proof-form').addEventListener('submit', async (submitEvent) => {
+                submitEvent.preventDefault();
+                const amount = Number(amountInput.value);
+                const uploadStatus = document.getElementById('payment-upload-status');
+                if (!amount || amount <= 0) {
+                    uploadStatus.textContent = 'Please enter a valid donation amount.';
+                    uploadStatus.style.color = '#b00020';
+                    return;
+                }
+                const file = document.getElementById('payment-screenshot').files[0];
+                uploadStatus.textContent = 'Uploading donation proof...';
+                uploadStatus.style.color = '';
+                try {
+                    if (!file) throw new Error('Payment screenshot is required.');
+                    const screenshotBase64 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+                    const donationRecord = {
+                        uid: state.user?.uid || '',
+                        name: donorName,
+                        email: donorEmail,
+                        phone: donorPhone,
+                        amount,
+                        paymentStatus: 'PENDING_APPROVAL',
+                        screenshotBase64,
+                        utrNumber: document.getElementById('payment-utr').value.trim(),
+                        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    await firebaseDb.collection('donations').add(donationRecord);
+                    modal.remove();
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed top-20 left-0 right-0 mx-auto z-50 bg-secondary-container text-on-secondary-container px-6 py-4 rounded-xl shadow-lg max-w-sm';
+                    toast.innerHTML = '<div class="flex items-center justify-center gap-3"><span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">volunteer_activism</span><span>Thank you for your donation! Proof submitted for approval.</span></div>';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3500);
+                } catch (error) {
+                    console.error('Donation proof upload failed:', error);
+                    uploadStatus.textContent = 'Upload failed. Please try again.';
+                }
+            });
+        }
+
         // Show help modal
         function showHelpModal() {
             const modal = document.createElement('div');
