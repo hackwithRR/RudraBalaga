@@ -119,6 +119,18 @@
         .kannada-text {
             line-height: 1.8;
         }
+
+        /* --- Responsive payment (donation history) modal --- */
+        .payment-modal-backdrop { background: rgba(36, 27, 22, 0.68) !important; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); overscroll-behavior: contain; padding: 0.75rem; }
+        @media (min-width: 480px) { .payment-modal-backdrop { padding: 1.25rem; } }
+        .payment-modal { border: 1px solid #e7d9ce; border-radius: 1.25rem !important; box-shadow: 0 28px 80px rgba(36, 27, 22, 0.28); max-height: calc(100vh - 1.5rem); }
+        @supports (height: 100dvh) { .payment-modal { max-height: calc(100dvh - 1.5rem); } }
+        .payment-modal::-webkit-scrollbar { width: 6px; }
+        .payment-modal::-webkit-scrollbar-thumb { background: #dbc2b0; border-radius: 999px; }
+        .payment-modal-header { position: sticky; top: 0; z-index: 10; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(6px); padding: 1rem 1.25rem 0.85rem; border-bottom: 1px solid #e7d9ce; }
+        @media (min-width: 480px) { .payment-modal-header { padding: 1.25rem 1.5rem 1rem; } }
+        .payment-modal-body { padding: 1rem 1.25rem 1.25rem; overflow-y: auto; }
+        @media (min-width: 480px) { .payment-modal-body { padding: 1.25rem 1.5rem 1.5rem; } }
     </style>
 </head>
 <body class="font-body-md text-body-md pb-32">
@@ -148,16 +160,17 @@
     <main id="app-content" class="pt-20 px-margin-mobile space-y-stack-lg max-w-2xl mx-auto">
         <!-- No Event Message -->
         <section id="no-event-section" class="hidden">
-            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm text-center">
-                <div class="flex items-center justify-center gap-2 mb-4">
-                    <span class="material-symbols-outlined text-secondary" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
-                    <span class="font-label-lg text-label-lg text-secondary kannada-text">ಇತಿಹಾಸದ ಇವೆಂಟ್ಸ್ ಇಲ್ಲ</span>
+            <div class="bg-gradient-to-b from-secondary-fixed to-surface-container-lowest border-2 border-secondary-container rounded-3xl p-6 sm:p-8 shadow-sm text-center flex flex-col items-center">
+                <div class="w-20 h-20 rounded-full bg-secondary-container flex items-center justify-center mb-4 shadow-inner">
+                    <span class="material-symbols-outlined text-secondary text-4xl" style="font-variation-settings: 'FILL' 1;">event_busy</span>
                 </div>
-                <p class="font-body-lg text-body-lg text-on-surface-variant kannada-text">
-                    ನಿಮ್ಮ ಚೆಕ್ಕೆಟ್ ಇವೆಂಟ್ ಹಾಜರಾಗಿದ್ದರೆ ಕಾಣಿಸಲ್ಪಟ್ಟೀರಿ.
+                <span class="font-headline-sm text-headline-sm text-primary kannada-text">ಇತಿಹಾಸದ ಇವೆಂಟ್ಸ್ ಇಲ್ಲ</span>
+                <p class="font-body-lg text-body-lg text-on-surface-variant mt-2 kannada-text">
+                    ನೀವು ಇನ್ನೂ ಯಾವುದೇ ಇವೆಂಟ್‌ನಲ್ಲಿ ಹಾಜರಾಗಿಲ್ಲ. ಇವೆಂಟ್‌ಗೆ ಹಾಜರಾದರೆ ನಿಮ್ಮ ಪರಿಶೀಲನಾ ಪಟ್ಟಿ (ಚೆಕ್ಕೆಟ್) ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.
                 </p>
-                <a href="events.html" class="touch-active inline-block mt-4 bg-primary-container text-on-primary-container font-bold py-3 px-6 rounded-xl h-14 text-body-lg kannada-text">
-                    ಎಲ್ಲಾರು ಇವೆಂಟ್ಸ್ ನೋಡಿರಿ
+                <a href="events.html" class="touch-active w-full sm:w-auto min-h-14 mt-5 px-8 py-3 bg-primary-container text-on-primary-container font-bold rounded-xl text-body-lg kannada-text inline-flex items-center justify-center gap-2 transition-transform duration-150 active:scale-[0.98]">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event</span>
+                    ಎಲ್ಲಾ ಇವೆಂಟ್ಸ್ ನೋಡಿರಿ
                 </a>
             </div>
         </section>
@@ -180,6 +193,14 @@
                     </button>
                 </div>
             </div>
+        </section>
+
+        <!-- My Donations Section -->
+        <section>
+            <button id="view-donations-btn" type="button" class="touch-active w-full min-h-14 py-3 px-4 rounded-2xl bg-surface-container-high border-2 border-outline-variant text-on-surface font-bold text-body-md sm:text-body-lg flex flex-wrap items-center justify-center gap-x-2 gap-y-1 shadow-sm transition-transform duration-150 active:scale-[0.98] kannada-text">
+                <span class="material-symbols-outlined shrink-0 text-2xl text-primary" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span>
+                <span class="text-center leading-snug">ನನ್ನ ದೇಣಿಗೆಗಳು — My Donations</span>
+            </button>
         </section>
 
         <!-- Final Checklist Section -->
@@ -670,12 +691,85 @@
                 }
             }
         }
+
+        // Show donation history modal for the logged-in user
+        function showMyDonationsModal() {
+            const modal = document.createElement('div');
+            modal.className = 'payment-modal-backdrop fixed inset-0 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="payment-modal bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-full">
+                    <div class="payment-modal-header flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="material-symbols-outlined text-primary shrink-0" style="font-size:28px; font-variation-settings: 'FILL' 1;">volunteer_activism</span>
+                            <div class="min-w-0">
+                                <h3 class="font-headline-sm text-headline-sm text-primary leading-tight kannada-text">ನನ್ನ ದೇಣಿಗೆಗಳು</h3>
+                                <p class="text-sm text-on-surface-variant truncate">My Donations</p>
+                            </div>
+                        </div>
+                        <button id="close-donations-modal" aria-label="Close" class="shrink-0 w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xl leading-none">&times;</button>
+                    </div>
+                    <div class="payment-modal-body">
+                        <div id="my-donations-summary" class="grid grid-cols-2 gap-3 mb-4"></div>
+                        <div id="my-donations-list" class="space-y-3">
+                            <p class="text-on-surface-variant kannada-text">ದೇಣಿಗೆಗಳನ್ನು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+            document.getElementById('close-donations-modal').onclick = () => modal.remove();
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+            const summaryEl = document.getElementById('my-donations-summary');
+            const listEl = document.getElementById('my-donations-list');
+            if (!state.user) { listEl.innerHTML = `<p class="text-on-surface-variant kannada-text">ಲಾಗಿನ್ ಅಗತ್ಯವಿದೆ.</p>`; return; }
+
+            // Note: server-side orderBy('submittedAt', 'desc') is intentionally omitted to avoid
+            // requiring a Firestore composite index (where uid == + orderBy submittedAt). Results
+            // are sorted client-side below; each user only sees their own (small) donation set.
+            firebaseDb.collection('donations').where('uid', '==', state.user.uid).get().then(snapshot => {
+                const donations = [];
+                snapshot.forEach(doc => donations.push({ id: doc.id, ...doc.data() }));
+                donations.sort((a, b) => {
+                    const ta = a.submittedAt && typeof a.submittedAt.toDate === 'function' ? a.submittedAt.toDate().getTime() : 0;
+                    const tb = b.submittedAt && typeof b.submittedAt.toDate === 'function' ? b.submittedAt.toDate().getTime() : 0;
+                    return tb - ta;
+                });
+
+                const approved = donations.filter(d => d.paymentStatus === 'APPROVED');
+                const totalApproved = approved.reduce((s, d) => s + (Number(d.amount) || 0), 0);
+                const totalAll = donations.reduce((s, d) => s + (Number(d.amount) || 0), 0);
+
+                summaryEl.innerHTML = [['ಒಟ್ಟು ದೇಣಿಗೆ', `₹${totalAll}`], ['ಅನುಮೋದಿತ', `₹${totalApproved}`]].map(([l, v]) => `<div class="p-3 rounded-xl bg-surface-container-high border border-outline-variant"><p class="text-xs uppercase tracking-wide text-on-surface-variant kannada-text">${l}</p><p class="font-bold text-lg text-primary">${v}</p></div>`).join('');
+
+                if (!donations.length) {
+                    listEl.innerHTML = `<div class="p-6 text-center rounded-xl bg-surface-container-low border border-outline-variant"><p class="material-symbols-outlined text-4xl text-on-surface-variant mx-auto mb-2" style="font-variation-settings: 'FILL' 1;">volunteer_activism</p><p class="text-on-surface-variant kannada-text">ನೀವು ಇನ್ನೂ ಯಾವುದೇ ದೇಣಿಗೆಯನ್ನು ನೀಡಿಲ್ಲ.</p><a href="index.html" class="touch-active inline-block mt-4 bg-primary-container text-on-primary-container font-bold py-3 px-6 rounded-xl text-body-lg kannada-text">ದೇಣಿಗೆ ನೀಡಿ</a></div>`;
+                    return;
+                }
+
+                listEl.innerHTML = donations.map(d => {
+                    const statusLabel = d.paymentStatus === 'APPROVED' ? 'ಅನುಮೋದಿತ' : d.paymentStatus === 'PENDING_APPROVAL' ? 'ನಿರೀಕ್ಷೆ' : d.paymentStatus === 'REJECTED' ? 'ತಿರಸ್ಕರಿಸಲಾಗಿದೆ' : d.paymentStatus || 'NONE';
+                    const statusClass = d.paymentStatus === 'APPROVED' ? 'bg-green-100 text-green-800' : d.paymentStatus === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-800' : d.paymentStatus === 'REJECTED' ? 'bg-red-100 text-red-700' : 'bg-surface-container-high text-on-surface-variant';
+                    return `<div class="rounded-xl border border-outline-variant bg-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <p class="font-bold text-on-surface text-lg">₹${Number(d.amount) || 0}</p>
+                            <p class="text-sm text-on-surface-variant">${d.submittedAt?.toDate ? d.submittedAt.toDate().toLocaleString() : 'ದಿನಾಂಕ ಲಭ್ಯವಿಲ್ಲ'}</p>
+                            ${d.utrNumber ? `<p class="text-sm text-on-surface-variant mt-1">UTR: <span class="select-all">${d.utrNumber}</span></p>` : ''}
+                        </div>
+                        <span class="inline-flex self-start sm:self-auto px-3 py-1 rounded-full text-xs font-bold ${statusClass}">${statusLabel}</span>
+                    </div>`;
+                }).join('');
+            }).catch(error => {
+                console.error('Error loading my donations:', error);
+                listEl.innerHTML = '<p class="text-on-surface-variant kannada-text">ದೇಣಿಗೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.</p>';
+            });
+        }
         
         // Add event listeners
         document.getElementById('help-btn').addEventListener('click', showHelpModal);
         document.getElementById('rudra-chamakam-btn').addEventListener('click', showChamakam);
         document.getElementById('rudra-namakam-btn').addEventListener('click', showNamakam);
         document.getElementById('reset-checklist-btn').addEventListener('click', resetChecklist);
+        document.getElementById('view-donations-btn').addEventListener('click', showMyDonationsModal);
     </script>
 </body>
 </html>
