@@ -195,21 +195,139 @@
         }
 
         #app-content > section:first-child {
-            padding: 1.6rem 0 0.25rem;
+            padding: 0.25rem 0 0;
         }
 
-        #app-content > section:first-child p {
-            color: var(--home-teal) !important;
-            font-size: 0.8rem;
+        /* --- Welcome / Greeting hero --- */
+        #welcome-section {
+            padding: 0 0 0.5rem;
+        }
+
+        .home-hero {
+            position: relative;
+            overflow: hidden;
+            padding: 1.5rem 1.5rem 1.35rem;
+            border-radius: 1.25rem;
+            color: #ffffff;
+            background:
+                radial-gradient(circle at 92% -8%, rgba(255, 190, 130, 0.55), transparent 13rem),
+                radial-gradient(circle at -8% 135%, rgba(196, 90, 22, 0.45), transparent 12rem),
+                linear-gradient(130deg, #2c625f 0%, #246b68 55%, #1c5452 100%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 22px 48px rgba(28, 84, 82, 0.28);
+        }
+
+        .home-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+            background-size: 16px 16px;
+            opacity: 0.22;
+            mask-image: linear-gradient(to bottom right, black, transparent 72%);
+            pointer-events: none;
+        }
+
+        .home-hero::after {
+            content: 'ॐ';
+            position: absolute;
+            right: 0.75rem;
+            bottom: -2rem;
+            font-size: 7.5rem;
+            line-height: 1;
+            font-family: 'Noto Serif', Georgia, serif;
+            color: rgba(255, 255, 255, 0.07);
+            pointer-events: none;
+        }
+
+        .home-hero-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .home-hero-icon {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3.25rem;
+            height: 3.25rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.26);
+            color: #ffdbb6;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+        }
+
+        .home-hero-text {
+            min-width: 0;
+        }
+
+        .home-hero-greeting {
+            margin: 0;
+            color: #ffdbb6 !important;
+            font-size: 0.72rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.18em !important;
+            text-transform: uppercase !important;
+        }
+
+        .home-hero-title {
+            margin: 0.2rem 0 0;
+            color: #ffffff !important;
+            font-size: 1.5rem;
+            line-height: 1.3;
             font-weight: 800;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
+            letter-spacing: -0.01em;
         }
 
-        #app-content > section:first-child p::after {
-            content: '  /  MEMBER DASHBOARD';
-            color: var(--home-muted);
-            letter-spacing: 0.08em;
+        .home-hero-sub {
+            margin: 0.35rem 0 0;
+            color: rgba(255, 255, 255, 0.78) !important;
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+            letter-spacing: 0 !important;
+            text-transform: none !important;
+            line-height: 1.7;
+        }
+
+        /* --- Section header (upcoming events) --- */
+        .home-section-head {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            margin: 0 0 1.1rem;
+            padding: 0 0.25rem;
+        }
+
+        .home-section-head-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.9rem;
+            height: 2.9rem;
+            flex: 0 0 auto;
+            border-radius: 0.9rem;
+            background: var(--home-accent);
+            color: #ffffff;
+            box-shadow: 0 10px 24px rgba(196, 90, 22, 0.24);
+        }
+
+        .home-section-eyebrow {
+            margin: 0;
+            color: var(--home-teal) !important;
+            font-size: 0.7rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.16em !important;
+            text-transform: uppercase !important;
+        }
+
+        .home-section-title {
+            margin: 0.1rem 0 0;
+            color: var(--home-ink) !important;
         }
 
         #announcements-section > div {
@@ -313,14 +431,10 @@
         @media (max-width: 640px) {
             #mobile-events-scroll-hint:not(.hidden) {
                 display: flex;
+                flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-                min-height: 3rem;
-                margin-top: -1rem;
-                color: var(--home-teal);
-                font-size: 0.95rem;
-                font-weight: 700;
+                gap: 0.2rem;
+                margin: 0rem 0 0.4rem;
                 text-align: center;
             }
 
@@ -328,8 +442,32 @@
                 display: flex;
             }
 
-            #mobile-events-scroll-hint .material-symbols-outlined {
-                animation: scroll-hint-bounce 1.5s ease-in-out infinite;
+            .scroll-hint-arrow {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 2.5rem;
+                height: 2.5rem;
+                border-radius: 999px;
+                background: #ffffff;
+                color: var(--home-accent);
+                border: 1px solid var(--home-line);
+                box-shadow: 0 8px 20px rgba(74, 42, 20, 0.1);
+                animation: scroll-hint-bounce 1.6s ease-in-out infinite;
+            }
+
+            .scroll-hint-text {
+                color: var(--home-accent-dark);
+                font-size: 0.82rem;
+                font-weight: 800;
+                letter-spacing: 0.04em;
+            }
+
+            .scroll-hint-sub {
+                color: var(--home-muted);
+                font-size: 0.72rem;
+                font-weight: 600;
+                line-height: 1.7;
             }
         }
 
@@ -472,17 +610,47 @@
         .payment-modal-backdrop {
             background: rgba(36, 27, 22, 0.68) !important;
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            overscroll-behavior: contain;
+            padding: 0.75rem;
+        }
+
+        @media (min-width: 480px) {
+            .payment-modal-backdrop { padding: 1.25rem; }
         }
 
         .payment-modal {
             border: 1px solid var(--home-line);
             border-radius: 1.25rem !important;
             box-shadow: 0 28px 80px rgba(36, 27, 22, 0.28);
+            max-height: calc(100vh - 1.5rem);
         }
 
+        @supports (height: 100dvh) {
+            .payment-modal { max-height: calc(100dvh - 1.5rem); }
+        }
+
+        .payment-modal::-webkit-scrollbar { width: 6px; }
+        .payment-modal::-webkit-scrollbar-thumb { background: #dbc2b0; border-radius: 999px; }
+
         .payment-modal-header {
-            padding-bottom: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(6px);
+            padding: 1rem 1.25rem 0.85rem;
             border-bottom: 1px solid var(--home-line);
+        }
+
+        @media (min-width: 480px) {
+            .payment-modal-header { padding: 1.25rem 1.5rem 1rem; }
+        }
+
+        .payment-modal-body { padding: 1rem 1.25rem 1.25rem; overflow-y: auto; }
+
+        @media (min-width: 480px) {
+            .payment-modal-body { padding: 1.25rem 1.5rem 1.5rem; }
         }
 
         .payment-method-card {
@@ -498,11 +666,15 @@
             width: 2.5rem;
             height: 2.5rem;
             border-radius: 0.7rem;
-            background: #e1f0ed;
-            color: var(--home-teal);
+            background: #ffe8cc;
+            color: var(--home-teal, #246b68);
+            flex-shrink: 0;
         }
 
         .payment-modal .payment-disclaimer {
+            display: flex;
+            gap: 0.65rem;
+            align-items: flex-start;
             border: 1px solid #ebcf99;
             border-radius: 0.75rem;
             background: #fff8e8;
@@ -512,6 +684,25 @@
         .payment-modal input[type='file'] {
             padding-top: 0.7rem;
             font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .payment-modal input[type='text'] { font-size: 16px; }
+
+        .payment-step-label { display: inline-flex; align-items: center; gap: 0.5rem; }
+
+        .payment-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.35rem;
+            height: 1.35rem;
+            border-radius: 999px;
+            background: #8f4e00;
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            flex-shrink: 0;
         }
 
         body > div.fixed.inset-0:not(#loader-panel) {
@@ -711,14 +902,26 @@
 
     <!-- Main Canvas -->
     <main id="app-content" class="pt-20 px-margin-mobile space-y-stack-lg max-w-2xl mx-auto opacity-0">
-        <!-- Welcome Section -->
-        <section class="mt-stack-md">
-<p class="text-on-surface-variant font-label-lg text-label-lg kannada-text">ಸ್ವಾಗತ, ಭಕ್ತರೇ</p>
+        <!-- Welcome / Greeting Section -->
+        <section id="welcome-section" class="mt-stack-md">
+            <div class="home-hero">
+                <div class="home-hero-content">
+                    <div class="home-hero-icon" aria-hidden="true">
+                        <span id="home-hero-icon-span" class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 1.7rem;">wb_sunny</span>
+                    </div>
+                    <div class="home-hero-text">
+                        <p id="home-greeting-label" class="home-hero-greeting">ಶುಭ ದಿನ</p>
+                        <h1 id="home-title" class="home-hero-title kannada-text">ಸ್ವಾಗತ, ಭಕ್ತರೇ</h1>
+                        <p class="home-hero-sub kannada-text">ರುದ್ರ ಬಲಗ ಸಮುದಾಯದಲ್ಲಿ ನಿಮಗೆ ಹೃತ್ಪೂರ್ವಕ ಸ್ವಾಗತ</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <div id="mobile-events-scroll-hint" class="hidden" aria-label="Scroll down to see upcoming events">
-            <span class="material-symbols-outlined" aria-hidden="true">south</span>
-            <span>Scroll down to see upcoming events</span>
+            <span class="material-symbols-outlined scroll-hint-arrow" aria-hidden="true">south</span>
+            <span class="scroll-hint-text">Scroll down to see upcoming events</span>
+            <span class="scroll-hint-sub kannada-text">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮಗಳಿಗಾಗಿ ಕೆಳಗೆ ಸ್ಕ್ರಾಲ್ ಮಾಡಿ</span>
         </div>
 
         <!-- Announcements Section -->
@@ -749,6 +952,13 @@
 
         <!-- Upcoming Events -->
         <section id="upcoming-events-section">
+            <div class="home-section-head">
+                <span class="home-section-head-icon material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_upcoming</span>
+                <div class="min-w-0">
+                    <p class="home-section-eyebrow">Coming up</p>
+                    <h2 class="home-section-title font-headline-sm text-headline-sm kannada-text">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮಗಳು</h2>
+                </div>
+            </div>
             <div id="events-list" class="grid grid-cols-1 gap-6">
                 <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
                     <p class="text-on-surface-variant font-body-lg text-body-lg">Loading upcoming events...</p>
@@ -954,10 +1164,28 @@
             });
         }
 
+        // Apply time-of-day greeting to the welcome hero
+        function applyGreeting(name) {
+            const displayName = name || 'ಭಕ್ತರೇ';
+            const hour = new Date().getHours();
+            let label, icon;
+            if (hour < 12) { label = 'ಶುಭೋದಯ'; icon = 'wb_sunny'; }
+            else if (hour < 17) { label = 'ಶುಭ ಮಧ್ಯಾಹ್ನ'; icon = 'light_mode'; }
+            else { label = 'ಶುಭ ಸಂಜೆ'; icon = 'dark_mode'; }
+
+            const labelEl = document.getElementById('home-greeting-label');
+            const titleEl = document.getElementById('home-title');
+            const iconEl = document.getElementById('home-hero-icon-span');
+            if (labelEl) labelEl.textContent = label;
+            if (titleEl) titleEl.textContent = `ಸ್ವಾಗತ, ${displayName}`;
+            if (iconEl) iconEl.textContent = icon;
+        }
+
         // Load user data
         function loadUserData(user) {
             // Set Google data as fallback
             document.getElementById('user-name').textContent = user.displayName || user.email || 'ಭಕ್ತ';
+            applyGreeting(user.displayName || user.email || 'ಭಕ್ತ');
             if (user.photoURL) {
                 document.getElementById('profile-link').innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
             }
@@ -970,6 +1198,8 @@
                             const userData = doc.data();
                             // Update user name in header (Firestore first, then Google)
                             document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'ಭಕ್ತ';
+                            // Update greeting with the member's name
+                            applyGreeting(userData.name || user.displayName);
                             // Show user ID
                             if (userData.userId) {
                                 document.getElementById('user-id').textContent = `ಐಡಿ: ${userData.userId}`;
@@ -1794,8 +2024,9 @@
         }
 
         function getEventAttendingCount(eventId) {
+            // Members whose payment was rejected are not counted as attending
             return Object.values(state.rsvps).filter(rsvpData =>
-                rsvpData[eventId] && rsvpData[eventId].status === 'attending'
+                rsvpData[eventId] && rsvpData[eventId].status === 'attending' && rsvpData[eventId].payment?.paymentStatus !== 'REJECTED'
             ).length;
         }
 
@@ -1826,11 +2057,23 @@
                 : travelDates.length === 1 ? formatDate(travelDates[0]) : 'Not specified';
             const busRoutes = getEventBusRoutes(event.id);
 
+            const eventPaymentChip = (event.type === 'Outstation' && event.requiresPayment === true) ? (() => {
+                const ps = userRsvp?.payment?.paymentStatus;
+                let label, cls, icon;
+                if (ps === 'APPROVED') { label = 'Paid'; cls = 'bg-green-100 text-green-800 border border-green-300'; icon = 'verified'; }
+                else if (ps === 'PENDING_APPROVAL') { label = 'Under review'; cls = 'bg-amber-100 text-amber-800 border border-amber-300'; icon = 'hourglass_top'; }
+                else if (ps === 'REJECTED') { label = 'Payment rejected'; cls = 'bg-red-100 text-red-700 border border-red-300'; icon = 'cancel'; }
+                else { label = `₹${Number(event.amount || 0)} · Not paid`; cls = 'bg-surface-container-high text-on-surface-variant border border-outline-variant'; icon = 'currency_rupee'; }
+                return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${cls}"><span class="material-symbols-outlined" style="font-size:14px;">${icon}</span>${label}</span>`;
+            })() : '';
+
             let responseHtml;
             if (userRsvp && userRsvp.status === 'attending' && !['PENDING_APPROVAL', 'REJECTED'].includes(userRsvp.payment?.paymentStatus)) {
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">You are attending this event</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>`;
             } else if (userRsvp?.payment?.paymentStatus === 'PENDING_APPROVAL') {
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-amber-50 rounded-xl text-center"><p class="font-body-lg text-body-lg text-amber-900 font-bold">Payment proof is pending approval</p><p class="text-sm text-amber-800 mt-1">Your attendance will be confirmed after admin verification.</p></div></div>`;
+            } else if (userRsvp?.payment?.paymentStatus === 'REJECTED' && userRsvp.status === 'attending') {
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">cancel</span>Payment rejected by admin</p><p class="text-sm text-on-error-container mt-1">Your RSVP has been reset — please respond again. If you attend, you'll need to submit a fresh payment.</p></div>${canEdit ? `<div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button data-rsvp-status="attending" data-event-id="${event.id}" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">check_circle</span>Attending</button><button data-rsvp-status="not-attending" data-event-id="${event.id}" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">Not attending</button></div>` : ''}</div>`;
             } else if (userRsvp && userRsvp.status === 'not-attending') {
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">You are not attending this event</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>`;
             } else if (isLimitReached) {
@@ -1843,7 +2086,7 @@
             const mapHtml = event.type === 'Bangalore' && event.location ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2">Open in Google Maps</p></a></div>` : '';
             const outstationHtml = event.type === 'Outstation' ? `<div class="mt-4 p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container"><p class="font-label-lg text-label-lg text-secondary mb-2">Outstation dates</p><p class="font-label-md text-label-md text-secondary">Event dates</p><p class="font-body-lg text-body-lg text-on-surface">${eventDateRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Departure to Bangalore arrival</p><p class="font-body-lg text-body-lg text-on-surface">${travelRange}</p></div>` : '';
 
-            return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Upcoming event</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><span class="shrink-0 px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Event dates</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Time</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Location</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p></div></div>${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
+            return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Upcoming event</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><div class="shrink-0 flex flex-col items-end gap-1.5"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span>${eventPaymentChip}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Event dates</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Time</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Location</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p></div></div>${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
         }
 
         // Render events on member dashboard
@@ -2209,6 +2452,8 @@
 
         if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
         const rsvpData = { ...(state.rsvps[state.user.uid][currentEvent.id] || {}), status };
+        // Clear any old/rejected payment info when switching to not-attending
+        if (status === 'not-attending' && rsvpData.payment) delete rsvpData.payment;
         state.rsvps[state.user.uid][currentEvent.id] = rsvpData;
         renderEvents();
 
@@ -2229,20 +2474,86 @@
         const appName = window.paymentConfig?.appName || 'Rudra Balaga';
         const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(appName)}&am=${encodeURIComponent(amount)}&cu=INR&tn=${encodeURIComponent(`EVENT_${event.id}_${state.user.uid}`)}`;
         const bankTransfer = event.bankTransfer || {};
-        const bankTransferHtml = bankTransfer.accountNumber ? `<div class="mt-4 p-4 rounded-xl bg-surface-container-high border border-outline-variant"><p class="font-label-lg text-label-lg text-primary mb-2">Pay by bank transfer</p><p class="text-sm text-on-surface-variant">Bank: <strong>${bankTransfer.bankName || 'Not specified'}</strong></p><p class="text-sm text-on-surface-variant">Account holder: <strong>${bankTransfer.accountName || 'Not specified'}</strong></p><p class="text-sm text-on-surface-variant">Account number: <strong>${bankTransfer.accountNumber}</strong></p><p class="text-sm text-on-surface-variant">IFSC: <strong>${bankTransfer.ifscCode || 'Not specified'}</strong></p></div>` : '';
+        const bankTransferHtml = bankTransfer.accountNumber ? `
+                    <div class="rounded-xl bg-surface-container-high border border-outline-variant overflow-hidden">
+                        <button type="button" id="toggle-bank-details" class="w-full flex items-center justify-between gap-2 px-4 py-3 text-left">
+                            <span class="flex items-center gap-2 font-label-lg text-label-lg text-primary"><span class="material-symbols-outlined">account_balance</span>Pay by bank transfer</span>
+                            <span id="bank-details-chevron" class="material-symbols-outlined text-on-surface-variant transition-transform">expand_more</span>
+                        </button>
+                        <div id="bank-details-body" class="hidden px-4 pb-4 space-y-1 text-sm text-on-surface-variant">
+                            <p>Bank: <strong class="text-on-surface">${bankTransfer.bankName || 'Not specified'}</strong></p>
+                            <p>Account holder: <strong class="text-on-surface">${bankTransfer.accountName || 'Not specified'}</strong></p>
+                            <p class="break-all">Account number: <strong class="text-on-surface select-all">${bankTransfer.accountNumber}</strong></p>
+                            <p>IFSC: <strong class="text-on-surface select-all">${bankTransfer.ifscCode || 'Not specified'}</strong></p>
+                        </div>
+                    </div>` : '';
         const modal = document.createElement('div');
-        modal.className = 'payment-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4';
-        modal.innerHTML = `<div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center gap-3 mb-4"><div><h3 class="font-headline-sm text-headline-sm text-primary">Outstation payment</h3><p class="text-on-surface-variant">${event.title}</p></div><button id="close-payment-modal" class="text-2xl text-on-surface-variant">&times;</button></div><div class="p-4 rounded-xl bg-secondary-fixed border border-secondary-container"><p class="text-sm text-on-surface-variant">Amount to pay</p><p class="text-3xl font-bold text-primary">₹${amount}</p><p class="text-on-surface mt-2">${event.paymentDescription || 'Outstation event fee'}</p></div>${bankTransferHtml}<div class="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-900"><strong>Important:</strong> Payment is non-refundable if you change your decision or cancel later.</div><p class="text-sm text-on-surface-variant mt-4">Choose a payment method, then submit your proof below.</p><div class="grid grid-cols-2 gap-3 mt-3"><button type="button" id="cancel-payment-modal" class="h-14 rounded-xl bg-surface-container-high text-on-surface-variant font-bold">No, go back</button><a id="pay-via-upi" href="${upiUrl}" class="touch-active h-14 rounded-xl bg-primary-container text-on-primary-container font-bold flex items-center justify-center">Pay via GPay / UPI</a></div><form id="payment-proof-form" class="space-y-3 mt-5 pt-5 border-t border-outline-variant"><div><label for="payment-screenshot" class="block font-label-lg text-label-lg text-on-surface mb-2">Transaction Screenshot</label><input id="payment-screenshot" type="file" accept="image/*" required class="w-full h-14 px-3 rounded-xl border border-outline-variant"></div><div><label for="payment-utr" class="block font-label-lg text-label-lg text-on-surface mb-2">UTR / Transaction Reference</label><input id="payment-utr" type="text" class="w-full h-14 px-3 rounded-xl border border-outline-variant" placeholder="Recommended"></div><button type="submit" class="w-full h-14 rounded-xl bg-secondary-container text-on-secondary-container font-bold">Submit Payment Proof</button><p id="payment-upload-status" class="text-sm text-on-surface-variant"></p></form></div>`;
+        modal.className = 'payment-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center';
+        modal.innerHTML = `
+            <div class="payment-modal bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-full">
+                <div class="payment-modal-header flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="payment-method-icon material-symbols-outlined">payments</span>
+                        <div class="min-w-0">
+                            <h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Outstation payment</h3>
+                            <p class="text-sm text-on-surface-variant truncate">${event.title}</p>
+                        </div>
+                    </div>
+                    <button id="close-payment-modal" aria-label="Close" class="shrink-0 w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xl leading-none">&times;</button>
+                </div>
+                <div class="payment-modal-body space-y-3 sm:space-y-4">
+                    <div class="rounded-xl bg-secondary-fixed border border-secondary-container p-4 text-center sm:text-left">
+                        <p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Amount to pay</p>
+                        <p class="text-3xl sm:text-4xl font-bold text-primary mt-1">&#8377;${amount}</p>
+                        <p class="text-on-surface-variant text-sm mt-1">${event.paymentDescription || 'Outstation event fee'}</p>
+                    </div>
+                    ${bankTransferHtml}
+                    <div class="payment-disclaimer p-3 text-sm rounded-xl border">
+                        <span class="material-symbols-outlined shrink-0" style="font-size:18px;">info</span>
+                        <p><strong>Important:</strong> Payment is non-refundable if you change your decision or cancel later.</p>
+                    </div>
+                    <div>
+                        <p class="payment-step-label font-label-lg text-label-lg text-on-surface mb-2"><span class="payment-step-num">1</span>Choose a payment method</p>
+                        <div class="grid grid-cols-1 min-[420px]:grid-cols-2 gap-2.5">
+                            <button type="button" id="cancel-payment-modal" class="touch-active h-14 rounded-xl bg-surface-container-high text-on-surface-variant font-bold flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">arrow_back</span>No, go back
+                            </button>
+                            <a id="pay-via-upi" href="${upiUrl}" class="touch-active h-14 rounded-xl bg-primary-container text-on-primary-container font-bold flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">account_balance_wallet</span>Pay via GPay / UPI
+                            </a>
+                        </div>
+                    </div>
+                    <form id="payment-proof-form" class="space-y-3 pt-4 border-t border-outline-variant">
+                        <p class="payment-step-label font-label-lg text-label-lg text-on-surface"><span class="payment-step-num">2</span>Submit your payment proof</p>
+                        <div>
+                            <label for="payment-screenshot" class="block font-label-md text-label-md text-on-surface mb-1.5">Transaction screenshot <span class="text-error">*</span></label>
+                            <input id="payment-screenshot" type="file" accept="image/*" required class="w-full px-3 py-2.5 rounded-xl border border-outline-variant text-on-surface bg-white">
+                        </div>
+                        <div>
+                            <label for="payment-utr" class="block font-label-md text-label-md text-on-surface mb-1.5">UTR / Transaction reference</label>
+                            <input id="payment-utr" type="text" inputmode="numeric" class="w-full h-12 px-3 rounded-xl border border-outline-variant text-on-surface bg-white" placeholder="Recommended">
+                        </div>
+                        <button type="submit" class="touch-active w-full h-14 rounded-xl bg-secondary-container text-on-secondary-container font-bold flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined">upload_file</span>Submit payment proof
+                        </button>
+                        <p id="payment-upload-status" class="text-sm text-on-surface-variant"></p>
+                    </form>
+                </div>
+            </div>`;
         document.body.appendChild(modal);
-        const paymentModal = modal.querySelector('div');
-        paymentModal.classList.add('payment-modal');
-        paymentModal.querySelector('h3')?.parentElement?.parentElement?.classList.add('payment-modal-header');
-        paymentModal.querySelector('.bg-amber-50')?.classList.add('payment-disclaimer');
-        paymentModal.querySelector('.bg-surface-container-high')?.classList.add('payment-method-card');
-        paymentModal.querySelector('.bg-surface-container-high')?.insertAdjacentHTML('afterbegin', '<span class="payment-method-icon material-symbols-outlined">account_balance</span>');
-        paymentModal.querySelector('h3')?.insertAdjacentHTML('beforebegin', '<span class="payment-method-icon material-symbols-outlined text-2xl">payments</span>');
-        paymentModal.querySelector('#pay-via-upi')?.insertAdjacentHTML('afterbegin', '<span class="material-symbols-outlined">account_balance_wallet</span>');
-        paymentModal.querySelector('#payment-proof-form button[type="submit"]')?.insertAdjacentHTML('afterbegin', '<span class="material-symbols-outlined">upload_file</span>');
+        // Close when tapping the backdrop
+        modal.addEventListener('click', (clickEvent) => {
+            if (clickEvent.target === modal) modal.remove();
+        });
+        // Toggle collapsible bank details
+        const toggleBankBtn = document.getElementById('toggle-bank-details');
+        if (toggleBankBtn) {
+            toggleBankBtn.onclick = () => {
+                document.getElementById('bank-details-body')?.classList.toggle('hidden');
+                const chevron = document.getElementById('bank-details-chevron');
+                if (chevron) chevron.style.transform = chevron.style.transform === 'rotate(180deg)' ? '' : 'rotate(180deg)';
+            };
+        }
         document.getElementById('close-payment-modal').onclick = () => modal.remove();
         document.getElementById('cancel-payment-modal').onclick = () => modal.remove();
         document.getElementById('payment-proof-form').addEventListener('submit', async (submitEvent) => {

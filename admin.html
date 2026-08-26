@@ -938,6 +938,15 @@
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
                 <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Members List</h3>
                 <div class="space-y-4">
+                    <!-- Find users search box -->
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">search</span>
+                        <input id="members-search-input" type="search" placeholder="Find users by name, email, phone or member ID..." autocomplete="off" class="w-full h-14 pl-12 pr-10 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg focus:outline-none focus:ring-2 focus:ring-primary/40">
+                        <button id="members-search-clear" type="button" aria-label="Clear search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+                            <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+                        </button>
+                    </div>
+                    <p id="members-count" class="text-sm text-on-surface-variant"></p>
                     <ul id="members-list" class="space-y-2">
                         <li class="text-on-surface-variant">Loading members...</li>
                     </ul>
@@ -1314,6 +1323,28 @@
             const membersTab = document.getElementById('members-tab');
             if (membersTab) {
                 membersTab.addEventListener('click', () => switchTab('members'));
+            }
+
+            // Find-users search box in the Members tab
+            const membersSearchInput = document.getElementById('members-search-input');
+            if (membersSearchInput) {
+                membersSearchInput.addEventListener('input', () => {
+                    renderMembersList();
+                    const clearBtn = document.getElementById('members-search-clear');
+                    if (clearBtn) clearBtn.classList.toggle('hidden', !membersSearchInput.value);
+                });
+            }
+            const membersSearchClear = document.getElementById('members-search-clear');
+            if (membersSearchClear) {
+                membersSearchClear.addEventListener('click', () => {
+                    const input = document.getElementById('members-search-input');
+                    if (input) {
+                        input.value = '';
+                        input.focus();
+                    }
+                    membersSearchClear.classList.add('hidden');
+                    renderMembersList();
+                });
             }
             
             const announcementsTab = document.getElementById('announcements-tab');
@@ -2079,6 +2110,8 @@
         }
 
         // Load and display all members
+        let allMembersCache = [];
+
         function loadMembers() {
             firebaseDb.collection('users').get().then(usersSnapshot => {
                 const members = [];
@@ -2100,10 +2133,42 @@
                 
                 // Sort alphabetically by name
                 members.sort((a, b) => a.name.localeCompare(b.name));
-                
-                const membersList = document.getElementById('members-list');
-                membersList.innerHTML = members.map((m, index) => {
-                    return `<li class="member-details-trigger p-3 bg-surface-container-high rounded-lg font-body-lg text-body-lg cursor-pointer hover:bg-primary-fixed" data-member='${JSON.stringify(m).replace(/'/g, '&apos;')}' tabindex="0" role="button">
+                allMembersCache = members;
+                renderMembersList();
+            });
+        }
+
+        // Render the members list, filtered by the find-users search box
+        function renderMembersList() {
+            const membersList = document.getElementById('members-list');
+            if (!membersList) return;
+
+            const searchInput = document.getElementById('members-search-input');
+            const filter = (searchInput?.value || '').trim().toLowerCase();
+            const filterDigits = filter.replace(/\D/g, '');
+
+            const filteredMembers = !filter ? allMembersCache : allMembersCache.filter(m => {
+                const haystack = [m.name, m.email, m.phone, m.id].join(' ').toLowerCase();
+                if (haystack.includes(filter)) return true;
+                // Allow finding users by typing only part of their phone number
+                if (filterDigits && String(m.phone).replace(/\D/g, '').includes(filterDigits)) return true;
+                return false;
+            });
+
+            const countEl = document.getElementById('members-count');
+            if (countEl) {
+                countEl.textContent = filter
+                    ? `Found ${filteredMembers.length} of ${allMembersCache.length} members for "${filter}"`
+                    : `Showing all ${allMembersCache.length} members`;
+            }
+
+            if (!filteredMembers.length) {
+                membersList.innerHTML = `<li class="p-6 text-center bg-surface-container-high rounded-lg"><span class="material-symbols-outlined text-on-surface-variant text-3xl">person_search</span><p class="text-on-surface-variant font-body-lg text-body-lg mt-2">No members found matching "<strong>${filter.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</strong>"</p></li>`;
+                return;
+            }
+
+            membersList.innerHTML = filteredMembers.map((m, index) => {
+                return `<li class="member-details-trigger p-3 bg-surface-container-high rounded-lg font-body-lg text-body-lg cursor-pointer hover:bg-primary-fixed" data-member='${JSON.stringify(m).replace(/'/g, '&apos;')}' tabindex="0" role="button">
                         <div class="flex justify-between items-center gap-3">
                             <div>
                                 <span class="font-bold text-primary">${index + 1}.</span>
@@ -2113,17 +2178,16 @@
                             <span class="material-symbols-outlined text-primary">arrow_forward</span>
                         </div>
                     </li>`;
-                }).join('');
+            }).join('');
 
-                membersList.querySelectorAll('.member-details-trigger').forEach(memberItem => {
-                    const openDetails = () => showMemberDetails(JSON.parse(memberItem.dataset.member.replace(/&apos;/g, "'")));
-                    memberItem.addEventListener('click', openDetails);
-                    memberItem.addEventListener('keydown', event => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            openDetails();
-                        }
-                    });
+            membersList.querySelectorAll('.member-details-trigger').forEach(memberItem => {
+                const openDetails = () => showMemberDetails(JSON.parse(memberItem.dataset.member.replace(/&apos;/g, "'")));
+                memberItem.addEventListener('click', openDetails);
+                memberItem.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openDetails();
+                    }
                 });
             });
         }
@@ -2591,6 +2655,131 @@
             });
         }
 
+        // ===================== Shared PDF export styling helpers =====================
+        // Every PDF export renders a styled HTML document into a print window,
+        // producing a consistent branded layout across all reports.
+
+        function pdfEscape(value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function pdfStatCards(stats) {
+            const items = (stats || []).filter(stat => stat && stat[1] !== undefined && stat[1] !== null && stat[1] !== '');
+            if (!items.length) return '';
+            return `<div class="stats-row">${items.map(([label, value]) => `<div class="stat-card"><span class="stat-label">${pdfEscape(label)}</span><span class="stat-value">${pdfEscape(value)}</span></div>`).join('')}</div>`;
+        }
+
+        function pdfMetaChips(rows) {
+            const visible = (rows || []).filter(row => row && row[1]);
+            if (!visible.length) return '';
+            return `<div class="meta-grid">${visible.map(([label, value]) => `<span class="meta-item">${pdfEscape(label)}: <strong>${pdfEscape(value)}</strong></span>`).join('')}</div>`;
+        }
+
+        function pdfMemberLine(index, name, phone) {
+            return `<div class="member-line"><span class="member-name"><span class="idx">${index}.</span>${pdfEscape(name)}</span><span class="phone-chip">${pdfEscape(phone)}</span></div>`;
+        }
+
+        function buildPrintDocument({ title, subtitle, metaRows, stats, bodyHtml }) {
+            const generatedAt = new Date().toLocaleString();
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>${pdfEscape(title)}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        html, body { margin: 0; padding: 0; }
+        body { font-family: 'Inter', 'Noto Sans Kannada', Arial, sans-serif; color: #241a00; font-size: 12px; line-height: 1.5; background: #f3ede7; }
+        .sheet { max-width: 820px; margin: 0 auto; background: #ffffff; padding: 26px 30px 34px; }
+        .report-band { background: linear-gradient(135deg, #6d3a00 0%, #8f4e00 55%, #b26a1a 100%); color: #ffffff; border-radius: 14px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+        .band-brand { display: flex; align-items: center; gap: 14px; }
+        .brand-mark { width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; flex-shrink: 0; }
+        .report-band h1 { margin: 0; font-size: 19px; letter-spacing: 0.02em; }
+        .org-sub { margin: 2px 0 0; font-size: 11px; opacity: 0.85; }
+        .generated { margin: 0; font-size: 10px; text-align: right; opacity: 0.9; }
+        .report-title { margin: 20px 0 2px; font-size: 18px; font-weight: 800; color: #6d3a00; }
+        .report-subtitle { margin: 0 0 10px; font-size: 13px; color: #554336; }
+        .meta-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+        .meta-item { font-size: 11px; color: #554336; background: #fdf6ee; border: 1px solid #e7d9ce; border-radius: 999px; padding: 4px 12px; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 12px 0 16px; }
+        .stat-card { border: 1px solid #e7d9ce; border-radius: 10px; padding: 10px 12px; background: #fbf7f2; }
+        .stat-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #554336; }
+        .stat-value { display: block; font-size: 20px; font-weight: 800; color: #8f4e00; margin-top: 2px; }
+        section.card { border: 1px solid #e7d9ce; border-left: 5px solid #ff9933; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; background: #fffdfb; page-break-inside: avoid; break-inside: avoid; }
+        .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; border-bottom: 2px solid #f0e4d8; padding-bottom: 8px; margin-bottom: 10px; }
+        .card-title { margin: 0; font-size: 14px; font-weight: 700; color: #6d3a00; }
+        .chip { font-size: 10px; font-weight: 700; background: #ffe8cc; color: #8f4e00; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+        table.data { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        table.data th { background: #8f4e00; color: #ffffff; text-align: left; font-size: 11px; font-weight: 700; padding: 8px 10px; }
+        table.data th:first-child { border-top-left-radius: 8px; }
+        table.data th:last-child { border-top-right-radius: 8px; }
+        table.data td { border-bottom: 1px solid #efe3d7; padding: 8px 10px; vertical-align: top; }
+        table.data tbody tr:nth-child(even) td { background: #fbf6f0; }
+        table.data td.name-cell { font-weight: 600; }
+        thead { display: table-header-group; }
+        tr { page-break-inside: avoid; break-inside: avoid; }
+        .subcard { border: 1px dashed #dbc2b0; border-radius: 10px; padding: 10px 12px; margin-top: 10px; background: #fffaf4; page-break-inside: avoid; break-inside: avoid; }
+        .subcard-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+        .subcard-head h4 { margin: 0; font-size: 12.5px; font-weight: 700; color: #ad2c00; }
+        .time-chip { font-size: 10px; font-weight: 700; color: #554336; background: #f0e4d8; border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+        .member-line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 2px; border-bottom: 1px dotted #e7d9ce; font-size: 12px; }
+        .member-line:last-child { border-bottom: none; }
+        .member-name { font-weight: 500; }
+        .idx { color: #8f4e00; font-weight: 800; margin-right: 6px; }
+        .phone-chip { font-size: 11px; color: #554336; white-space: nowrap; }
+        .empty { color: #8a7566; font-style: italic; margin: 6px 0 0; }
+        .totals-row td { font-weight: 800; background: #fdf6ee !important; border-top: 2px solid #dbc2b0; }
+        .report-footer { margin-top: 24px; padding-top: 10px; border-top: 1px solid #e7d9ce; display: flex; justify-content: space-between; gap: 12px; font-size: 10px; color: #8a7566; }
+        @media print {
+            body { background: #ffffff; }
+            .sheet { max-width: none; padding: 0; }
+            .report-band { border-radius: 12px; }
+        }
+        @page { size: A4; margin: 11mm 10mm; }
+    </style>
+</head>
+<body>
+    <div class="sheet">
+        <header class="report-band">
+            <div class="band-brand">
+                <span class="brand-mark">&#2384;</span>
+                <div>
+                    <h1>ರುದ್ರ ಬಲಗ · Rudra Parayana</h1>
+                    <p class="org-sub">Admin report</p>
+                </div>
+            </div>
+            <p class="generated">Generated<br>${pdfEscape(generatedAt)}</p>
+        </header>
+        <h2 class="report-title">${pdfEscape(title)}</h2>
+        ${subtitle ? `<p class="report-subtitle">${subtitle}</p>` : ''}
+        ${pdfMetaChips(metaRows)}
+        ${pdfStatCards(stats)}
+        <main>${bodyHtml}</main>
+        <footer class="report-footer"><span>Generated by Rudra Balaga admin console</span><span>Auto-generated document</span></footer>
+    </div>
+</body></html>`;
+        }
+
+        function openPrintDocument(html) {
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                alert('Please allow popups to download the PDF');
+                return;
+            }
+            printWindow.document.open();
+            printWindow.document.write(html);
+            printWindow.document.close();
+            printWindow.focus();
+            // Give the document/fonts a moment to render before opening the print dialog
+            setTimeout(() => { printWindow.print(); }, 450);
+        }
         // Download attendance as PDF
         function downloadPDF() {
             const eventId = document.getElementById('roster-event-select').value;
@@ -2623,53 +2812,43 @@
                     }
                 });
 
-                // Create HTML content for PDF
-                let html = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Attendance - ${event?.title || 'Event'}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #ff5722; text-align: center; }
-                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
-                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-                            th { background-color: #ff5722; color: white; }
-                            tr:nth-child(even) { background-color: #f9f9f9; }
-                            .header { text-align: center; margin-bottom: 20px; }
-                            .date { text-align: center; color: #666; margin-bottom: 20px; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
-                            <h2>Attendance Sheet</h2>
-                            <p class="date">Event: ${event?.title || 'Unknown'} | Date: ${new Date().toLocaleDateString()}</p>
-                        </div>
-                        
-                        <h2>Attending Members (${attendingRows.length})</h2>
-                        <table>
-                            <tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>DOB</th><th>Address</th></tr>
-                `;
-                
-                attendingRows.forEach(row => {
-                    html += `<tr><td>${row.id}</td><td>${row.name}</td><td>${row.phone}</td><td>${row.email}</td><td>${row.dob}</td><td>${row.address}</td></tr>`;
-                });
-                
-                html += `
-                        </table>
-                    </body>
-                    </html>
-                `;
+                const tableRows = attendingRows.map((row, index) => `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${pdfEscape(row.id)}</td>
+                                <td class="name-cell">${pdfEscape(row.name)}</td>
+                                <td>${pdfEscape(row.phone)}</td>
+                                <td>${pdfEscape(row.email)}</td>
+                                <td>${pdfEscape(row.dob)}</td>
+                                <td>${pdfEscape(row.address)}</td>
+                            </tr>`).join('');
 
-                // Create a new window and print as PDF
-                const printWindow = window.open('', '_blank');
-                printWindow.document.write(html);
-                printWindow.document.close();
-                printWindow.focus();
-                printWindow.print();
-                printWindow.close();
+                const bodyHtml = `
+                    <section class="card">
+                        <div class="card-head">
+                            <h3 class="card-title">Attending members</h3>
+                            <span class="chip">${attendingRows.length} members</span>
+                        </div>
+                        ${attendingRows.length ? `
+                        <table class="data">
+                            <thead>
+                                <tr><th>#</th><th>Member ID</th><th>Name</th><th>Phone</th><th>Email</th><th>DOB</th><th>Address</th></tr>
+                            </thead>
+                            <tbody>${tableRows}</tbody>
+                        </table>` : '<p class="empty">No attending members yet.</p>'}
+                    </section>`;
+
+                openPrintDocument(buildPrintDocument({
+                    title: 'Attendance sheet',
+                    subtitle: pdfEscape(event?.title || 'Unknown event'),
+                    metaRows: [
+                        ['Event date', event?.date ? formatDate(event.date) : ''],
+                        ['Venue', event?.location || ''],
+                        ['Report date', new Date().toLocaleDateString()]
+                    ],
+                    stats: [['Total attending', attendingRows.length]],
+                    bodyHtml
+                }));
             });
         }
 
@@ -2881,32 +3060,12 @@
                     users[doc.id] = doc.data();
                 });
                 
-                let html = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Bus Routes - ${event?.title || 'Event'}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #ff5722; text-align: center; }
-                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
-                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-                            th { background-color: #ff5722; color: white; }
-                            tr:nth-child(even) { background-color: #f9f9f9; }
-                            .header { text-align: center; margin-bottom: 20px; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
-                            <h2>Bus Routes Report</h2>
-                            <p>Event: ${event?.title || 'Unknown'}</p>
-                        </div>
-                `;
-                
+                let bodyHtml = '';
+                let totalAssigned = 0;
+
                 buses.forEach(bus => {
-                    html += `<h3>${bus.name}</h3><table><tr><th>Pickup Point</th><th>Time</th><th>Members</th></tr>`;
+                    let busTotal = 0;
+                    const routeRows = [];
                     if (bus.routes) {
                         bus.routes.forEach(route => {
                             const routeUsers = [];
@@ -2918,24 +3077,28 @@
                                     routeUsers.push(user.name || user.email || 'Unknown');
                                 }
                             });
-                            html += `<tr><td>${route.point}</td><td>${route.time}</td><td>${routeUsers.join(', ') || 'None'}</td></tr>`;
+                            busTotal += routeUsers.length;
+                            routeRows.push(`<tr><td class="name-cell">${pdfEscape(route.point)}</td><td>${pdfEscape(route.time)}</td><td>${routeUsers.length ? routeUsers.map(pdfEscape).join('<br>') : '<span class="empty">None</span>'}</td></tr>`);
                         });
                     }
-                    html += '</table>';
+                    totalAssigned += busTotal;
+                    bodyHtml += `
+                        <section class="card">
+                            <div class="card-head">
+                                <h3 class="card-title">${pdfEscape(bus.name)}</h3>
+                                <span class="chip">${busTotal} members · ${(bus.routes || []).length} pickup points</span>
+                            </div>
+                            ${routeRows.length ? `<table class="data"><thead><tr><th>Pickup point</th><th>Time</th><th>Members</th></tr></thead><tbody>${routeRows.join('')}</tbody></table>` : '<p class="empty">No pickup points configured.</p>'}
+                        </section>`;
                 });
                 
-                html += '</body></html>';
-                
-                const printWindow = window.open('', '_blank');
-                if (printWindow) {
-                    printWindow.document.write(html);
-                    printWindow.document.close();
-                    printWindow.focus();
-                    printWindow.print();
-                    printWindow.close();
-                } else {
-                    alert('Please allow popups to download the PDF');
-                }
+                openPrintDocument(buildPrintDocument({
+                    title: 'Bus routes report',
+                    subtitle: pdfEscape(event?.title || 'Unknown event'),
+                    metaRows: [['Event date', event?.date ? formatDate(event.date) : '']],
+                    stats: [['Buses', buses.length], ['Pickup assignments', totalAssigned]],
+                    bodyHtml: bodyHtml || '<p class="empty">No bus routes configured for this event.</p>'
+                }));
             });
         }
         
@@ -3047,35 +3210,16 @@
             const bus = buses.find(b => b.id === busId);
             if (!bus) return;
 
+            const event = state.events.find(e => e.id === eventId);
+
             firebaseDb.collection('users').get().then(usersSnapshot => {
                 const users = {};
                 usersSnapshot.forEach(doc => {
                     users[doc.id] = doc.data();
                 });
 
-                // Collect members per route pickup id for this bus
-                let html = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Bus Members - ${bus.name}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #ff5722; text-align: center; }
-                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
-                            .bus { font-weight: 800; margin: 10px 0 18px 0; }
-                            .pickup { margin-top: 10px; font-weight: 800; }
-                            .members { margin-left: 18px; margin-top: 6px; }
-                            .member { margin: 4px 0; }
-                        </style>
-                    </head>
-                    <body>
-                        <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
-                        <h2>Bus: ${bus.name}</h2>
-                        <div class="bus">Pickup points & selected members</div>
-                `;
-
-                (bus.routes || []).forEach(route => {
+                let busMemberTotal = 0;
+                const pickupBlocks = (bus.routes || []).map(route => {
                     const routeMembers = [];
 
                     Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
@@ -3090,26 +3234,37 @@
                         }
                     });
 
-                    html += `
-                        <div class="pickup">${route.point} - ${route.time}</div>
-                        <div class="members">
-                            ${routeMembers.length ? routeMembers.map(m => `<div class="member">--> ${m.name} - ${m.phone}</div>`).join('') : '<div class="member">--> No members selected</div>'}
+                    busMemberTotal += routeMembers.length;
+                    const memberLines = routeMembers.length
+                        ? routeMembers.map((m, i) => pdfMemberLine(i + 1, m.name, m.phone)).join('')
+                        : '<p class="empty">No members selected for this pickup point.</p>';
+
+                    return `
+                        <div class="subcard">
+                            <div class="subcard-head">
+                                <h4>${pdfEscape(route.point)}</h4>
+                                <span class="time-chip">${pdfEscape(route.time)}</span>
+                            </div>
+                            ${memberLines}
+                        </div>`;
+                }).join('');
+
+                const bodyHtml = `
+                    <section class="card">
+                        <div class="card-head">
+                            <h3 class="card-title">${pdfEscape(bus.name)}</h3>
+                            <span class="chip">${busMemberTotal} members · ${(bus.routes || []).length} pickup points</span>
                         </div>
-                    `;
-                });
+                        ${pickupBlocks || '<p class="empty">No pickup points configured for this bus.</p>'}
+                    </section>`;
 
-                html += '</body></html>';
-
-                const printWindow = window.open('', '_blank');
-                if (printWindow) {
-                    printWindow.document.write(html);
-                    printWindow.document.close();
-                    printWindow.focus();
-                    printWindow.print();
-                    printWindow.close();
-                } else {
-                    alert('Please allow popups to download the PDF');
-                }
+                openPrintDocument(buildPrintDocument({
+                    title: 'Bus-wise member list',
+                    subtitle: `${pdfEscape(bus.name)} — ${pdfEscape(event?.title || 'Unknown event')}`,
+                    metaRows: [['Event date', event?.date ? formatDate(event.date) : '']],
+                    stats: [['Total members', busMemberTotal]],
+                    bodyHtml
+                }));
             });
         }
 
@@ -3140,67 +3295,43 @@
                     }
                 });
 
-                let html = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Route-wise Members - ${event?.title || 'Event'}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #ff5722; text-align: center; }
-                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
-                            .header { text-align: center; margin-bottom: 20px; }
-                            .block { margin-bottom: 18px; }
-                            .route { font-weight: 700; margin-top: 10px; }
-                            .pickup { margin-left: 18px; font-weight: 700; }
-                            .members { margin-left: 36px; white-space: pre-wrap; }
-                            .meta { color: #444; font-size: 12px; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
-                            <h2>Route-wise Members Report</h2>
-                            <p>Event: ${event?.title || 'Unknown'}</p>
-                        </div>
-                `;
-
-                html += `<div class="block"><div>event</div></div>`;
-
-                buses.forEach(bus => {
-                    html += `
-                        <div class="block">
-                            <div class="route">--> ${bus.name}</div>
-                    `;
-
-                    if (bus.routes) {
-                        bus.routes.forEach(route => {
-                            const members = pickupPointMembers[route.id] || [];
-                            html += `
-                                <div class="pickup">&nbsp;&nbsp;--> ${route.point}</div>
-                                <div class="meta" style="margin-left:36px;">${route.time}</div>
-                                <div class="members">
-                                    ${members.length ? members.map(m => `&nbsp;&nbsp;&nbsp;&nbsp;--> ${m.name} - ${m.phone}`).join('<br>') : '&nbsp;&nbsp;&nbsp;&nbsp;--> No members selected'}
+                let totalMembers = 0;
+                const busBlocks = buses.map(bus => {
+                    let busMemberCount = 0;
+                    const pickupBlocks = (bus.routes || []).map(route => {
+                        const members = pickupPointMembers[route.id] || [];
+                        busMemberCount += members.length;
+                        const memberLines = members.length
+                            ? members.map((m, i) => pdfMemberLine(i + 1, m.name, m.phone)).join('')
+                            : '<p class="empty">No members selected.</p>';
+                        return `
+                            <div class="subcard">
+                                <div class="subcard-head">
+                                    <h4>${pdfEscape(route.point)}</h4>
+                                    <span class="time-chip">${pdfEscape(route.time)}</span>
                                 </div>
-                            `;
-                        });
-                    }
+                                ${memberLines}
+                            </div>`;
+                    }).join('');
+                    totalMembers += busMemberCount;
 
-                    html += `</div>`;
-                });
+                    return `
+                        <section class="card">
+                            <div class="card-head">
+                                <h3 class="card-title">${pdfEscape(bus.name)}</h3>
+                                <span class="chip">${busMemberCount} members · ${(bus.routes || []).length} pickup points</span>
+                            </div>
+                            ${pickupBlocks || '<p class="empty">No pickup points for this route.</p>'}
+                        </section>`;
+                }).join('');
 
-                html += '</body></html>';
-
-                const printWindow = window.open('', '_blank');
-                if (printWindow) {
-                    printWindow.document.write(html);
-                    printWindow.document.close();
-                    printWindow.focus();
-                    printWindow.print();
-                    printWindow.close();
-                } else {
-                    alert('Please allow popups to download the PDF');
-                }
+                openPrintDocument(buildPrintDocument({
+                    title: 'Route-wise members report',
+                    subtitle: pdfEscape(event?.title || 'Unknown event'),
+                    metaRows: [['Event date', event?.date ? formatDate(event.date) : '']],
+                    stats: [['Buses', buses.length], ['Total members', totalMembers]],
+                    bodyHtml: busBlocks || '<p class="empty">No bus routes configured for this event.</p>'
+                }));
             });
         }
 
@@ -3222,31 +3353,8 @@
                     users[doc.id] = doc.data();
                 });
 
-                let html = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Consolidated Route-wise Members</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #ff5722; text-align: center; }
-                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
-                            .header { text-align: center; margin-bottom: 20px; }
-                            .eventBlock { margin-bottom: 22px; }
-                            .route { font-weight: 700; }
-                            .pickup { margin-left: 18px; font-weight: 700; }
-                            .meta { color: #444; font-size: 12px; }
-                            .members { margin-left: 36px; white-space: pre-wrap; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
-                            <h2>Consolidated Route-wise Members Report</h2>
-                        </div>
-                `;
-
-                outstationEvents.forEach(event => {
+                let totalMembers = 0;
+                const eventBlocks = selectedEvents.map(event => {
                     const buses = state.busRoutes[event.id] || [];
 
                     // Build pickup point -> members for this event
@@ -3263,49 +3371,53 @@
                         }
                     });
 
-                    html += `
-                        <div class="eventBlock">
-                            <h3>${event.title} - ${formatDate(event.date)}</h3>
-                            <div>event</div>
-                    `;
-
-                    buses.forEach(bus => {
-                        html += `
-                            <div style="margin-top:10px;">
-                                <div class="route">--> ${bus.name}</div>
-                        `;
-
-                        if (bus.routes) {
-                            bus.routes.forEach(route => {
-                                const members = pickupPointMembers[route.id] || [];
-                                html += `
-                                    <div class="pickup">&nbsp;&nbsp;--> ${route.point}</div>
-                                    <div class="meta" style="margin-left:36px;">${route.time}</div>
-                                    <div class="members">
-                                        ${members.length ? members.map(m => `&nbsp;&nbsp;&nbsp;&nbsp;--> ${m.name} - ${m.phone}`).join('<br>') : '&nbsp;&nbsp;&nbsp;&nbsp;--> No members selected'}
+                    let eventMemberCount = 0;
+                    const busBlocks = buses.map(bus => {
+                        let busMemberCount = 0;
+                        const pickupBlocks = (bus.routes || []).map(route => {
+                            const members = pickupPointMembers[route.id] || [];
+                            busMemberCount += members.length;
+                            const memberLines = members.length
+                                ? members.map((m, i) => pdfMemberLine(i + 1, m.name, m.phone)).join('')
+                                : '<p class="empty">No members selected.</p>';
+                            return `
+                                <div class="subcard">
+                                    <div class="subcard-head">
+                                        <h4>${pdfEscape(route.point)}</h4>
+                                        <span class="time-chip">${pdfEscape(route.time)}</span>
                                     </div>
-                                `;
-                            });
-                        }
+                                    ${memberLines}
+                                </div>`;
+                        }).join('');
+                        eventMemberCount += busMemberCount;
 
-                        html += `</div>`;
-                    });
+                        return `
+                            <div class="subcard" style="background:#fffdfb;">
+                                <div class="subcard-head">
+                                    <h4 style="color:#6d3a00;">${pdfEscape(bus.name)}</h4>
+                                    <span class="chip">${busMemberCount} members</span>
+                                </div>
+                                ${pickupBlocks || '<p class="empty">No pickup points for this route.</p>'}
+                            </div>`;
+                    }).join('');
+                    totalMembers += eventMemberCount;
 
-                    html += `</div>`;
-                });
+                    return `
+                        <section class="card">
+                            <div class="card-head">
+                                <h3 class="card-title">${pdfEscape(event.title)}</h3>
+                                <span class="chip">${formatDate(event.date)} · ${eventMemberCount} members</span>
+                            </div>
+                            ${busBlocks || '<p class="empty">No bus routes configured.</p>'}
+                        </section>`;
+                }).join('');
 
-                html += '</body></html>';
-
-                const printWindow = window.open('', '_blank');
-                if (printWindow) {
-                    printWindow.document.write(html);
-                    printWindow.document.close();
-                    printWindow.focus();
-                    printWindow.print();
-                    printWindow.close();
-                } else {
-                    alert('Please allow popups to download the PDF');
-                }
+                openPrintDocument(buildPrintDocument({
+                    title: 'Consolidated route-wise members',
+                    metaRows: [['Outstation events', selectedEvents.length]],
+                    stats: [['Events', selectedEvents.length], ['Total members', totalMembers]],
+                    bodyHtml: eventBlocks || '<p class="empty">No attending members found for any outstation event.</p>'
+                }));
             });
         }
 
@@ -3319,32 +3431,11 @@
                     users[doc.id] = doc.data();
                 });
                 
-                let html = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Consolidated Bus Routes</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #ff5722; text-align: center; }
-                            h2 { color: #333; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
-                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-                            th { background-color: #ff5722; color: white; }
-                            tr:nth-child(even) { background-color: #f9f9f9; }
-                            .header { text-align: center; margin-bottom: 20px; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
-                            <h2>Consolidated Bus Routes Report</h2>
-                        </div>
-                `;
-                
-                outstationEvents.forEach(event => {
+                let totalAssignments = 0;
+                const eventBlocks = outstationEvents.map(event => {
                     const buses = state.busRoutes[event.id] || [];
-                    html += `<h3>${event.title} - ${formatDate(event.date)}</h3><table><tr><th>Bus</th><th>Pickup Point</th><th>Time</th><th>Members</th></tr>`;
+                    let eventAssignments = 0;
+                    const rows = [];
                     buses.forEach(bus => {
                         if (bus.routes) {
                             bus.routes.forEach(route => {
@@ -3356,25 +3447,29 @@
                                         routeUsers.push(user.name || user.email || 'Unknown');
                                     }
                                 });
-                                html += `<tr><td>${bus.name}</td><td>${route.point}</td><td>${route.time}</td><td>${routeUsers.length}</td></tr>`;
+                                eventAssignments += routeUsers.length;
+                                rows.push(`<tr><td class="name-cell">${pdfEscape(bus.name)}</td><td>${pdfEscape(route.point)}</td><td>${pdfEscape(route.time)}</td><td>${routeUsers.length}</td></tr>`);
                             });
                         }
                     });
-                    html += '</table>';
-                });
-                
-                html += '</body></html>';
-                
-                const printWindow = window.open('', '_blank');
-                if (printWindow) {
-                    printWindow.document.write(html);
-                    printWindow.document.close();
-                    printWindow.focus();
-                    printWindow.print();
-                    printWindow.close();
-                } else {
-                    alert('Please allow popups to download the PDF');
-                }
+                    totalAssignments += eventAssignments;
+
+                    return `
+                        <section class="card">
+                            <div class="card-head">
+                                <h3 class="card-title">${pdfEscape(event.title)}</h3>
+                                <span class="chip">${formatDate(event.date)} · ${eventAssignments} pickups</span>
+                            </div>
+                            ${rows.length ? `<table class="data"><thead><tr><th>Bus</th><th>Pickup point</th><th>Time</th><th>Members</th></tr></thead><tbody>${rows.join('')}</tbody></table>` : '<p class="empty">No bus routes configured.</p>'}
+                        </section>`;
+                }).join('');
+
+                openPrintDocument(buildPrintDocument({
+                    title: 'Consolidated bus routes report',
+                    metaRows: [['Outstation events', outstationEvents.length]],
+                    stats: [['Events', outstationEvents.length], ['Pickup assignments', totalAssignments]],
+                    bodyHtml: eventBlocks || '<p class="empty">No outstation events found.</p>'
+                }));
             });
         }
     </script>
