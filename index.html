@@ -219,6 +219,47 @@
             box-shadow: var(--home-shadow) !important;
         }
 
+        .announcement-panel {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .announcement-panel::after {
+            content: '';
+            position: absolute;
+            width: 9rem;
+            height: 9rem;
+            right: -4rem;
+            top: -4rem;
+            border: 1px solid rgba(196, 90, 22, 0.16);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .announcement-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.8rem;
+            height: 2.8rem;
+            flex: 0 0 auto;
+            border-radius: 0.8rem;
+            background: #fff1df;
+            color: var(--home-accent) !important;
+        }
+
+        .announcement-view-all {
+            position: relative;
+            z-index: 1;
+            transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+        }
+
+        .announcement-view-all:hover {
+            transform: translateX(3px);
+            background: var(--home-accent) !important;
+            color: white !important;
+        }
+
         #announcements-section .text-secondary-container {
             color: var(--home-accent-dark) !important;
         }
@@ -227,6 +268,13 @@
             background: var(--home-paper) !important;
             border: 1px solid var(--home-line) !important;
             border-radius: 0.75rem !important;
+            box-shadow: 0 8px 20px rgba(74, 42, 20, 0.05);
+        }
+
+        #announcements-list > div img {
+            max-height: 15rem;
+            border: 1px solid var(--home-line);
+            object-position: center;
         }
 
         #announcements-list h4 {
@@ -235,6 +283,59 @@
 
         #events-list {
             gap: 1.25rem;
+        }
+
+        #mobile-events-scroll-hint {
+            display: none;
+        }
+
+        #announcements-collapsed-bar {
+            display: none;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 3.25rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--home-line);
+            border-left: 4px solid var(--home-accent);
+            border-radius: 0.75rem;
+            background: rgba(255, 253, 250, 0.95);
+            color: var(--home-accent-dark);
+            box-shadow: 0 8px 20px rgba(74, 42, 20, 0.05);
+            font-weight: 700;
+            text-align: left;
+        }
+
+        #announcements-collapsed-bar.visible {
+            display: flex;
+        }
+
+        @media (max-width: 640px) {
+            #mobile-events-scroll-hint:not(.hidden) {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                min-height: 3rem;
+                margin-top: -1rem;
+                color: var(--home-teal);
+                font-size: 0.95rem;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            #announcements-collapsed-bar.visible {
+                display: flex;
+            }
+
+            #mobile-events-scroll-hint .material-symbols-outlined {
+                animation: scroll-hint-bounce 1.5s ease-in-out infinite;
+            }
+        }
+
+        @keyframes scroll-hint-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
         }
 
         #events-list > article {
@@ -366,6 +467,51 @@
         #view-scripts-btn:hover {
             transform: translateY(-3px);
             background: #e2f0eb !important;
+        }
+
+        .payment-modal-backdrop {
+            background: rgba(36, 27, 22, 0.68) !important;
+            backdrop-filter: blur(8px);
+        }
+
+        .payment-modal {
+            border: 1px solid var(--home-line);
+            border-radius: 1.25rem !important;
+            box-shadow: 0 28px 80px rgba(36, 27, 22, 0.28);
+        }
+
+        .payment-modal-header {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--home-line);
+        }
+
+        .payment-method-card {
+            border: 1px solid var(--home-line);
+            border-radius: 0.9rem;
+            background: #fffaf5;
+        }
+
+        .payment-method-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.7rem;
+            background: #e1f0ed;
+            color: var(--home-teal);
+        }
+
+        .payment-modal .payment-disclaimer {
+            border: 1px solid #ebcf99;
+            border-radius: 0.75rem;
+            background: #fff8e8;
+            color: #765315;
+        }
+
+        .payment-modal input[type='file'] {
+            padding-top: 0.7rem;
+            font-size: 0.9rem;
         }
 
         body > div.fixed.inset-0:not(#loader-panel) {
@@ -570,20 +716,35 @@
 <p class="text-on-surface-variant font-label-lg text-label-lg kannada-text">ಸ್ವಾಗತ, ಭಕ್ತರೇ</p>
         </section>
 
+        <div id="mobile-events-scroll-hint" class="hidden" aria-label="Scroll down to see upcoming events">
+            <span class="material-symbols-outlined" aria-hidden="true">south</span>
+            <span>Scroll down to see upcoming events</span>
+        </div>
+
         <!-- Announcements Section -->
         <section id="announcements-section" class="hidden">
-            <div class="bg-secondary-fixed border-2 border-secondary-container rounded-xl p-6 shadow-sm">
-                <div class="flex justify-between items-center gap-2 mb-4">
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-secondary-container" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
-                        <span class="font-label-lg text-label-lg text-secondary-container uppercase tracking-wider kannada-text">ಘೋಷಣೆಗಳು</span>
+            <div id="announcements-expanded-panel" class="announcement-panel bg-secondary-fixed border-2 border-secondary-container rounded-xl p-6 shadow-sm">
+                <div class="flex justify-between items-start gap-4 mb-5">
+                    <div class="flex items-start gap-3">
+                        <span class="announcement-icon material-symbols-outlined text-secondary-container" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.16em] text-secondary-container">Latest update</p>
+                            <h2 class="font-headline-sm text-headline-sm text-on-surface mt-1 kannada-text">ಘೋಷಣೆಗಳು</h2>
+                            <p class="text-sm text-on-surface-variant mt-1 kannada-text">ನಿಮಗಾಗಿ ಇತ್ತೀಚಿನ ಮಾಹಿತಿ</p>
+                        </div>
                     </div>
-                    <button id="view-all-announcements" class="touch-active text-secondary-container font-label-md text-label-md underline kannada-text">ಎಲ್ಲಾವನ್ನು ನೋಡಿರಿ</button>
+                    <button id="view-all-announcements" aria-label="View all announcements" class="touch-active announcement-view-all flex items-center justify-center w-11 h-11 rounded-full bg-white text-secondary-container shadow-sm">
+                        <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+                    </button>
                 </div>
                 <div id="announcements-list" class="space-y-3">
                     <p class="text-on-surface-variant kannada-text">ಘೋಷಣೆಗಳು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                 </div>
             </div>
+            <button id="announcements-collapsed-bar" type="button" aria-label="Open announcements">
+                <span class="flex items-center gap-2"><span class="material-symbols-outlined">campaign</span><span>Announcements</span></span>
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
         </section>
 
         <!-- Upcoming Events -->
@@ -912,9 +1073,17 @@
         function renderAnnouncements(announcements) {
             const announcementsSection = document.getElementById('announcements-section');
             const announcementsList = document.getElementById('announcements-list');
+            const mobileEventsScrollHint = document.getElementById('mobile-events-scroll-hint');
+            const expandedPanel = document.getElementById('announcements-expanded-panel');
+            const collapsedBar = document.getElementById('announcements-collapsed-bar');
             
             if (announcements.length > 0) {
                 announcementsSection.classList.remove('hidden');
+                mobileEventsScrollHint.classList.remove('hidden');
+                const latestAnnouncementId = announcements[0].id;
+                const hasSeenLatest = localStorage.getItem(`announcement-viewed-${latestAnnouncementId}`) === 'true';
+                expandedPanel.classList.toggle('hidden', hasSeenLatest);
+                collapsedBar.classList.toggle('visible', hasSeenLatest);
                 announcementsList.innerHTML = announcements.map(a => `
                     <div class="p-4 bg-white rounded-lg border border-outline-variant">
                         <h4 class="font-bold text-primary text-lg mb-2 kannada-text">${a.title}</h4>
@@ -924,6 +1093,9 @@
                 `).join('');
             } else {
                 announcementsSection.classList.add('hidden');
+                mobileEventsScrollHint.classList.add('hidden');
+                expandedPanel.classList.remove('hidden');
+                collapsedBar.classList.remove('visible');
             }
         }
 
@@ -948,6 +1120,7 @@
                 }
             });
             document.getElementById('view-all-announcements').addEventListener('click', showAllAnnouncements);
+            document.getElementById('announcements-collapsed-bar').addEventListener('click', showAllAnnouncements);
             document.getElementById('view-scripts-btn').addEventListener('click', showScriptsModal);
             // Events nav button now links to events.html directly
             
@@ -1574,6 +1747,10 @@
         // Show all announcements in a modal
         function showAllAnnouncements() {
             const announcements = state.allAnnouncements || [];
+            if (announcements[0]?.id) {
+                localStorage.setItem(`announcement-viewed-${announcements[0].id}`, 'true');
+                renderAnnouncements(announcements.slice(0, 1));
+            }
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
             modal.innerHTML = `
@@ -2051,27 +2228,41 @@
         const upiId = window.paymentConfig?.upiId || 'YOUR_UPI_ID@bank';
         const appName = window.paymentConfig?.appName || 'Rudra Balaga';
         const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(appName)}&am=${encodeURIComponent(amount)}&cu=INR&tn=${encodeURIComponent(`EVENT_${event.id}_${state.user.uid}`)}`;
+        const bankTransfer = event.bankTransfer || {};
+        const bankTransferHtml = bankTransfer.accountNumber ? `<div class="mt-4 p-4 rounded-xl bg-surface-container-high border border-outline-variant"><p class="font-label-lg text-label-lg text-primary mb-2">Pay by bank transfer</p><p class="text-sm text-on-surface-variant">Bank: <strong>${bankTransfer.bankName || 'Not specified'}</strong></p><p class="text-sm text-on-surface-variant">Account holder: <strong>${bankTransfer.accountName || 'Not specified'}</strong></p><p class="text-sm text-on-surface-variant">Account number: <strong>${bankTransfer.accountNumber}</strong></p><p class="text-sm text-on-surface-variant">IFSC: <strong>${bankTransfer.ifscCode || 'Not specified'}</strong></p></div>` : '';
         const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-60 p-4';
-        modal.innerHTML = `<div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center gap-3 mb-4"><div><h3 class="font-headline-sm text-headline-sm text-primary">Outstation payment</h3><p class="text-on-surface-variant">${event.title}</p></div><button id="close-payment-modal" class="text-2xl text-on-surface-variant">&times;</button></div><div class="p-4 rounded-xl bg-secondary-fixed border border-secondary-container"><p class="text-sm text-on-surface-variant">Amount to pay</p><p class="text-3xl font-bold text-primary">₹${amount}</p><p class="text-on-surface mt-2">${event.paymentDescription || 'Outstation event fee'}</p></div><p class="text-sm text-on-surface-variant mt-4">Do you want to proceed and pay?</p><div class="grid grid-cols-2 gap-3 mt-3"><button type="button" id="cancel-payment-modal" class="h-14 rounded-xl bg-surface-container-high text-on-surface-variant font-bold">No, go back</button><a id="pay-via-upi" href="${upiUrl}" class="touch-active h-14 rounded-xl bg-primary-container text-on-primary-container font-bold flex items-center justify-center">Pay via GPay / UPI</a></div><form id="payment-proof-form" class="space-y-3 mt-5 pt-5 border-t border-outline-variant"><div><label for="payment-screenshot" class="block font-label-lg text-label-lg text-on-surface mb-2">Transaction Screenshot</label><input id="payment-screenshot" type="file" accept="image/*" required class="w-full h-14 px-3 rounded-xl border border-outline-variant"></div><div><label for="payment-utr" class="block font-label-lg text-label-lg text-on-surface mb-2">UTR / Transaction Reference</label><input id="payment-utr" type="text" class="w-full h-14 px-3 rounded-xl border border-outline-variant" placeholder="Recommended"></div><button type="submit" class="w-full h-14 rounded-xl bg-secondary-container text-on-secondary-container font-bold">Submit Payment Proof</button><p id="payment-upload-status" class="text-sm text-on-surface-variant"></p></form></div>`;
+        modal.className = 'payment-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4';
+        modal.innerHTML = `<div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center gap-3 mb-4"><div><h3 class="font-headline-sm text-headline-sm text-primary">Outstation payment</h3><p class="text-on-surface-variant">${event.title}</p></div><button id="close-payment-modal" class="text-2xl text-on-surface-variant">&times;</button></div><div class="p-4 rounded-xl bg-secondary-fixed border border-secondary-container"><p class="text-sm text-on-surface-variant">Amount to pay</p><p class="text-3xl font-bold text-primary">₹${amount}</p><p class="text-on-surface mt-2">${event.paymentDescription || 'Outstation event fee'}</p></div>${bankTransferHtml}<div class="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-900"><strong>Important:</strong> Payment is non-refundable if you change your decision or cancel later.</div><p class="text-sm text-on-surface-variant mt-4">Choose a payment method, then submit your proof below.</p><div class="grid grid-cols-2 gap-3 mt-3"><button type="button" id="cancel-payment-modal" class="h-14 rounded-xl bg-surface-container-high text-on-surface-variant font-bold">No, go back</button><a id="pay-via-upi" href="${upiUrl}" class="touch-active h-14 rounded-xl bg-primary-container text-on-primary-container font-bold flex items-center justify-center">Pay via GPay / UPI</a></div><form id="payment-proof-form" class="space-y-3 mt-5 pt-5 border-t border-outline-variant"><div><label for="payment-screenshot" class="block font-label-lg text-label-lg text-on-surface mb-2">Transaction Screenshot</label><input id="payment-screenshot" type="file" accept="image/*" required class="w-full h-14 px-3 rounded-xl border border-outline-variant"></div><div><label for="payment-utr" class="block font-label-lg text-label-lg text-on-surface mb-2">UTR / Transaction Reference</label><input id="payment-utr" type="text" class="w-full h-14 px-3 rounded-xl border border-outline-variant" placeholder="Recommended"></div><button type="submit" class="w-full h-14 rounded-xl bg-secondary-container text-on-secondary-container font-bold">Submit Payment Proof</button><p id="payment-upload-status" class="text-sm text-on-surface-variant"></p></form></div>`;
         document.body.appendChild(modal);
+        const paymentModal = modal.querySelector('div');
+        paymentModal.classList.add('payment-modal');
+        paymentModal.querySelector('h3')?.parentElement?.parentElement?.classList.add('payment-modal-header');
+        paymentModal.querySelector('.bg-amber-50')?.classList.add('payment-disclaimer');
+        paymentModal.querySelector('.bg-surface-container-high')?.classList.add('payment-method-card');
+        paymentModal.querySelector('.bg-surface-container-high')?.insertAdjacentHTML('afterbegin', '<span class="payment-method-icon material-symbols-outlined">account_balance</span>');
+        paymentModal.querySelector('h3')?.insertAdjacentHTML('beforebegin', '<span class="payment-method-icon material-symbols-outlined text-2xl">payments</span>');
+        paymentModal.querySelector('#pay-via-upi')?.insertAdjacentHTML('afterbegin', '<span class="material-symbols-outlined">account_balance_wallet</span>');
+        paymentModal.querySelector('#payment-proof-form button[type="submit"]')?.insertAdjacentHTML('afterbegin', '<span class="material-symbols-outlined">upload_file</span>');
         document.getElementById('close-payment-modal').onclick = () => modal.remove();
         document.getElementById('cancel-payment-modal').onclick = () => modal.remove();
         document.getElementById('payment-proof-form').addEventListener('submit', async (submitEvent) => {
             submitEvent.preventDefault();
             const file = document.getElementById('payment-screenshot').files[0];
             const status = document.getElementById('payment-upload-status');
-            if (!file || !window.firebaseStorage) return;
+            if (!file) return;
             status.textContent = 'Uploading payment proof...';
             try {
-                const fileRef = window.firebaseStorage.ref(`payment-proofs/${event.id}/${state.user.uid}/${Date.now()}-${file.name}`);
-                const snapshot = await fileRef.put(file);
-                const screenshotUrl = await snapshot.ref.getDownloadURL();
+                const screenshotBase64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
                 const payment = {
                     paymentStatus: 'PENDING_APPROVAL',
                     amount: Number(event.amount),
                     paymentDescription: event.paymentDescription || '',
-                    screenshotUrl,
+                    screenshotBase64,
                     utrNumber: document.getElementById('payment-utr').value.trim(),
                     submittedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };

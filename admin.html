@@ -359,6 +359,22 @@
             border-radius: 0.65rem !important;
         }
 
+        .payment-review-backdrop {
+            background: rgba(36, 27, 22, 0.68) !important;
+            backdrop-filter: blur(8px);
+        }
+
+        .payment-review-modal {
+            border: 1px solid var(--admin-line);
+            border-radius: 1.25rem !important;
+            box-shadow: 0 28px 80px rgba(36, 27, 22, 0.28);
+        }
+
+        .payment-review-modal img {
+            min-height: 16rem;
+            background: #f5eee8;
+        }
+
         @media (max-width: 900px) {
             #app-content > section:nth-child(2) > div {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -706,6 +722,22 @@
                                         <label for="event-payment-description" class="block font-label-lg text-label-lg text-on-surface mb-2">What does the fee cover?</label>
                                         <input type="text" id="event-payment-description" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Bus travel + hotel stay">
                                     </div>
+                                    <div>
+                                        <label for="event-bank-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Bank Name</label>
+                                        <input type="text" id="event-bank-name" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Bank name">
+                                    </div>
+                                    <div>
+                                        <label for="event-account-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Account Holder Name</label>
+                                        <input type="text" id="event-account-name" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Account holder name">
+                                    </div>
+                                    <div>
+                                        <label for="event-account-number" class="block font-label-lg text-label-lg text-on-surface mb-2">Account Number</label>
+                                        <input type="text" id="event-account-number" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Account number">
+                                    </div>
+                                    <div>
+                                        <label for="event-ifsc-code" class="block font-label-lg text-label-lg text-on-surface mb-2">IFSC Code</label>
+                                        <input type="text" id="event-ifsc-code" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="IFSC code">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -998,6 +1030,22 @@
                                     <div>
                                         <label for="edit-event-payment-description" class="block font-label-lg text-label-lg text-on-surface mb-2">What does the fee cover?</label>
                                         <input type="text" id="edit-event-payment-description" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                    </div>
+                                    <div>
+                                        <label for="edit-event-bank-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Bank Name</label>
+                                        <input type="text" id="edit-event-bank-name" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                    </div>
+                                    <div>
+                                        <label for="edit-event-account-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Account Holder Name</label>
+                                        <input type="text" id="edit-event-account-name" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                    </div>
+                                    <div>
+                                        <label for="edit-event-account-number" class="block font-label-lg text-label-lg text-on-surface mb-2">Account Number</label>
+                                        <input type="text" id="edit-event-account-number" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                    </div>
+                                    <div>
+                                        <label for="edit-event-ifsc-code" class="block font-label-lg text-label-lg text-on-surface mb-2">IFSC Code</label>
+                                        <input type="text" id="edit-event-ifsc-code" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                                     </div>
                                 </div>
                             </div>
@@ -1908,6 +1956,10 @@
                 document.getElementById('edit-event-requires-payment').value = event.requiresPayment === true ? 'true' : 'false';
                 document.getElementById('edit-event-payment-amount').value = event.amount || '';
                 document.getElementById('edit-event-payment-description').value = event.paymentDescription || '';
+                document.getElementById('edit-event-bank-name').value = event.bankTransfer?.bankName || '';
+                document.getElementById('edit-event-account-name').value = event.bankTransfer?.accountName || '';
+                document.getElementById('edit-event-account-number').value = event.bankTransfer?.accountNumber || '';
+                document.getElementById('edit-event-ifsc-code').value = event.bankTransfer?.ifscCode || '';
                 document.getElementById('edit-event-payment-fields').classList.toggle('hidden', event.requiresPayment !== true);
             } else {
                 document.getElementById('edit-event-end-date-section').classList.add('hidden');
@@ -1976,6 +2028,12 @@
                 updateData.requiresPayment = document.getElementById('edit-event-requires-payment').value === 'true';
                 updateData.amount = updateData.requiresPayment ? Number(document.getElementById('edit-event-payment-amount').value) : null;
                 updateData.paymentDescription = updateData.requiresPayment ? document.getElementById('edit-event-payment-description').value.trim() : null;
+                updateData.bankTransfer = updateData.requiresPayment ? {
+                    bankName: document.getElementById('edit-event-bank-name').value.trim(),
+                    accountName: document.getElementById('edit-event-account-name').value.trim(),
+                    accountNumber: document.getElementById('edit-event-account-number').value.trim(),
+                    ifscCode: document.getElementById('edit-event-ifsc-code').value.trim().toUpperCase()
+                } : null;
             }
             
             firebaseDb.collection('events').doc(eventId).update(updateData).then(() => {
@@ -2150,6 +2208,12 @@
                 eventData.requiresPayment = document.getElementById('event-requires-payment').value === 'true';
                 eventData.amount = eventData.requiresPayment ? Number(document.getElementById('event-payment-amount').value) : null;
                 eventData.paymentDescription = eventData.requiresPayment ? document.getElementById('event-payment-description').value.trim() : null;
+                eventData.bankTransfer = eventData.requiresPayment ? {
+                    bankName: document.getElementById('event-bank-name').value.trim(),
+                    accountName: document.getElementById('event-account-name').value.trim(),
+                    accountNumber: document.getElementById('event-account-number').value.trim(),
+                    ifscCode: document.getElementById('event-ifsc-code').value.trim().toUpperCase()
+                } : null;
             }
 
             firebaseDb.collection('events').add(eventData);
@@ -2315,7 +2379,7 @@
                     const name = record.user.name || record.user.email || record.uid;
                     const contact = record.user.email || record.user.phone || 'No contact';
                     const status = payment.paymentStatus || 'NONE';
-                    return `<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 rounded-xl border border-outline-variant bg-white"><div><p class="font-bold text-on-surface">${name}</p><p class="text-sm text-on-surface-variant">${contact}</p><p class="text-sm text-on-surface-variant mt-1">${payment.submittedAt?.toDate ? payment.submittedAt.toDate().toLocaleString() : 'No proof submitted'}</p></div><div class="flex items-center gap-2"><span class="px-3 py-1 rounded-full text-xs font-bold ${status === 'APPROVED' ? 'bg-green-100 text-green-800' : status === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-800' : 'bg-surface-container-high text-on-surface-variant'}">${status}</span>${payment.screenshotUrl ? `<button class="view-payment-proof touch-active px-3 py-2 rounded-lg bg-primary-container text-on-primary-container font-bold" data-event-id="${eventId}" data-user-id="${record.uid}">View Proof</button>` : ''}</div></div>`;
+                    return `<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 rounded-xl border border-outline-variant bg-white"><div><p class="font-bold text-on-surface">${name}</p><p class="text-sm text-on-surface-variant">${contact}</p><p class="text-sm text-on-surface-variant mt-1">${payment.submittedAt?.toDate ? payment.submittedAt.toDate().toLocaleString() : 'No proof submitted'}</p></div><div class="flex items-center gap-2"><span class="px-3 py-1 rounded-full text-xs font-bold ${status === 'APPROVED' ? 'bg-green-100 text-green-800' : status === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-800' : 'bg-surface-container-high text-on-surface-variant'}">${status}</span>${payment.screenshotBase64 || payment.screenshotUrl ? `<button class="view-payment-proof touch-active px-3 py-2 rounded-lg bg-primary-container text-on-primary-container font-bold" data-event-id="${eventId}" data-user-id="${record.uid}">View Proof</button>` : ''}</div></div>`;
                 }).join('') : '<p class="text-on-surface-variant">No registrations found for this event.</p>';
 
                 list.querySelectorAll('.view-payment-proof').forEach(button => button.addEventListener('click', () => showPaymentReviewModal(eventId, button.dataset.userId, event, records.find(record => record.uid === button.dataset.userId))));
@@ -2326,9 +2390,14 @@
             if (!record) return;
             const payment = record.rsvp.payment || {};
             const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-60 p-4';
-            modal.innerHTML = `<div class="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center gap-3 mb-4"><div><h3 class="font-headline-sm text-headline-sm text-primary">Payment Proof</h3><p class="text-on-surface-variant">${record.user.name || record.user.email || userId}</p></div><button id="close-payment-review" class="text-2xl text-on-surface-variant">&times;</button></div><img src="${payment.screenshotUrl}" alt="Payment transaction screenshot" class="w-full max-h-[55vh] object-contain rounded-lg border border-outline-variant bg-surface-container-high"><div class="grid grid-cols-2 gap-3 mt-4"><div class="p-3 rounded-lg bg-surface-container-high"><p class="text-xs text-on-surface-variant">Amount expected</p><p class="font-bold">₹${event?.amount || payment.amount || 0}</p></div><div class="p-3 rounded-lg bg-surface-container-high"><p class="text-xs text-on-surface-variant">UTR / reference</p><p class="font-bold break-all">${payment.utrNumber || 'Not provided'}</p></div></div><p class="text-on-surface mt-4">${event?.paymentDescription || ''}</p><div class="grid grid-cols-2 gap-3 mt-5"><button id="reject-payment" class="h-12 rounded-lg bg-error-container text-on-error-container font-bold">Reject Payment</button><button id="approve-payment" class="h-12 rounded-lg bg-primary-container text-on-primary-container font-bold">Approve Payment</button></div></div>`;
+            modal.className = 'payment-review-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4';
+            modal.innerHTML = `<div class="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center gap-3 mb-4"><div><h3 class="font-headline-sm text-headline-sm text-primary">Payment Proof</h3><p class="text-on-surface-variant">${record.user.name || record.user.email || userId}</p></div><button id="close-payment-review" class="text-2xl text-on-surface-variant">&times;</button></div><img src="${payment.screenshotBase64 || payment.screenshotUrl}" alt="Payment transaction screenshot" class="w-full max-h-[55vh] object-contain rounded-lg border border-outline-variant bg-surface-container-high"><div class="grid grid-cols-2 gap-3 mt-4"><div class="p-3 rounded-lg bg-surface-container-high"><p class="text-xs text-on-surface-variant">Amount expected</p><p class="font-bold">₹${event?.amount || payment.amount || 0}</p></div><div class="p-3 rounded-lg bg-surface-container-high"><p class="text-xs text-on-surface-variant">UTR / reference</p><p class="font-bold break-all">${payment.utrNumber || 'Not provided'}</p></div></div><p class="text-on-surface mt-4">${event?.paymentDescription || ''}</p><div class="grid grid-cols-2 gap-3 mt-5"><button id="reject-payment" class="h-12 rounded-lg bg-error-container text-on-error-container font-bold">Reject Payment</button><button id="approve-payment" class="h-12 rounded-lg bg-primary-container text-on-primary-container font-bold">Approve Payment</button></div></div>`;
             document.body.appendChild(modal);
+            const reviewModal = modal.querySelector('div');
+            reviewModal.classList.add('payment-review-modal');
+            reviewModal.querySelector('h3')?.insertAdjacentHTML('beforebegin', '<span class="material-symbols-outlined text-2xl text-primary">fact_check</span>');
+            reviewModal.querySelector('#approve-payment')?.insertAdjacentHTML('afterbegin', '<span class="material-symbols-outlined align-middle mr-1">check_circle</span>');
+            reviewModal.querySelector('#reject-payment')?.insertAdjacentHTML('afterbegin', '<span class="material-symbols-outlined align-middle mr-1">cancel</span>');
             document.getElementById('close-payment-review').onclick = () => modal.remove();
             const updateStatus = status => firebaseDb.collection('rsvps').doc(userId).update({
                 [`${eventId}.payment.paymentStatus`]: status,
