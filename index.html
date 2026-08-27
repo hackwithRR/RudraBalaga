@@ -2757,7 +2757,8 @@
 
     function showPaymentModal(event) {
         const amount = Number(event.amount || 0).toFixed(2);
-        const upiId = window.paymentConfig?.upiId || 'YOUR_UPI_ID@bank';
+        const upiId = event.upiId || window.paymentConfig?.upiId || 'YOUR_UPI_ID@bank';
+        const upiLabel = ((window.paymentConfig?.upiIds || []).find((option) => option.id === upiId) || {}).label || 'UPI';
         const appName = window.paymentConfig?.appName || 'Rudra Balaga';
         const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(appName)}&am=${encodeURIComponent(amount)}&cu=INR&tn=${encodeURIComponent(`EVENT_${event.id}_${state.user.uid}`)}`;
         const bankTransfer = event.bankTransfer || {};
@@ -2809,6 +2810,7 @@
                                 <span class="material-symbols-outlined">account_balance_wallet</span>Pay via GPay / UPI
                             </a>
                         </div>
+                        <p class="text-xs text-on-surface-variant mt-2 text-center min-[420px]:text-left break-all">Paying to: <strong class="text-on-surface">${upiLabel} &middot; ${upiId}</strong></p>
                     </div>
                     <form id="payment-proof-form" class="space-y-3 pt-4 border-t border-outline-variant">
                         <p class="payment-step-label font-label-lg text-label-lg text-on-surface"><span class="payment-step-num">2</span>Submit your payment proof</p>

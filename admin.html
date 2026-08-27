@@ -858,6 +858,11 @@
                                         <label for="event-payment-description" class="block font-label-lg text-label-lg text-on-surface mb-2">What does the fee cover?</label>
                                         <input type="text" id="event-payment-description" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Bus travel + hotel stay">
                                     </div>
+                                    <div class="md:col-span-2">
+                                        <label for="event-upi-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Payment UPI ID</label>
+                                        <select id="event-upi-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"></select>
+                                        <p class="mt-2 text-sm text-on-surface-variant">Members will pay this event's fee to the selected UPI ID.</p>
+                                    </div>
                                     <div>
                                         <label for="event-bank-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Bank Name</label>
                                         <input type="text" id="event-bank-name" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Bank name">
@@ -1164,6 +1169,11 @@
                                     <div>
                                         <label for="edit-event-payment-description" class="block font-label-lg text-label-lg text-on-surface mb-2">What does the fee cover?</label>
                                         <input type="text" id="edit-event-payment-description" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="edit-event-upi-select" class="block font-label-lg text-label-lg text-on-surface mb-2">Payment UPI ID</label>
+                                        <select id="edit-event-upi-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"></select>
+                                        <p class="mt-2 text-sm text-on-surface-variant">Members will pay this event's fee to the selected UPI ID.</p>
                                     </div>
                                     <div>
                                         <label for="edit-event-bank-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Bank Name</label>
@@ -1562,6 +1572,21 @@
                     eventTypeSelect.dispatchEvent(new Event('change'));
                 });
             }
+
+            // Fill the per-event UPI ID selects from the shared payment config
+            function populateUpiSelects() {
+                const upiOptions = (window.paymentConfig?.upiIds && window.paymentConfig.upiIds.length)
+                    ? window.paymentConfig.upiIds
+                    : [{ label: 'Rudrabalaga Trust', id: window.paymentConfig?.upiId || 'YOUR_UPI_ID@bank' }];
+                ['event-upi-select', 'edit-event-upi-select'].forEach((selectId) => {
+                    const select = document.getElementById(selectId);
+                    if (!select) return;
+                    select.innerHTML = upiOptions.map((option) =>
+                        `<option value="${option.id}">${option.label} &#8226; ${option.id}</option>`
+                    ).join('');
+                });
+            }
+            populateUpiSelects();
 
             const paymentSelect = document.getElementById('event-requires-payment');
             if (paymentSelect) {
@@ -2375,6 +2400,14 @@
                 document.getElementById('edit-event-requires-payment').value = event.requiresPayment === true ? 'true' : 'false';
                 document.getElementById('edit-event-payment-amount').value = event.amount || '';
                 document.getElementById('edit-event-payment-description').value = event.paymentDescription || '';
+                const editUpiSelect = document.getElementById('edit-event-upi-select');
+                if (editUpiSelect) {
+                    const currentUpiId = event.upiId || window.paymentConfig?.upiId || '';
+                    if (currentUpiId && !Array.from(editUpiSelect.options).some((option) => option.value === currentUpiId)) {
+                        editUpiSelect.insertAdjacentHTML('beforeend', `<option value="${currentUpiId}">${currentUpiId}</option>`);
+                    }
+                    editUpiSelect.value = currentUpiId;
+                }
                 document.getElementById('edit-event-bank-name').value = event.bankTransfer?.bankName || '';
                 document.getElementById('edit-event-account-name').value = event.bankTransfer?.accountName || '';
                 document.getElementById('edit-event-account-number').value = event.bankTransfer?.accountNumber || '';
@@ -2462,6 +2495,7 @@
                 updateData.requiresPayment = document.getElementById('edit-event-requires-payment').value === 'true';
                 updateData.amount = updateData.requiresPayment ? Number(document.getElementById('edit-event-payment-amount').value) : null;
                 updateData.paymentDescription = updateData.requiresPayment ? document.getElementById('edit-event-payment-description').value.trim() : null;
+                updateData.upiId = updateData.requiresPayment ? (document.getElementById('edit-event-upi-select').value || null) : null;
                 updateData.bankTransfer = updateData.requiresPayment ? {
                     bankName: document.getElementById('edit-event-bank-name').value.trim(),
                     accountName: document.getElementById('edit-event-account-name').value.trim(),
@@ -2694,6 +2728,7 @@
                 eventData.requiresPayment = document.getElementById('event-requires-payment').value === 'true';
                 eventData.amount = eventData.requiresPayment ? Number(document.getElementById('event-payment-amount').value) : null;
                 eventData.paymentDescription = eventData.requiresPayment ? document.getElementById('event-payment-description').value.trim() : null;
+                eventData.upiId = eventData.requiresPayment ? (document.getElementById('event-upi-select').value || null) : null;
                 eventData.bankTransfer = eventData.requiresPayment ? {
                     bankName: document.getElementById('event-bank-name').value.trim(),
                     accountName: document.getElementById('event-account-name').value.trim(),

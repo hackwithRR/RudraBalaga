@@ -13,7 +13,14 @@ const firebaseConfig = {
 // Replace these placeholders with the account that receives event payments.
 const paymentConfig = {
   upiId: "rudra80508421@barodampay",
-  appName: "Rudra Balaga"
+  appName: "Rudra Balaga",
+  // UPI IDs admins can choose per event in the Add/Edit Event form.
+  // The first entry is the default. Replace the placeholder IDs with real ones.
+  upiIds: [
+    { label: "Rudrabalaga Trust", id: "rudra80508421@barodampay" },
+    { label: "UPI ID 2 (placeholder)", id: "placeholder2@upi" },
+    { label: "UPI ID 3 (placeholder)", id: "placeholder3@upi" }
+  ]
 };
 
 // Donation payment details (UPI is reused from paymentConfig; bank transfer is funnel-specific).
