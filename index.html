@@ -2220,8 +2220,17 @@
             if (!upcomingEvents.length) return [];
 
             const userRsvps = state.rsvps[state.user.uid] || {};
-            const unansweredEvents = upcomingEvents.filter(event => !userRsvps[event.id]);
-            if (unansweredEvents.length) return unansweredEvents;
+
+            // A member must respond again when they never answered, or when an admin
+            // accepted their payment first and later rejected it (RSVP reset - e.g. a
+            // mistake or misunderstanding). Such events must surface on the home tab
+            // again so the member can re-attend / re-pay or cancel.
+            const needsResponseEvents = upcomingEvents.filter(event => {
+                const rsvp = userRsvps[event.id];
+                if (!rsvp) return true;
+                return rsvp.status === 'attending' && rsvp.payment?.paymentStatus === 'REJECTED';
+            });
+            if (needsResponseEvents.length) return needsResponseEvents;
 
             const attendingEvents = upcomingEvents.filter(event => userRsvps[event.id].status === 'attending');
             return [attendingEvents.length ? attendingEvents[attendingEvents.length - 1] : upcomingEvents[upcomingEvents.length - 1]];
@@ -2348,9 +2357,19 @@
 
             const upcomingEvents = state.events.filter(event => event.date && new Date(event.date) >= new Date(new Date().setHours(0, 0, 0, 0)));
             const userRsvps = state.rsvps[state.user.uid] || {};
-            const allUpcomingResponded = upcomingEvents.length > 0 && upcomingEvents.every(event => userRsvps[event.id]);
+            // A payment-rejected RSVP is not an active attending response (matches
+            // getEventAttendingCount), so it must not show in the attending bar either.
+            const isActivelyAttending = (event) => {
+                const rsvp = userRsvps[event.id];
+                return !!rsvp && rsvp.status === 'attending' && rsvp.payment?.paymentStatus !== 'REJECTED';
+            };
+            const allUpcomingResponded = upcomingEvents.length > 0 && upcomingEvents.every(event => {
+                const rsvp = userRsvps[event.id];
+                // Responded = has a RSVP and isn't in the "payment rejected - respond again" state.
+                return !!rsvp && !(rsvp.status === 'attending' && rsvp.payment?.paymentStatus === 'REJECTED');
+            });
             const attendingEvents = upcomingEvents
-                .filter(event => userRsvps[event.id] && userRsvps[event.id].status === 'attending')
+                .filter(isActivelyAttending)
                 .sort((first, second) => new Date(first.date) - new Date(second.date));
             const attendingEventBar = document.getElementById('attending-event-bar');
             const attendingEventBarText = document.getElementById('attending-event-bar-text');
