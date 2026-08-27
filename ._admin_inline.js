@@ -1118,7 +1118,7 @@
                     </head>
                     <body>
                         <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h1>ರುದ್ರ ಬಳಗ - Rudra Parayana</h1>
                             <h2>Attendance Sheet</h2>
                             <p class="date">Event: ${event?.title || 'Unknown'} | Date: ${new Date().toLocaleDateString()}</p>
                         </div>
@@ -1372,7 +1372,7 @@
                     </head>
                     <body>
                         <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h1>ರುದ್ರ ಬಳಗ - Rudra Parayana</h1>
                             <h2>Bus Routes Report</h2>
                             <p>Event: ${event?.title || 'Unknown'}</p>
                         </div>
@@ -1541,7 +1541,7 @@
                         </style>
                     </head>
                     <body>
-                        <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                        <h1>ರುದ್ರ ಬಳಗ - Rudra Parayana</h1>
                         <h2>Bus: ${bus.name}</h2>
                         <div class="bus">Pickup points & selected members</div>
                 `;
@@ -1629,7 +1629,7 @@
                     </head>
                     <body>
                         <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h1>ರುದ್ರ ಬಳಗ - Rudra Parayana</h1>
                             <h2>Route-wise Members Report</h2>
                             <p>Event: ${event?.title || 'Unknown'}</p>
                         </div>
@@ -1711,7 +1711,7 @@
                     </head>
                     <body>
                         <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h1>ರುದ್ರ ಬಳಗ - Rudra Parayana</h1>
                             <h2>Consolidated Route-wise Members Report</h2>
                         </div>
                 `;
@@ -1807,7 +1807,7 @@
                     </head>
                     <body>
                         <div class="header">
-                            <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                            <h1>ರುದ್ರ ಬಳಗ - Rudra Parayana</h1>
                             <h2>Consolidated Bus Routes Report</h2>
                         </div>
                 `;

@@ -431,7 +431,7 @@ function downloadBusRoutesUsersPDF() {
             </head>
             <body>
                 <div class="header">
-                    <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                    <h1>ರುದ್ರ ಬಳಗ - Rudra Parayana</h1>
                     <h2>Bus Routes Report</h2>
                     <p>Event: ${event?.title || 'Unknown'}</p>
                 </div>
@@ -494,7 +494,7 @@ function downloadConsolidatedBusRoutesPDF() {
             </head>
             <body>
                 <div class="header">
-                    <h1>ರುದ್ರ ಬಲಗ - Rudra Parayana</h1>
+                    <h1>ರುದ್ರ ಬಳಗ - Rudra Parayana</h1>
                     <h2>Consolidated Bus Routes Report</h2>
                 </div>
         `;

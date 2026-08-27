@@ -264,7 +264,9 @@
         }
 
         #members-tab svg,
-        #announcements-tab svg {
+        #announcements-tab svg,
+        #members-tab .material-symbols-outlined,
+        #announcements-tab .material-symbols-outlined {
             color: var(--admin-teal);
         }
 
@@ -622,7 +624,7 @@
         <!-- App Branding Typography -->
         <div class="overflow-visible text-center mt-6">
             <h1 id="app-title" class="text-3xl font-black text-stone-900 opacity-0 translate-y-[100%]">
-                ರುದ್ರ <span class="text-[#ff5722] orange-glow">ಬಲಗ</span>
+                ರುದ್ರ <span class="text-[#ff5722] orange-glow">ಬಳಗ</span>
             </h1>
         </div>
         </div>
@@ -641,12 +643,10 @@
         <div class="flex justify-between items-center px-4 h-16">
             <div class="flex items-center gap-2">
                 <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-on-primary-container">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-xl">home</span>
                 </a>
                 <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
-                <h1 class="text-xl font-bold text-primary min-w-0 truncate">ರುದ್ರ ಬಲಗ</h1>
+                <h1 class="text-xl font-bold text-primary min-w-0 truncate">ರುದ್ರ ಬಳಗ</h1>
             </div>
             <div class="flex items-center gap-2">
                 <div class="text-right">
@@ -671,33 +671,23 @@
         <section>
             <div class="grid grid-cols-2 gap-3">
                 <button id="add-event-tab" class="tab-active touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-primary-container text-on-primary-container shadow-md">
-                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V7h14v12zm-8-8h2v-2h2v-2h-2V7h-2v2H9v2h2v2z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl mb-1">event</span>
                     <span>Add Event</span>
                 </button>
                 <button id="event-history-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
-                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl mb-1">history</span>
                     <span>Event History</span>
                 </button>
                 <button id="attendance-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
-                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl mb-1">how_to_reg</span>
                     <span>Attendance</span>
                 </button>
                 <button id="bus-routes-users-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
-                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M4 16.5V6.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5zm2-11v10h11V6.5H6zm5 2.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl mb-1">directions_bus</span>
                     <span>Bus Routes (Manage)</span>
                 </button>
                 <button id="bus-routes-selected-members-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
-                    <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2v2zm8 0c1.1 0 2-.9 2-2h2c0 2.21-1.79 4-4 4v-2zm-3 9c-2.67 0-8-1.34-8-4v-2h16v2c0 2.66-5.33 4-8 4z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-3xl mb-1">route</span>
                     <span>Route-wise Members</span>
                 </button>
                 <button id="event-payments-tab" class="touch-active h-20 rounded-xl font-bold text-body-lg flex flex-col items-center justify-center gap-1 bg-surface-container-high text-on-surface-variant border-2 border-outline-variant">
@@ -714,9 +704,7 @@
         <!-- Members Button (Full width) -->
         <section class="mt-3">
             <button id="members-tab" class="touch-active w-full h-16 rounded-xl font-bold text-body-lg flex items-center justify-center gap-3 bg-tertiary-container text-on-tertiary shadow-md">
-                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2v2zm8 0c1.1 0 2-.9 2-2h2c0 2.21-1.79 4-4 4zm4.5 6.5c-1.66-1.34-4.34-1.34-6 0l-1.5 1.5c-.39.39-.39 1.02 0 1.41l1.5 1.5c.67.53 1.37.79 2.12.79s1.45-.26 2.12-.79l1.5-1.5c.39-.39.39-1.02 0-1.41l-1.5-1.5z"/>
-                </svg>
+                <span class="material-symbols-outlined text-2xl">group</span>
                 Members
             </button>
         </section>
@@ -724,9 +712,7 @@
         <!-- Announcements Button (Full width) -->
         <section class="mt-3">
             <button id="announcements-tab" class="touch-active w-full h-16 rounded-xl font-bold text-body-lg flex items-center justify-center gap-3 bg-tertiary-container text-on-tertiary shadow-md">
-                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2-2V4c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1z"/>
-                </svg>
+                <span class="material-symbols-outlined text-2xl">campaign</span>
                 Announcements
             </button>
         </section>
@@ -786,9 +772,7 @@
                         <input type="file" id="announcement-image" accept="image/*" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                     </div>
                     <button type="submit" class="w-full h-[60px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M2.01 21L23 12c1.37-1.03 1.37-3.1 0-4.14L2.01 3v7.5l10.5 2.5-10.5 2.5V21z"/>
-                        </svg>
+                        <span class="material-symbols-outlined text-xl">send</span>
                         Send Announcement
                     </button>
                 </form>
@@ -852,6 +836,11 @@
                                     <label for="return-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Arriving Back in Bangalore</label>
                                     <input type="date" id="return-date" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                                 </div>
+                                <div class="rounded-xl border-2 border-primary-container bg-white p-3 md:col-span-2">
+                                    <label for="registration-deadline" class="block font-label-lg text-label-lg text-on-surface mb-2">Last Date to Register</label>
+                                    <input type="date" id="registration-deadline" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                    <p class="mt-2 text-sm text-on-surface-variant">Members must mark their attendance on or before this date so tickets can be booked in advance. Registrations are not accepted after this date.</p>
+                                </div>
                             </div>
                             <p class="mt-3 text-sm text-on-surface-variant">Select your trip start and end date for the outstation event.</p>
                             <div class="mt-4 pt-4 border-t border-outline-variant">
@@ -905,9 +894,7 @@
                         <input type="number" id="event-custom-limit" placeholder="Enter custom limit" min="1" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                     </div>
                     <button type="submit" class="w-full h-[60px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 13h-4v4h-2v-4H5v-2h10V5h2v6h4v2z"/>
-                        </svg>
+                        <span class="material-symbols-outlined text-xl">add_circle</span>
                         Create Event
                     </button>
                 </form>
@@ -968,15 +955,11 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3 mt-4">
                         <button id="download-bus-routes-users-pdf" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm2-4H6v-2h8v2zm4-4h-2V5h2v4z"/>
-                            </svg>
+                            <span class="material-symbols-outlined text-xl">picture_as_pdf</span>
                             Download PDF
                         </button>
                         <button id="download-consolidated-bus-routes-pdf" class="w-full h-[56px] bg-tertiary-container text-on-tertiary rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8H5v-2h4v2zm0-4H5V9h4v4zm0-4H5V5h4v2z"/>
-                            </svg>
+                            <span class="material-symbols-outlined text-xl">inventory_2</span>
                             Consolidated
                         </button>
                     </div>
@@ -1002,15 +985,11 @@
 
                     <div class="grid grid-cols-2 gap-3 mt-4">
                         <button id="download-bus-routes-selected-members-pdf" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm2-4H6v-2h8v2zm4-4h-2V5h2v4z"/>
-                            </svg>
+                            <span class="material-symbols-outlined text-xl">picture_as_pdf</span>
                             Download PDF
                         </button>
                         <button id="download-consolidated-bus-routes-selected-members-pdf" class="w-full h-[56px] bg-tertiary-container text-on-tertiary rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8H5v-2h4v2zm0-4H5V9h4v4zm0-4H5V5h4v2z"/>
-                            </svg>
+                            <span class="material-symbols-outlined text-xl">inventory_2</span>
                             Consolidated
                         </button>
                     </div>
@@ -1038,9 +1017,7 @@
                         <!-- Take Attendance Section -->
                         <div class="mb-4">
                         <button id="take-attendance-btn" class="w-full h-[56px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                            </svg>
+                            <span class="material-symbols-outlined text-xl">how_to_reg</span>
                             Take Attendance
                         </button>
                         </div>
@@ -1063,15 +1040,11 @@
                         <!-- Download Buttons -->
                         <div class="grid grid-cols-2 gap-3 mt-4">
                             <button id="download-pdf-btn" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm2-4H6v-2h8v2zm4-4h-2V5h2v4z"/>
-                                </svg>
+                                <span class="material-symbols-outlined text-xl">picture_as_pdf</span>
                                 Download PDF
                             </button>
                             <button id="download-excel-btn" class="w-full h-[56px] bg-tertiary-container text-on-tertiary rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8h-2v-2h2v2zm0-4h-2V9h2v4zm0-4h-2V5h2v4zm-4 8H5v-2h4v2zm0-4H5V9h4v4zm0-4H5V5h4v2z"/>
-                                </svg>
+                                <span class="material-symbols-outlined text-xl">table_chart</span>
                                 Download Excel
                             </button>
                         </div>
@@ -1170,6 +1143,11 @@
                                     <label for="edit-return-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Arriving Back in Bangalore</label>
                                     <input type="date" id="edit-return-date" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                                 </div>
+                                <div class="rounded-xl border-2 border-primary-container bg-white p-3 md:col-span-2">
+                                    <label for="edit-registration-deadline" class="block font-label-lg text-label-lg text-on-surface mb-2">Last Date to Register</label>
+                                    <input type="date" id="edit-registration-deadline" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                                    <p class="mt-2 text-sm text-on-surface-variant">Registrations are not accepted on the member side after this date.</p>
+                                </div>
                             </div>
                             <p class="mt-3 text-sm text-on-surface-variant">Adjust the trip dates for this outstation event.</p>
                             <div class="mt-4 pt-4 border-t border-outline-variant">
@@ -1227,9 +1205,7 @@
                             Cancel
                         </button>
                         <button type="submit" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V7h14v12zm-8-8h2v-2h2v-2h-2V7h-2v2H9v2h2v2z"/>
-                            </svg>
+                            <span class="material-symbols-outlined text-xl">save</span>
                             Save Changes
                         </button>
                     </div>
@@ -1244,9 +1220,7 @@
     <!-- Action Buttons -->
     <section class="grid grid-cols-1 gap-3">
         <button id="logout-btn" class="w-full h-[56px] bg-error text-on-error rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M16 13v-2H7V8l-5 4 5 4v-3h9zM20 3H4c-1.1 0-2 .9-2 2v4h2V5h16v14H4v-4H2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-            </svg>
+            <span class="material-symbols-outlined text-xl">logout</span>
             Logout
         </button>
     </section>
@@ -2397,6 +2371,7 @@
                 document.getElementById('edit-outstation-dates-section').classList.remove('hidden');
                 document.getElementById('edit-departure-date').value = event.departureDate || '';
                 document.getElementById('edit-return-date').value = event.returnDate || '';
+                document.getElementById('edit-registration-deadline').value = event.registrationDeadline || '';
                 document.getElementById('edit-event-requires-payment').value = event.requiresPayment === true ? 'true' : 'false';
                 document.getElementById('edit-event-payment-amount').value = event.amount || '';
                 document.getElementById('edit-event-payment-description').value = event.paymentDescription || '';
@@ -2441,6 +2416,7 @@
                 mapLink: document.getElementById('edit-event-map-link').value || null,
                 limit: limit,
                 isOutstation: type === 'Outstation',
+                registrationDeadline: null,
                 requiresPayment: false,
                 amount: null,
                 paymentDescription: null
@@ -2452,6 +2428,7 @@
                 const eventEndDate = document.getElementById('edit-event-end-date').value || null;
                 const departureDate = document.getElementById('edit-departure-date').value || null;
                 const returnDate = document.getElementById('edit-return-date').value || null;
+                const registrationDeadline = document.getElementById('edit-registration-deadline').value || null;
 
                 if (!validateOutstationDateRange(eventStartDate, eventEndDate)) {
                     alert('Event end date must be on or after the event start date.');
@@ -2459,6 +2436,18 @@
                 }
                 if (!validateOutstationDateRange(departureDate, returnDate)) {
                     alert('Arriving-back date must be on or after the departure date.');
+                    return;
+                }
+                if (!registrationDeadline) {
+                    alert('Please set the last date to register so members can confirm their attendance before tickets are booked.');
+                    return;
+                }
+                if (!validateOutstationDateRange(registrationDeadline, eventStartDate)) {
+                    alert('Last date to register must be on or before the event start date.');
+                    return;
+                }
+                if (departureDate && !validateOutstationDateRange(registrationDeadline, departureDate)) {
+                    alert('Last date to register must be on or before the departure date, so attendance can be counted for ticket booking.');
                     return;
                 }
 
@@ -2469,6 +2458,7 @@
                 updateData.returnDate = endDate;
                 updateData.outstationDates = rangeDates.length ? rangeDates : [];
                 updateData.isOutstation = true;
+                updateData.registrationDeadline = registrationDeadline;
                 updateData.requiresPayment = document.getElementById('edit-event-requires-payment').value === 'true';
                 updateData.amount = updateData.requiresPayment ? Number(document.getElementById('edit-event-payment-amount').value) : null;
                 updateData.paymentDescription = updateData.requiresPayment ? document.getElementById('edit-event-payment-description').value.trim() : null;
@@ -2639,6 +2629,7 @@
             const departureDate = document.getElementById('departure-date').value;
             const returnDate = document.getElementById('return-date').value;
             const eventEndDate = document.getElementById('event-end-date').value;
+            const registrationDeadline = document.getElementById('registration-deadline').value;
 
             if (type === 'Outstation') {
                 if (!validateOutstationDateRange(date, eventEndDate)) {
@@ -2647,6 +2638,22 @@
                 }
                 if (!validateOutstationDateRange(departureDate, returnDate)) {
                     alert('Arriving-back date must be on or after the departure date.');
+                    return;
+                }
+                if (!registrationDeadline) {
+                    alert('Please set the last date to register so members can confirm their attendance before tickets are booked.');
+                    return;
+                }
+                if (!validateOutstationDateRange(registrationDeadline, date)) {
+                    alert('Last date to register must be on or before the event start date.');
+                    return;
+                }
+                if (departureDate && !validateOutstationDateRange(registrationDeadline, departureDate)) {
+                    alert('Last date to register must be on or before the departure date, so attendance can be counted for ticket booking.');
+                    return;
+                }
+                if (new Date(`${registrationDeadline}T23:59:59`) < new Date(new Date().setHours(0, 0, 0, 0))) {
+                    alert('Last date to register cannot be in the past.');
                     return;
                 }
             }
@@ -2668,6 +2675,7 @@
                 mapLink: mapLink || null,
                 limit: limit,
                 isOutstation: type === 'Outstation',
+                registrationDeadline: null,
                 requiresPayment: false,
                 amount: null,
                 paymentDescription: null,
@@ -2682,6 +2690,7 @@
                 eventData.returnDate = endDate || null;
                 eventData.outstationDates = rangeDates.length ? rangeDates : [];
                 eventData.isOutstation = true;
+                eventData.registrationDeadline = registrationDeadline;
                 eventData.requiresPayment = document.getElementById('event-requires-payment').value === 'true';
                 eventData.amount = eventData.requiresPayment ? Number(document.getElementById('event-payment-amount').value) : null;
                 eventData.paymentDescription = eventData.requiresPayment ? document.getElementById('event-payment-description').value.trim() : null;
@@ -3168,6 +3177,51 @@
             return `<div class="member-line"><span class="member-name"><span class="idx">${index}.</span>${pdfEscape(name)}</span><span class="phone-chip">${pdfEscape(phone)}</span></div>`;
         }
 
+        // Compute age in years from a date-of-birth value.
+        // DOB is saved from the profile <input type="date"> (YYYY-MM-DD). Parsing is
+        // defensive so an empty/invalid date just renders its raw value instead of NaN.
+        function calculateAge(dob) {
+            if (!dob) return 'N/A';
+            const parts = String(dob).split('-');
+            if (parts.length === 3 && parts[0].length === 4) {
+                const year = Number(parts[0]);
+                const month = Number(parts[1]);
+                const day = Number(parts[2]);
+                if (!Number.isNaN(year) && !Number.isNaN(month) && !Number.isNaN(day)) {
+                    const now = new Date();
+                    let age = now.getFullYear() - year;
+                    // Subtract a year if the birthday hasn't happened yet this year
+                    const beforeBirthday = (now.getMonth() + 1 < month) ||
+                        (now.getMonth() + 1 === month && now.getDate() < day);
+                    if (beforeBirthday) age--;
+                    return age >= 0 ? age : 0;
+                }
+            }
+            return String(dob);
+        }
+
+        // Map an RSVP payment status to a printable label.
+        // When the event does not require payment, missing records render as N/A
+        // instead of wrongly marking everyone "Not paid".
+        function paymentStatusInfo(status, requirePayment) {
+            switch (status) {
+                case 'APPROVED':
+                    return { key: 'paid', label: 'Paid' };
+                case 'PENDING_APPROVAL':
+                    return { key: 'pending', label: 'Pending approval' };
+                case 'REJECTED':
+                case 'NONE':
+                    return { key: 'unpaid', label: 'Not paid' };
+                default:
+                    return requirePayment ? { key: 'unpaid', label: 'Not paid' } : { key: 'na', label: 'N/A' };
+            }
+        }
+
+        function paymentStatusBadge(status, requirePayment) {
+            const info = paymentStatusInfo(status, requirePayment);
+            return `<span class="badge badge-${info.key}">${pdfEscape(info.label)}</span>`;
+        }
+
         function buildPrintDocument({ title, subtitle, metaRows, stats, bodyHtml }) {
             const generatedAt = new Date().toLocaleString();
             return `<!DOCTYPE html>
@@ -3200,6 +3254,11 @@
         .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; border-bottom: 2px solid #f0e4d8; padding-bottom: 8px; margin-bottom: 10px; }
         .card-title { margin: 0; font-size: 14px; font-weight: 700; color: #6d3a00; }
         .chip { font-size: 10px; font-weight: 700; background: #ffe8cc; color: #8f4e00; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+        .badge { display: inline-block; font-size: 10px; font-weight: 800; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+        .badge-paid { background: #dcfce7; color: #166534; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-unpaid { background: #fee2e2; color: #991b1b; }
+        .badge-na { background: #f0e4d8; color: #8a7566; }
         table.data { width: 100%; border-collapse: collapse; margin-top: 6px; }
         table.data th { background: #8f4e00; color: #ffffff; text-align: left; font-size: 11px; font-weight: 700; padding: 8px 10px; }
         table.data th:first-child { border-top-left-radius: 8px; }
@@ -3235,7 +3294,7 @@
             <div class="band-brand">
                 <span class="brand-mark">&#2384;</span>
                 <div>
-                    <h1>ರುದ್ರ ಬಲಗ · Rudra Parayana</h1>
+                    <h1>ರುದ್ರ ಬಳಗ · Rudra Parayana</h1>
                     <p class="org-sub">Admin report</p>
                 </div>
             </div>
@@ -3270,6 +3329,11 @@
             if (!eventId) return;
 
             const event = state.events.find(e => e.id === eventId);
+            const isOutstationEvent = event?.type === 'Outstation' || event?.isOutstation === true;
+            const requirePayment = event?.requiresPayment === true;
+            // Payments are collected for outstation events – include the
+            // paid/not-paid column whenever payment tracking applies.
+            const trackPayments = isOutstationEvent || requirePayment;
 
             // Get all member data
             firebaseDb.collection('users').get().then(usersSnapshot => {
@@ -3279,19 +3343,31 @@
                 });
 
                 const attendingRows = [];
+                let paidCount = 0;
+                let pendingCount = 0;
+                let notPaidCount = 0;
 
                 Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                     const rsvp = rsvpData[eventId];
                     const user = users[uid] || {};
                     // Check for both 'attending' and 'attended' statuses
                     if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended')) {
+                        const paymentInfo = paymentStatusInfo(rsvp.payment?.paymentStatus || '', requirePayment);
+                        if (paymentInfo.key === 'paid') paidCount++;
+                        else if (paymentInfo.key === 'pending') pendingCount++;
+                        else if (paymentInfo.key === 'unpaid') notPaidCount++;
+
                         attendingRows.push({
                             id: user.userId || 'N/A',
                             name: user.name || user.email || 'Unknown',
                             phone: user.phone || 'N/A',
-                            email: user.email || 'N/A',
-                            dob: user.dob || 'N/A',
-                            address: user.address || 'N/A'
+                            age: calculateAge(user.dob),
+                            address: user.address || 'N/A',
+                            emergencyName: user.emergencyContactName || 'N/A',
+                            emergencyPhone: user.emergencyContact || 'N/A',
+                            emergencyRelation: user.emergencyContactRelation || 'N/A',
+                            paymentStatus: rsvp.payment?.paymentStatus || '',
+                            paymentLabel: paymentInfo.label
                         });
                     }
                 });
@@ -3302,9 +3378,12 @@
                                 <td>${pdfEscape(row.id)}</td>
                                 <td class="name-cell">${pdfEscape(row.name)}</td>
                                 <td>${pdfEscape(row.phone)}</td>
-                                <td>${pdfEscape(row.email)}</td>
-                                <td>${pdfEscape(row.dob)}</td>
+                                <td>${pdfEscape(row.age)}</td>
                                 <td>${pdfEscape(row.address)}</td>
+                                <td>${pdfEscape(row.emergencyName)}</td>
+                                <td>${pdfEscape(row.emergencyPhone)}</td>
+                                <td>${pdfEscape(row.emergencyRelation)}</td>
+                                ${trackPayments ? `<td>${paymentStatusBadge(row.paymentStatus, requirePayment)}</td>` : ''}
                             </tr>`).join('');
 
                 const bodyHtml = `
@@ -3312,36 +3391,66 @@
                         <div class="card-head">
                             <h3 class="card-title">Attending members</h3>
                             <span class="chip">${attendingRows.length} members</span>
+                            ${isOutstationEvent ? '<span class="chip">Outstation</span>' : ''}
                         </div>
                         ${attendingRows.length ? `
                         <table class="data">
                             <thead>
-                                <tr><th>#</th><th>Member ID</th><th>Name</th><th>Phone</th><th>Email</th><th>DOB</th><th>Address</th></tr>
+                                <tr><th>#</th><th>Member ID</th><th>Name</th><th>Phone</th><th>Age</th><th>Address</th><th>Emergency contact</th><th>Emergency phone</th><th>Relationship</th>${trackPayments ? '<th>Payment</th>' : ''}</tr>
                             </thead>
                             <tbody>${tableRows}</tbody>
                         </table>` : '<p class="empty">No attending members yet.</p>'}
                     </section>`;
 
+                const metaRows = [
+                    ['Event date', event?.date ? formatDate(event.date) : ''],
+                    ['Venue', event?.location || ''],
+                    ['Event type', isOutstationEvent ? 'Outstation' : (event?.type || '')],
+                    ['Report date', new Date().toLocaleDateString()]
+                ];
+                if (requirePayment) {
+                    metaRows.push(['Fee', `₹${Number(event?.amount) || 0}`]);
+                }
+                if (isOutstationEvent && event?.departureDate && event?.returnDate) {
+                    metaRows.push(['Trip dates', `${formatDate(event.departureDate)} – ${formatDate(event.returnDate)}`]);
+                }
+                if (isOutstationEvent && event?.registrationDeadline) {
+                    metaRows.push(['Last date to register', formatDate(event.registrationDeadline)]);
+                }
+
+                const stats = [['Total attending', attendingRows.length]];
+                if (trackPayments) {
+                    stats.push(['Paid', paidCount], ['Pending review', pendingCount], ['Not paid', notPaidCount]);
+                }
+
                 openPrintDocument(buildPrintDocument({
                     title: 'Attendance sheet',
                     subtitle: pdfEscape(event?.title || 'Unknown event'),
-                    metaRows: [
-                        ['Event date', event?.date ? formatDate(event.date) : ''],
-                        ['Venue', event?.location || ''],
-                        ['Report date', new Date().toLocaleDateString()]
-                    ],
-                    stats: [['Total attending', attendingRows.length]],
+                    metaRows,
+                    stats,
                     bodyHtml
                 }));
             });
         }
 
         // Download attendance as Excel
+        function xmlEscape(value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+
         function downloadExcel() {
             const eventId = document.getElementById('roster-event-select').value;
             if (!eventId) return;
 
             const event = state.events.find(e => e.id === eventId);
+            const isOutstationEvent = event?.type === 'Outstation' || event?.isOutstation === true;
+            const requirePayment = event?.requiresPayment === true;
+            const trackPayments = isOutstationEvent || requirePayment;
 
             // Get all member data
             firebaseDb.collection('users').get().then(usersSnapshot => {
@@ -3357,13 +3466,18 @@
                     const user = users[uid] || {};
                     // Check for both 'attending' and 'attended' statuses
                     if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended')) {
+                        const paymentInfo = paymentStatusInfo(rsvp.payment?.paymentStatus || '', requirePayment);
                         attendingRows.push([
                             user.userId || 'N/A',
                             user.name || user.email || 'Unknown',
                             user.phone || 'N/A',
                             user.email || 'N/A',
                             user.dob || 'N/A',
-                            user.address || 'N/A'
+                            user.address || 'N/A',
+                            user.emergencyContactName || 'N/A',
+                            user.emergencyContact || 'N/A',
+                            user.emergencyContactRelation || 'N/A',
+                            ...(trackPayments ? [paymentInfo.label] : [])
                         ]);
                     }
                 });
@@ -3375,13 +3489,11 @@
                 excel += ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
                 excel += ' <Worksheet ss:ss:name="Attending">\n';
                 excel += '  <Table>\n';
-                excel += '   <Row><Cell><Data ss:Type="String">ID</Data></Cell><Cell><Data ss:Type="String">Name</Data></Cell><Cell><Data ss:Type="String">Phone</Data></Cell><Cell><Data ss:Type="String">Email</Data></Cell><Cell><Data ss:Type="String">DOB</Data></Cell><Cell><Data ss:Type="String">Address</Data></Cell></Row>\n';
+                const headerLabels = ['ID', 'Name', 'Phone', 'Email', 'DOB', 'Address', 'Emergency Contact Name', 'Emergency Contact Phone', 'Relationship'];
+                if (trackPayments) headerLabels.push('Payment Status');
+                excel += `   <Row>${headerLabels.map(label => `<Cell><Data ss:Type="String">${xmlEscape(label)}</Data></Cell>`).join('')}</Row>\n`;
                 attendingRows.forEach(row => {
-                    excel += '   <Row>';
-                    row.forEach(cell => {
-                        excel += `<Cell><Data ss:Type="String">${cell}</Data></Cell>`;
-                    });
-                    excel += '</Row>\n';
+                    excel += `   <Row>${row.map(cell => `<Cell><Data ss:Type="String">${xmlEscape(cell)}</Data></Cell>`).join('')}</Row>\n`;
                 });
                 excel += '  </Table>\n';
                 excel += ' </Worksheet>\n';

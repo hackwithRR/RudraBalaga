@@ -1711,7 +1711,7 @@
             <div class="band-brand">
                 <span class="brand-mark">&#2384;</span>
                 <div>
-                    <h1>ರುದ್ರ ಬಲಗ · Rudra Parayana</h1>
+                    <h1>ರುದ್ರ ಬಳಗ · Rudra Parayana</h1>
                     <p class="org-sub">Admin report</p>
                 </div>
             </div>

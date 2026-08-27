@@ -885,7 +885,7 @@
         <!-- App Branding Typography -->
         <div class="overflow-visible text-center mt-6">
             <h1 id="app-title" class="text-3xl font-black text-stone-900 opacity-0 translate-y-[100%]">
-                ರುದ್ರ <span class="text-[#ff5722] orange-glow">ಬಲಗ</span>
+                ರುದ್ರ <span class="text-[#ff5722] orange-glow">ಬಳಗ</span>
             </h1>
         </div>
         </div>
@@ -904,13 +904,16 @@
         <div class="flex justify-between items-center px-4 h-16">
             <div class="flex items-center gap-3">
                 <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
-                <h1 class="text-xl font-bold text-primary kannada-text">ರುದ್ರ ಬಲಗ</h1>
+                <h1 class="text-xl font-bold text-primary kannada-text">ರುದ್ರ ಬಳಗ</h1>
             </div>
             <div class="flex items-center gap-2">
                 <div class="text-right">
 <p id="user-name" class="text-sm font-medium text-on-surface kannada-text">ಸ್ವಾಗತ</p>
                     <p id="user-id" class="text-xs text-on-surface-variant hidden"></p>
                 </div>
+                <button id="header-announcements-btn" type="button" aria-label="All announcements" title="All announcements" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+                </button>
                 <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
                     <span class="material-symbols-outlined text-on-primary-container" data-icon="account_circle">account_circle</span>
                 </a>
@@ -930,7 +933,7 @@
                     <div class="home-hero-text">
                         <p id="home-greeting-label" class="home-hero-greeting">ಶುಭ ದಿನ</p>
                         <h1 id="home-title" class="home-hero-title kannada-text">ಸ್ವಾಗತ, ಭಕ್ತರೇ</h1>
-                        <p class="home-hero-sub kannada-text">ರುದ್ರ ಬಲಗ ಸಮುದಾಯದಲ್ಲಿ ನಿಮಗೆ ಹೃತ್ಪೂರ್ವಕ ಸ್ವಾಗತ</p>
+                        <p class="home-hero-sub kannada-text">ರುದ್ರ ಬಳಗ ಸಮುದಾಯದಲ್ಲಿ ನಿಮಗೆ ಹೃತ್ಪೂರ್ವಕ ಸ್ವಾಗತ</p>
                     </div>
                 </div>
             </div>
@@ -1020,14 +1023,14 @@
         <section class="grid grid-cols-1 gap-stack-md">
             <!-- App Name in Kannada -->
             <div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 text-center">
-                <h4 class="font-headline-sm text-headline-sm text-primary mb-2 kannada-text">ರುದ್ರ ಬಲಗ</h4>
+                <h4 class="font-headline-sm text-headline-sm text-primary mb-2 kannada-text">ರುದ್ರ ಬಳಗ</h4>
                 <p class="text-on-surface-variant font-label-lg text-label-lg kannada-text">ರುದ್ರ ಪರಾಯಣ</p>
             </div>
             <!-- Donate Section -->
             <div id="donate-section" class="w-full text-center">
                 <button id="donate-btn" type="button" class="touch-active w-full min-h-14 sm:min-h-16 py-3 px-4 rounded-2xl bg-[linear-gradient(135deg,#8f1d1d,#c45a16)] text-white font-bold text-body-md sm:text-body-lg shadow-lg transition-transform duration-150 active:scale-[0.98] flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
                     <span class="material-symbols-outlined shrink-0 text-2xl sm:text-3xl" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span>
-                    <span class="kannada-text leading-snug text-center">ಧರ್ಮಾರ್ಥ ದೇಣಿಗೆ ನೀಡಿ — Donate</span>
+                    <span class="kannada-text leading-snug text-center">ಅರ್ಪಣೆ — Donate</span>
                 </button>
                 <p class="text-xs sm:text-sm text-center text-on-surface-variant mt-2 px-2 kannada-text">ನಿಮ್ಮ ಉದಾರ ದೇಣಿಗೆಯು ಸಮುದಾಯದ ಸೇವೆಗಳಿಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ</p>
             </div>
@@ -1324,7 +1327,7 @@
                 console.log('Firestore not available, using demo data');
                 // Demo data
                 const announcements = [
-                    { id: 'demo-announcement-1', title: 'ರುದ್ರ ಬಲಗಕ್ಕೆ ಸ್ವಾಗತ', content: 'ನಮ್ಮ ಆಧ್ಯಾತ್ಮಿಕ ಸಮುದಾಯದಲ್ಲಿ ಸೇರಿಕೆದರಿಂದ ಧನ್ಯವಾದ!' }
+                    { id: 'demo-announcement-1', title: 'ರುದ್ರ ಬಳಗಕ್ಕೆ ಸ್ವಾಗತ', content: 'ನಮ್ಮ ಆಧ್ಯಾತ್ಮಿಕ ಸಮುದಾಯದಲ್ಲಿ ಸೇರಿಕೆದರಿಂದ ಧನ್ಯವಾದ!' }
                 ];
                 state.allAnnouncements = announcements;
                 renderAnnouncements(announcements.slice(0, 1));
@@ -1338,27 +1341,49 @@
             const mobileEventsScrollHint = document.getElementById('mobile-events-scroll-hint');
             const expandedPanel = document.getElementById('announcements-expanded-panel');
             const collapsedBar = document.getElementById('announcements-collapsed-bar');
-            
-            if (announcements.length > 0) {
-                announcementsSection.classList.remove('hidden');
-                mobileEventsScrollHint.classList.remove('hidden');
-                const latestAnnouncementId = announcements[0].id;
-                const hasSeenLatest = localStorage.getItem(`announcement-viewed-${latestAnnouncementId}`) === 'true';
-                expandedPanel.classList.toggle('hidden', hasSeenLatest);
-                collapsedBar.classList.toggle('visible', hasSeenLatest);
-                announcementsList.innerHTML = announcements.map(a => `
+
+            // Fully hide the banner area. Used when there are no updates and also when
+            // the member has already seen the latest announcement, so nothing (panel or
+            // strip) resurfaces. The full history stays reachable via the header button.
+            const hideBanner = () => {
+                announcementsSection.classList.add('hidden');
+                expandedPanel.classList.add('hidden');
+                collapsedBar.classList.add('hidden');
+                collapsedBar.classList.remove('visible');
+                mobileEventsScrollHint.classList.add('hidden');
+            };
+
+            if (!announcements || announcements.length === 0) {
+                hideBanner();
+                return;
+            }
+
+            const latestAnnouncementId = announcements[0].id;
+            const hasSeenLatest = localStorage.getItem(`announcement-viewed-${latestAnnouncementId}`) === 'true';
+
+            if (hasSeenLatest) {
+                // Already seen / loaded — do not show the announcement again.
+                hideBanner();
+                return;
+            }
+
+            // A fresh, unseen announcement → show it once for this session, then remember
+            // that it has been seen so it won't reappear on the next page load.
+            announcementsSection.classList.remove('hidden');
+            mobileEventsScrollHint.classList.remove('hidden');
+            expandedPanel.classList.remove('hidden');
+            collapsedBar.classList.add('hidden');
+            collapsedBar.classList.remove('visible');
+
+            announcementsList.innerHTML = announcements.map(a => `
                     <div class="p-4 bg-white rounded-lg border border-outline-variant">
                         <h4 class="font-bold text-primary text-lg mb-2 kannada-text">${a.title}</h4>
                         ${a.image ? `<img src="${a.image}" class="w-full h-48 object-cover rounded-lg mb-3" alt="Announcement image">` : ''}
                         <p class="text-on-surface font-body-lg text-body-lg kannada-text">${a.content}</p>
                     </div>
                 `).join('');
-            } else {
-                announcementsSection.classList.add('hidden');
-                mobileEventsScrollHint.classList.add('hidden');
-                expandedPanel.classList.remove('hidden');
-                collapsedBar.classList.remove('visible');
-            }
+
+            localStorage.setItem(`announcement-viewed-${latestAnnouncementId}`, 'true');
         }
 
         // Setup all event listeners
@@ -1371,9 +1396,14 @@
                 if (actionButton.dataset.rsvpStatus) {
                     setRSVP(actionButton.dataset.rsvpStatus, eventId);
                 } else if (actionButton.dataset.editRsvp) {
-                    const card = actionButton.closest('[data-event-id]');
-                    card.querySelector('[data-rsvp-section]').classList.remove('hidden');
-                    card.querySelector('[data-rsvp-status-section]').classList.add('hidden');
+                    // The change-response button itself also carries data-event-id, so
+                    // closest() would return the button. Walk up to the event card (article).
+                    const card = actionButton.closest('article[data-event-id]');
+                    if (!card) return;
+                    const rsvpSection = card.querySelector('[data-rsvp-section]');
+                    const rsvpStatusSection = card.querySelector('[data-rsvp-status-section]');
+                    if (rsvpSection) rsvpSection.classList.remove('hidden');
+                    if (rsvpStatusSection) rsvpStatusSection.classList.add('hidden');
                 }
             });
             document.getElementById('events-list').addEventListener('change', (event) => {
@@ -1383,6 +1413,7 @@
             });
             document.getElementById('view-all-announcements').addEventListener('click', showAllAnnouncements);
             document.getElementById('announcements-collapsed-bar').addEventListener('click', showAllAnnouncements);
+            document.getElementById('header-announcements-btn').addEventListener('click', showAllAnnouncements);
             document.getElementById('view-scripts-btn').addEventListener('click', showScriptsModal);
             // Donate button
             document.getElementById('donate-btn').addEventListener('click', showDonationModal);
@@ -2216,6 +2247,19 @@
             return routes;
         }
 
+        // Registration deadline (only applies to outstation events)
+        function getRegistrationDeadline(event) {
+            return event && event.type === 'Outstation' ? (event.registrationDeadline || null) : null;
+        }
+
+        // Registration stays open through the end of the deadline day
+        function isRegistrationClosed(event) {
+            const deadline = getRegistrationDeadline(event);
+            if (!deadline) return false;
+            const deadlineEnd = new Date(`${deadline}T23:59:59`);
+            return !Number.isNaN(deadlineEnd.getTime()) && new Date() > deadlineEnd;
+        }
+
         function renderEventCard(event) {
             const userRsvp = (state.rsvps[state.user.uid] || {})[event.id];
             const attendingCount = getEventAttendingCount(event.id);
@@ -2234,6 +2278,14 @@
                 ? `${formatDate(travelDates[0])} - ${formatDate(travelDates[1])}`
                 : travelDates.length === 1 ? formatDate(travelDates[0]) : 'Not specified';
             const busRoutes = getEventBusRoutes(event.id);
+            const registrationClosed = isRegistrationClosed(event);
+            const registrationDeadlineText = getRegistrationDeadline(event) ? formatDate(getRegistrationDeadline(event)) : 'Not specified';
+
+            // RSVP buttons (attending is hidden when registration has closed)
+            const rsvpButtonsHtml = (allowAttending) => `<div class="grid grid-cols-1 md:grid-cols-2 gap-3">${allowAttending ? `<button data-rsvp-status="attending" data-event-id="${event.id}" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">check_circle</span>Attending</button>` : ''}<button data-rsvp-status="not-attending" data-event-id="${event.id}" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">Not attending</button></div>`;
+            const registrationClosedHtml = `<div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">event_busy</span>Last date to register is over</p><p class="text-sm text-on-error-container mt-1">Registration closed on ${registrationDeadlineText}.</p></div>`;
+            // Hidden response section revealed by the "Change response" button
+            const changeResponseSectionHtml = (allowAttending) => `<div data-rsvp-section class="hidden space-y-3 pt-4 border-t border-outline-variant">${registrationClosed ? '<p class="text-center font-label-lg text-label-lg text-on-surface">Registration is closed — you can only cancel your attendance.</p>' : '<p class="text-center font-label-lg text-label-lg text-on-surface">Please respond to this event</p>'}${rsvpButtonsHtml(allowAttending)}</div>`;
 
             const eventPaymentChip = (event.type === 'Outstation' && event.requiresPayment === true) ? (() => {
                 const ps = userRsvp?.payment?.paymentStatus;
@@ -2247,17 +2299,20 @@
 
             let responseHtml;
             if (userRsvp && userRsvp.status === 'attending' && !['PENDING_APPROVAL', 'REJECTED'].includes(userRsvp.payment?.paymentStatus)) {
-                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">You are attending this event</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>`;
-            } else if (userRsvp?.payment?.paymentStatus === 'PENDING_APPROVAL') {
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">You are attending this event</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>${canEdit ? changeResponseSectionHtml(!registrationClosed) : ''}`;
+            } else if (userRsvp?.status === 'attending' && userRsvp?.payment?.paymentStatus === 'PENDING_APPROVAL') {
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-amber-50 rounded-xl text-center"><p class="font-body-lg text-body-lg text-amber-900 font-bold">Payment proof is pending approval</p><p class="text-sm text-amber-800 mt-1">Your attendance will be confirmed after admin verification.</p></div></div>`;
             } else if (userRsvp?.payment?.paymentStatus === 'REJECTED' && userRsvp.status === 'attending') {
-                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">cancel</span>Payment rejected by admin</p><p class="text-sm text-on-error-container mt-1">Your RSVP has been reset — please respond again. If you attend, you'll need to submit a fresh payment.</p></div>${canEdit ? `<div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button data-rsvp-status="attending" data-event-id="${event.id}" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">check_circle</span>Attending</button><button data-rsvp-status="not-attending" data-event-id="${event.id}" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">Not attending</button></div>` : ''}</div>`;
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">cancel</span>Payment rejected by admin</p><p class="text-sm text-on-error-container mt-1">Your RSVP has been reset — please respond again. If you attend, you'll need to submit a fresh payment.</p></div>${canEdit ? (registrationClosed ? `${registrationClosedHtml}${rsvpButtonsHtml(false)}` : rsvpButtonsHtml(true)) : ''}</div>`;
             } else if (userRsvp && userRsvp.status === 'not-attending') {
-                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">You are not attending this event</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>`;
+                const canChangeResponse = canEdit && !registrationClosed;
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">You are not attending this event</p></div>${canChangeResponse ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>${canChangeResponse ? changeResponseSectionHtml(true) : ''}`;
             } else if (isLimitReached) {
                 responseHtml = `<div class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-error-container rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold">Event is full</p><p class="font-body-lg text-body-lg text-on-error-container mt-1">Maximum ${event.limit} attendees reached.</p></div></div>`;
+            } else if (registrationClosed) {
+                responseHtml = `<div class="space-y-3 pt-4 border-t border-outline-variant">${registrationClosedHtml}</div>`;
             } else {
-                responseHtml = `<div data-rsvp-section class="space-y-3 pt-4 border-t border-outline-variant"><p class="text-center font-label-lg text-label-lg text-on-surface">Please respond to this event</p><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button data-rsvp-status="attending" data-event-id="${event.id}" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">check_circle</span>Attending</button><button data-rsvp-status="not-attending" data-event-id="${event.id}" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">Not attending</button></div></div>`;
+                responseHtml = `<div data-rsvp-section class="space-y-3 pt-4 border-t border-outline-variant"><p class="text-center font-label-lg text-label-lg text-on-surface">Please respond to this event</p>${rsvpButtonsHtml(true)}</div>`;
             }
 
             let busHtml = '';
@@ -2278,7 +2333,7 @@
                 }
             }
             const mapHtml = event.type === 'Bangalore' && event.location ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2">Open in Google Maps</p></a></div>` : '';
-            const outstationHtml = event.type === 'Outstation' ? `<div class="mt-4 p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container"><p class="font-label-lg text-label-lg text-secondary mb-2">Outstation dates</p><p class="font-label-md text-label-md text-secondary">Event dates</p><p class="font-body-lg text-body-lg text-on-surface">${eventDateRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Departure to Bangalore arrival</p><p class="font-body-lg text-body-lg text-on-surface">${travelRange}</p></div>` : '';
+            const outstationHtml = event.type === 'Outstation' ? `<div class="mt-4 p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container"><p class="font-label-lg text-label-lg text-secondary mb-2">Outstation dates</p><p class="font-label-md text-label-md text-secondary">Event dates</p><p class="font-body-lg text-body-lg text-on-surface">${eventDateRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Departure to Bangalore arrival</p><p class="font-body-lg text-body-lg text-on-surface">${travelRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Last date to register</p><p class="font-body-lg text-body-lg ${registrationClosed ? 'text-error font-bold' : 'text-on-surface'}">${registrationDeadlineText}</p>${registrationClosed ? '<p class="font-label-md text-label-md text-error mt-1">Registration is over</p>' : ''}</div>` : '';
 
             return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Upcoming event</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><div class="shrink-0 flex flex-col items-end gap-1.5"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span>${eventPaymentChip}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Event dates</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Time</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Location</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p></div></div>${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
         }
@@ -2629,14 +2684,52 @@
         }, { merge: true });
     }
 
+    // Shared toast helper for RSVP actions
+    function showRsvpToast(message, isInfo) {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-20 left-0 right-0 mx-auto z-50 px-6 py-4 rounded-xl shadow-lg max-w-sm ${isInfo ? 'bg-surface-container-high text-on-surface-variant' : 'bg-primary-container text-on-primary-container'}`;
+        toast.innerHTML = `
+            <div class="flex items-center justify-center gap-3">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">${isInfo ? 'info' : 'check_circle'}</span>
+                <span class="font-body-lg text-body-lg">${message}</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 3000);
+    }
+
     // Event-specific action handlers for the multi-event dashboard
     function setRSVP(status, eventId) {
         const currentEvent = state.events.find(event => event.id === eventId);
         if (!currentEvent || !state.user) return;
 
-        if (status === 'attending' && currentEvent.type === 'Outstation' && currentEvent.requiresPayment === true) {
-            showPaymentModal(currentEvent);
+        const userRsvps = state.rsvps[state.user.uid] || {};
+        const existingRsvp = userRsvps[eventId] || {};
+
+        // Already in the requested state - tell the user instead of re-saving/re-paying
+        if (existingRsvp.status === status) {
+            showRsvpToast(status === 'attending' ? 'You are already attending this event.' : 'You are already not attending this event.', true);
+            renderEvents();
             return;
+        }
+
+        // Do not accept registrations after the last date to register
+        if (status === 'attending' && isRegistrationClosed(currentEvent)) {
+            alert(`Last date to register for this event was ${formatDate(currentEvent.registrationDeadline)}. Registration is now over.`);
+            return;
+        }
+
+        // Outstation events require payment. If the member has already paid (payment was
+        // not rejected), don't ask them to pay again when they switch back to attending.
+        if (status === 'attending' && currentEvent.type === 'Outstation' && currentEvent.requiresPayment === true) {
+            const payStatus = existingRsvp.payment && existingRsvp.payment.paymentStatus;
+            const alreadyPaid = payStatus && payStatus !== 'REJECTED';
+            if (!alreadyPaid) {
+                showPaymentModal(currentEvent);
+                return;
+            }
         }
 
         if (status === 'attending' && currentEvent.limit && getEventAttendingCount(currentEvent.id) >= currentEvent.limit) {
@@ -2646,19 +2739,19 @@
 
         if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
         const rsvpData = { ...(state.rsvps[state.user.uid][currentEvent.id] || {}), status };
-        // Clear any old/rejected payment info when switching to not-attending
-        if (status === 'not-attending' && rsvpData.payment) delete rsvpData.payment;
+        // Keep the payment record when switching to not-attending so an already-paid member
+        // does not have to re-pay if they later switch back to attending. Only a rejected
+        // payment is dropped (a fresh one is required for the booking).
+        if (status === 'not-attending' && rsvpData.payment && rsvpData.payment.paymentStatus === 'REJECTED') {
+            delete rsvpData.payment;
+        }
         state.rsvps[state.user.uid][currentEvent.id] = rsvpData;
         renderEvents();
 
         firebaseDb.collection('rsvps').doc(state.user.uid).set({
             [currentEvent.id]: rsvpData
         }, { merge: true }).then(() => {
-            const toast = document.createElement('div');
-            toast.className = 'fixed top-20 left-0 right-0 mx-auto z-50 bg-primary-container text-on-primary-container px-6 py-4 rounded-xl shadow-lg max-w-sm';
-            toast.textContent = status === 'attending' ? 'You are attending!' : 'You are not attending.';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            showRsvpToast(status === 'attending' ? 'You are attending!' : 'You are not attending.', false);
         });
     }
 

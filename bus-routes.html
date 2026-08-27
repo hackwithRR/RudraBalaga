@@ -357,7 +357,7 @@
                         <div class="mt-3 pt-3 border-t border-outline-variant">
                             <div class="flex justify-between items-center mb-2">
                                 <p class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ಸ್:</p>
-                                ${hasSelectedPickup ? `<button class="edit-pickup-btn touch-active text-primary font-label-md text-label-md kannada-text" data-event-id="${e.id}">ಬದಲಿಸಿ</button>` : ''}
+                                ${hasSelectedPickup ? `<button type="button" class="edit-pickup-btn touch-active group inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-sm hover:bg-secondary hover:text-on-secondary transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-lowest" data-event-id="${e.id}" aria-label="ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಬದಲಿಸಿ"><span class="material-symbols-outlined text-lg transition-transform duration-300 group-hover:scale-110" style="font-variation-settings: 'FILL' 1;" data-icon="swap_horiz">swap_horiz</span><span class="font-label-md text-label-md kannada-text whitespace-nowrap">ಬದಲಿಸಿ</span></button>` : ''}
                             </div>
                             ${hasSelectedPickup ? `
                                 <div class="mb-3">

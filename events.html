@@ -217,6 +217,12 @@
             user: null
         };
 
+        // Tracks the response a member had before they tapped "Change / edit my answer".
+        // Used to detect re-picking the same decision (i.e. "already attending").
+        // Declared at script top level so it is visible to renderEvents()/updateRsvp()
+        // and ready even if renderEvents() runs synchronously from the demo-data fallback.
+        const rsvpEditMode = {};
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             // Check authentication state
@@ -330,6 +336,19 @@
             return now < oneDayBefore;
         }
 
+        // Registration deadline (only applies to outstation events)
+        function getRegistrationDeadline(e) {
+            return e && e.type === 'Outstation' ? (e.registrationDeadline || null) : null;
+        }
+
+        // Registration stays open through the end of the deadline day
+        function isRegistrationClosed(e) {
+            const deadline = getRegistrationDeadline(e);
+            if (!deadline) return false;
+            const deadlineEnd = new Date(`${deadline}T23:59:59`);
+            return !Number.isNaN(deadlineEnd.getTime()) && new Date() > deadlineEnd;
+        }
+
         // Render events on events page
         function renderEvents() {
             const eventsList = document.getElementById('events-list');
@@ -342,6 +361,8 @@
             eventsList.innerHTML = state.events.map(e => {
                 const userRsvp = state.rsvps[state.user.uid] && state.rsvps[state.user.uid][e.id];
                 const canEdit = isEventEditable(e.date);
+                const registrationClosed = isRegistrationClosed(e);
+                const registrationDeadlineText = getRegistrationDeadline(e) ? formatDate(getRegistrationDeadline(e)) : 'Not specified';
                 
                 // Payment info for events that require payment
                 const requiresPayment = e.type === 'Outstation' && e.requiresPayment === true;
@@ -364,18 +385,24 @@
                 if (isRejected) {
                     status = 'Payment rejected by admin - please respond again';
                     statusColor = 'text-error font-bold';
-                } else if (userRsvp && userRsvp.payment?.paymentStatus === 'PENDING_APPROVAL') {
+                } else if (userRsvp && userRsvp.status === 'attending' && userRsvp.payment?.paymentStatus === 'PENDING_APPROVAL') {
                     status = 'Payment proof pending approval';
                     statusColor = 'text-amber-700';
-                } else if (userRsvp && userRsvp.payment?.paymentStatus === 'APPROVED') {
+                } else if (userRsvp && userRsvp.status === 'attending' && userRsvp.payment?.paymentStatus === 'APPROVED') {
                     status = 'Paid - attending';
                     statusColor = 'text-green-700';
+                } else if (userRsvp && userRsvp.status === 'not-attending') {
+                    status = 'ಹಾಜರಾಗಿಲ್ಲ';
+                    statusColor = 'text-error';
                 } else if (userRsvp && userRsvp.status === 'attending' && requiresPayment) {
                     status = 'Attending - payment not completed';
                     statusColor = 'text-amber-700';
                 } else if (userRsvp) {
                     status = userRsvp.status === 'attending' ? 'ಹಾಜರಾಗಿದ್ದೀರಿ' : 'ಹಾಜರಾಗಿಲ್ಲ';
                     statusColor = userRsvp.status === 'attending' ? 'text-secondary' : 'text-error';
+                } else if (registrationClosed) {
+                    status = 'Last date to register is over';
+                    statusColor = 'text-error font-bold';
                 } else if (isLimitReached) {
                     status = 'ಇವೆಂಟ್ ಸಮಾಪ್ತಿಯಾಗಿದೆ';
                     statusColor = 'text-error';
@@ -430,6 +457,8 @@
                 }
                 
                 // Build RSVP buttons or limit reached message
+                const registrationClosedHtml = `<div class="mt-3 p-3 bg-error-container rounded-lg text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold kannada-text">Last date to register is over</p><p class="text-sm text-on-error-container mt-1 kannada-text">Registration closed on ${registrationDeadlineText}.</p></div>`;
+                const notAttendingOnlyHtml = `<div class="mt-2 grid grid-cols-1 gap-2"><button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗಿಲ್ಲ</span></button></div>`;
                 let rsvpButtonsHtml = '';
                 if (isRejected) {
                     // Admin rejected the payment - reset the RSVP and ask again whether attending or not
@@ -438,16 +467,29 @@
                                 <p class="font-bold text-on-error-container flex items-center gap-2 kannada-text"><span class="material-symbols-outlined">cancel</span>ನಿಮ್ಮ ಪಾವತಿಯನ್ನು ಅಡ್ಮಿನ್ ತಿರಸ್ಕರಿಸಿದ್ದಾರೆ</p>
                                 <p class="text-sm text-on-error-container mt-1 kannada-text">ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಮರುಹೊಂದಿಸಲಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಆಯ್ಕೆ ಮಾಡಿ - ಹಾಜರಾಗುತ್ತೀರಿ ಎಂದರೆ ಹೊಸ ಪಾವತಿ ಸಲ್ಲಿಸಬೇಕಾಗುತ್ತದೆ.</p>
                             </div>
-                            ${canEdit ? `
+                            ${canEdit ? (registrationClosed ? `${registrationClosedHtml}${notAttendingOnlyHtml}` : `
                             <div class="mt-2 grid grid-cols-2 gap-2">
                                 <button class="edit-rsvp-btn touch-active w-full bg-primary-container text-on-primary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="attending"><span class="kannada-text">ಹಾಜರಾಗಿದ್ದೀರಿ</span></button>
                                 <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗಿಲ್ಲ</span></button>
-                            </div>` : ''}
+                            </div>`) : ''}
                     `;
                 } else if (userRsvp) {
-                    // User has already responded - show edit button if event is editable
-                    if (canEdit) {
-                        rsvpButtonsHtml = `
+                    // User has already responded
+                    if (registrationClosed && canEdit && userRsvp.status === 'attending') {
+                        // Registration is over - attending members can only cancel their attendance
+                        rsvpButtonsHtml = `${registrationClosedHtml}${notAttendingOnlyHtml}`;
+                    } else if (canEdit && !registrationClosed) {
+                        if (rsvpEditMode[e.id] !== undefined) {
+                            // User tapped "Change my answer" - show the two options again while
+                            // keeping their previous response so picking the same one is detected.
+                            rsvpButtonsHtml = `
+                            <div class="mt-3 grid grid-cols-2 gap-2">
+                                <button class="edit-rsvp-btn touch-active w-full bg-primary-container text-on-primary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="attending"><span class="kannada-text">ಹಾಜರಾಗಿದ್ದೀರಿ</span></button>
+                                <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗಿಲ್ಲ</span></button>
+                            </div>
+                        `;
+                        } else {
+                            rsvpButtonsHtml = `
                             <div class="mt-3 grid grid-cols-1 gap-2">
                                 <button class="edit-rsvp-btn touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="edit">
                                     <span class="material-symbols-outlined mr-1" data-icon="edit" style="font-variation-settings: 'FILL' 1;">edit</span>
@@ -455,7 +497,11 @@
                                 </button>
                             </div>
                         `;
+                        }
                     }
+                } else if (registrationClosed) {
+                    // No response yet and registration is over
+                    rsvpButtonsHtml = registrationClosedHtml;
                 } else if (isLimitReached) {
                     // Limit reached - show message instead of buttons
                     rsvpButtonsHtml = `
@@ -497,6 +543,9 @@
                                     <p class="font-body-lg text-body-lg text-on-surface kannada-text">${eventEndDate}</p>
                                     <p class="font-label-md text-label-md text-secondary mt-2 kannada-text">ನಿರ್ಗಮನದಿಂದ ಬೆಂಗಳೂರು ಆಗಮನದವರೆಗೆ</p>
                                     <p class="font-body-lg text-body-lg text-on-surface kannada-text">${visibleRange}</p>
+                                    <p class="font-label-md text-label-md text-secondary mt-2 kannada-text">Last date to register</p>
+                                    <p class="font-body-lg text-body-lg ${registrationClosed ? 'text-error font-bold' : 'text-on-surface'} kannada-text">${registrationDeadlineText}</p>
+                                    ${registrationClosed ? '<p class="font-label-md text-label-md text-error mt-1 kannada-text">Registration is over</p>' : ''}
                                 </div>
                             ` : '';
                         })() : ''}
@@ -530,6 +579,22 @@
             });
         }
         
+        // Show a toast notification
+        function showEventsToast(message, isInfo) {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-20 left-0 right-0 mx-auto z-50 px-6 py-4 rounded-xl shadow-lg max-w-sm ${isInfo ? 'bg-surface-container-high text-on-surface-variant' : 'bg-primary-container text-on-primary-container'}`;
+            toast.innerHTML = `
+                <div class="flex items-center justify-center gap-3 font-body-lg text-body-lg">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">${isInfo ? 'info' : 'check_circle'}</span>
+                    <span class="kannada-text">${message}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 3000);
+        }
+
         // Update pickup point
         function updatePickupPoint(eventId, pickupPoint) {
             if (!state.user) return;
@@ -548,12 +613,11 @@
         function updateRsvp(eventId, status) {
             if (!state.user) return;
 
-            // Handle "edit" status - remove RSVP to show buttons again
+            // Handle "edit" status - keep the previous response but show the options again.
+            // We remember the prior status so that re-picking the same option is detected.
             if (status === 'edit') {
-                // Remove the user's RSVP for this event
-                if (state.rsvps[state.user.uid] && state.rsvps[state.user.uid][eventId]) {
-                    delete state.rsvps[state.user.uid][eventId];
-                }
+                const prevStatus = (state.rsvps[state.user.uid] && state.rsvps[state.user.uid][eventId] && state.rsvps[state.user.uid][eventId].status) || null;
+                rsvpEditMode[eventId] = prevStatus;
                 // Re-render to show the buttons
                 renderEvents();
                 return;
@@ -562,9 +626,30 @@
             // Find the event
             const event = state.events.find(e => e.id === eventId);
 
-            if (status === 'attending' && event && event.type === 'Outstation' && event.requiresPayment === true) {
-                showPaymentModal(event);
+            // Already in the requested state - tell the user instead of re-saving/re-paying
+            if (rsvpEditMode[eventId] !== undefined && status === rsvpEditMode[eventId]) {
+                showEventsToast(status === 'attending' ? 'ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿದ್ದೀರಿ.' : 'ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿಲ್ಲ ಎಂದು ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ.', true);
+                delete rsvpEditMode[eventId];
+                renderEvents();
                 return;
+            }
+
+            // Do not accept registrations after the last date to register
+            if (status === 'attending' && event && isRegistrationClosed(event)) {
+                alert(`Last date to register for this event was ${formatDate(event.registrationDeadline)}. Registration is now over.`);
+                return;
+            }
+
+            // Outstation events require payment. If the member has already paid (payment was
+            // not rejected), don't ask them to pay again when they switch back to attending.
+            if (status === 'attending' && event && event.type === 'Outstation' && event.requiresPayment === true) {
+                const currentRsvp = state.rsvps[state.user.uid] && state.rsvps[state.user.uid][eventId];
+                const payStatus = currentRsvp && currentRsvp.payment && currentRsvp.payment.paymentStatus;
+                const alreadyPaid = payStatus && payStatus !== 'REJECTED';
+                if (!alreadyPaid) {
+                    showPaymentModal(event);
+                    return;
+                }
             }
             
             // Check if event has a limit and if it's reached (only for attending status)
@@ -589,27 +674,27 @@
                 status: status
             };
 
-            // Clear any old/rejected payment info when switching to not-attending
-            if (status === 'not-attending' && rsvpData.payment) {
+            // Keep the payment record when switching to not-attending so an already-paid member
+            // does not have to re-pay if they later switch back to attending. Only a rejected
+            // payment is dropped (a fresh one is required for the booking).
+            if (status === 'not-attending' && rsvpData.payment && rsvpData.payment.paymentStatus === 'REJECTED') {
                 delete rsvpData.payment;
             }
+
+            // Leaving edit mode - show the normal status view after saving.
+            if (rsvpEditMode[eventId] !== undefined) {
+                delete rsvpEditMode[eventId];
+            }
+
+            if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
+            state.rsvps[state.user.uid][eventId] = rsvpData;
+            renderEvents();
 
             firebaseDb.collection('rsvps').doc(state.user.uid).set({
                 [eventId]: rsvpData
             }, { merge: true }).then(() => {
                 // Show toast notification
-                const toast = document.createElement('div');
-                toast.className = 'fixed top-20 left-0 right-0 mx-auto z-50 bg-primary-container text-on-primary-container px-6 py-4 rounded-xl shadow-lg max-w-sm';
-                toast.innerHTML = `
-                    <div class="flex items-center justify-center gap-3">
-                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                        <span class="font-body-lg text-body-lg kannada-text">${status === 'attending' ? 'ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ!' : 'ನೀವು ಹಾಜರಾಗಿಲ್ಲ.'}</span>
-                    </div>
-                `;
-                document.body.appendChild(toast);
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 3000);
+                showEventsToast(status === 'attending' ? 'ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ!' : 'ನೀವು ಹಾಜರಾಗಿಲ್ಲ.', false);
             });
         }
 
