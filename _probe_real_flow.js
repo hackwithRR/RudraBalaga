@@ -91,7 +91,7 @@ const SHIM = [
       return {
         stillHere: location.pathname.endsWith('/admin.html'),
         message: document.getElementById('toast-message').textContent,
-        visible: !t.classList.contains('hidden') && !t.classList.contains('opacity-0') && !t.classList.contains('translate-x-6'),
+        visible: !t.classList.contains('hidden') && !t.classList.contains('opacity-0') && !t.classList.contains('scale-95'),
         defaultPrevented: typeof window.__defaultPrevented === 'undefined' ? null : window.__defaultPrevented,
         numberAfterReRender: document.querySelector('#buses-container input[id^="bus-detail-number"]')?.value ?? null
       };

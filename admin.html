@@ -1111,19 +1111,9 @@
             </div>
         </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="hidden fixed top-20 right-4 z-50 bg-primary-container text-on-primary-container px-6 py-4 rounded-xl shadow-lg max-w-sm transition-all duration-300 ease-out pointer-events-none translate-x-6 opacity-0">
-        <div class="flex items-center gap-3">
-            <span id="toast-icon" class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-            <span id="toast-message" class="font-body-lg text-body-lg"></span>
-        </div>
-    </div>
-
-    <!-- Help Button (Floating) -->
-    <button id="help-btn" class="fixed bottom-32 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
-        <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
-        <span class="font-label-lg text-label-lg">ಸಹಾಯ</span>
-    </button>
+    <!-- NOTE: Toast popup + Help button were moved OUT of <main> to direct <body> children
+         (just before the script tags) so they stay glued to the viewport no matter how far
+         the page is scrolled. See bottom of file. -->
 
     <!-- Action Buttons -->
     <section class="grid grid-cols-1 gap-3">
@@ -1136,12 +1126,33 @@
     </section>
     </main>
 
+    <!-- Toast popup: full-viewport overlay pins the message to the EXACT screen center
+         irrespective of how far the page is scrolled. Direct <body> child = zero quirks. -->
+    <div id="toast-wrap" class="hidden fixed inset-0 z-[100] grid place-items-center pointer-events-none">
+        <div id="toast" class="bg-primary-container text-on-primary-container px-6 py-4 rounded-xl shadow-lg max-w-sm transition-all duration-300 ease-out opacity-0 scale-95 select-none">
+            <div class="flex items-center gap-3">
+                <span id="toast-icon" class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                <span id="toast-message" class="font-body-lg text-body-lg"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Button (Floating) - kept at body level so it never drifts with page content -->
+    <button id="help-btn" class="fixed bottom-32 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
+        <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
+        <span class="font-label-lg text-label-lg">ಸಹాಯ</span>
+    </button>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script>
+        // Build stamp - printed to console on every load so a stale-cached tab is immediately obvious
+        const APP_BUILD = 'admin-2026-08-27 bus-toast-v3';
+        console.log('%c[Admin] App build: ', 'color:#7c4dff;font-weight:bold;', APP_BUILD);
+
         // State Management
         const state = {
             events: [],
@@ -1645,8 +1656,11 @@
                         e.preventDefault();
                         addBusRoute(e);
                     } else if (e.target.classList.contains('bus-details-form')) {
-                        e.preventDefault();
-                        saveBusDetails(e);
+                        if (!e.__busDetailsHandled) {
+                            e.__busDetailsHandled = true;
+                            e.preventDefault();
+                            saveBusDetails(e);
+                        }
                     } else if (e.target.classList.contains('edit-route-form')) {
                         e.preventDefault();
                         saveEditedRoute(e);
@@ -1922,6 +1936,19 @@
                         `}
                     `;
                     busesContainer.appendChild(busDiv);
+
+                    // Belt-and-braces: bind submit DIRECTLY on this card's Bus Details form so the
+                    // "saved successfully" popup always fires, even if container-level delegation
+                    // ever fails. The __busDetailsHandled guard prevents double-saving.
+                    const detailsForm = busDiv.querySelector('.bus-details-form');
+                    if (detailsForm) {
+                        detailsForm.addEventListener('submit', function(ev) {
+                            if (ev.__busDetailsHandled) return;
+                            ev.__busDetailsHandled = true;
+                            ev.preventDefault();
+                            saveBusDetails(ev);
+                        });
+                    }
                 });
             } else {
                 busRoutesList.classList.add('hidden');
@@ -1986,10 +2013,11 @@
         let toastTransitionTimer = null;
 
         function showToast(message, icon = 'check_circle') {
+            const toastWrap = document.getElementById('toast-wrap');
             const toast = document.getElementById('toast');
             const toastIcon = document.getElementById('toast-icon');
             const toastMessage = document.getElementById('toast-message');
-            if (!toast || !toastIcon || !toastMessage) return;
+            if (!toast || !toastIcon || !toastMessage || !toastWrap) return;
 
             toastIcon.textContent = icon;
             toastIcon.setAttribute('data-icon', icon);
@@ -1998,14 +2026,14 @@
             clearTimeout(toastHideTimer);
             clearTimeout(toastTransitionTimer);
 
-            toast.classList.remove('hidden');
+            toastWrap.classList.remove('hidden');
             requestAnimationFrame(() => {
-                toast.classList.remove('opacity-0', 'translate-x-6');
+                toast.classList.remove('opacity-0', 'scale-95');
             });
 
             toastHideTimer = setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-x-6');
-                toastTransitionTimer = setTimeout(() => toast.classList.add('hidden'), 320);
+                toast.classList.add('opacity-0', 'scale-95');
+                toastTransitionTimer = setTimeout(() => toastWrap.classList.add('hidden'), 320);
             }, 3000);
         }
 
@@ -3255,55 +3283,31 @@
                         <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
                     </div>
                     <div class="space-y-4">
-                        <div class="p-4 bg-surface-container-high rounded-lg">
-                            <h4 class="font-bold text-primary mb-2">Admin Help</h4>
-                            <p class="text-on-surface font-body-lg text-body-lg">For admin-specific issues, contact an admin:</p>
-                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1">
-                                <li>Event creation problems</li>
-                                <li>Bus route management</li>
-                                <li>Attendance tracking issues</li>
-                                <li>Member data access</li>
-                            </ul>
-                        </div>
+                        <p class="font-label-lg text-label-lg text-on-surface-variant">For any issues or support:</p>
                         <div id="admins-list" class="space-y-2">
-                            <p class="text-center text-on-surface-variant">Loading admins...</p>
-                        </div>
+                            <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
+                                <span class="font-body-lg text-body-lg font-bold text-on-primary-fixed">Rithvik</span>
+                                <a href="tel:+919148860082" class="text-primary font-bold text-body-lg">9148860082</a>
+                            </div>
+                            <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
+                                <span class="font-body-lg text-body-lg font-bold text-on-primary-fixed">Subramanyam</span>
+                                <a href="tel:+919448588610" class="text-primary font-bold text-body-lg">9448588610</a>
+                            </div>
                     </div>
+                </div>
                 </div>
             `;
             document.body.appendChild(modal);
             document.getElementById('close-help-modal').addEventListener('click', () => {
                 document.body.removeChild(modal);
             });
-            
-            // Fetch admin users from Firestore
-            if (typeof firebaseDb !== 'undefined' && firebaseDb) {
-                try {
-                    firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
-                        const adminsList = document.getElementById('admins-list');
-                        if (snapshot.empty) {
-                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant">No admins available</p>';
-                            return;
-                        }
-                        
-                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2">Contact an Admin:</p>';
-                        snapshot.forEach(doc => {
-                            const admin = doc.data();
-                            const phone = admin.phone || admin.email || 'N/A';
-                            const name = admin.name || 'Admin';
-                            html += `
-                                <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
-                                    <span class="font-body-lg text-body-lg text-on-primary-fixed">${name}</span>
-                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg">${phone}</a>
-                                </div>
-                            `;
-                        });
-                        adminsList.innerHTML = html;
-                    });
-                } catch (error) {
-                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant">Unable to load admin contacts</p>';
-                }
-            }
+            // Tapping the dark backdrop also dismisses the modal
+            modal.addEventListener('click', (ev) => {
+                if (ev.target === modal) document.body.removeChild(modal);
+            });
+
+            // NOTE: Admin page intentionally shows FIXED support contacts (Rithvik &
+            // Subramanyam) - the live Firestore "admins panel" listing is NOT used here.
         }
 
         // Add help button click handler

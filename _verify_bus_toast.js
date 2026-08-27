@@ -113,14 +113,27 @@ const STUBS = [
   let result = null;
   try {
     result = await page.evaluate(() => {
+      const wrap = document.getElementById('toast-wrap');
       const toast = document.getElementById('toast');
+      const rectOf = () => { const r = toast.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
+      const before = rectOf();
+      // Scroll EVERY scrollable surface aggressively — popup must stay pinned to screen center
+      window.scrollTo(0, 8000);
+      if (document.scrollingElement) document.scrollingElement.scrollTop = 8000;
+      document.querySelectorAll('main').forEach(m => { m.scrollTop = 600; });
+      document.querySelectorAll('.overflow-y-auto,.overflow-auto').forEach(el => { el.scrollTop = 600; });
       const r = toast.getBoundingClientRect();
+      const after = rectOf();
       return {
         realmAlive: Array.isArray(window.__writes),
         message: document.getElementById('toast-message')?.textContent ?? null,
         icon: document.getElementById('toast-icon')?.textContent ?? null,
-        visible: !toast.classList.contains('hidden') && !toast.classList.contains('opacity-0') && !toast.classList.contains('translate-x-6'),
+        visible: !wrap.classList.contains('hidden') && !toast.classList.contains('opacity-0') && !toast.classList.contains('scale-95'),
         onScreen: r.top >= 0 && r.left >= 0 && r.width > 0 && r.height > 0,
+        wrapperCoversViewport: (() => { const w = wrap.getBoundingClientRect(); return Math.abs(w.width - innerWidth) < 2 && Math.abs(w.height - innerHeight) < 2 && w.top <= 0 && w.left <= 0; })(),
+        centerX: Math.abs(after.x - innerWidth / 2) < 3,
+        centerY: Math.abs(after.y - innerHeight / 2) < 3,
+        scrollStable: Math.abs(after.x - before.x) < 1 && Math.abs(after.y - before.y) < 1,
         writes: window.__writes,
         reRenderedValue: document.querySelector('#buses-container input[id^="bus-detail-number"]')?.value ?? null
       };
@@ -136,8 +149,12 @@ const STUBS = [
       === JSON.stringify([{ id: 'bus-test', number: 'KA 05 MH 2918', driver: '+91 98765 43210' }]);
 
   const passToast = result.realmAlive && result.visible && result.onScreen && /saved successfully/i.test(result.message || '');
+  const passCenter = result.centerX && result.centerY && result.scrollStable;
   console.log(passToast ? '\u2713 TOAST POPUP SHOWN' : 'X TOAST NOT SHOWN',
     '| message:', JSON.stringify(result.message), '| icon:', result.icon, '| visible+onscreen:', result.visible && result.onScreen);
+  console.log(passCenter ? '\u2713 PINNED TO CENTER EVEN WHILE SCROLLED' : 'X PLACEMENT WRONG',
+    '| centerX:', result.centerX, '| centerY:', result.centerY, '| scroll-stable:', result.scrollStable,
+    '| wrapper covers viewport:', result.wrapperCoversViewport);
   console.log(writeOk ? '\u2713 FIRESTORE WRITE OK (mocked)' : 'X WRITE UNEXPECTED:', JSON.stringify(w).slice(0, 220));
   console.log(result.reRenderedValue === 'KA 05 MH 2918' ? '\u2713 FORM RE-RENDERED WITH SAVED VALUES' : '! re-render value: ' + result.reRenderedValue);
 
@@ -145,8 +162,9 @@ const STUBS = [
   let autoHide = false;
   try {
     autoHide = await page.evaluate(() => {
+      const wrap = document.getElementById('toast-wrap');
       const t = document.getElementById('toast');
-      return t.classList.contains('opacity-0') || t.classList.contains('hidden');
+      return wrap.classList.contains('hidden') || t.classList.contains('opacity-0');
     });
   } catch {}
   console.log(autoHide ? '\u2713 TOAST AUTO-DISMISSED AFTER ~3s' : '! toast persisted beyond ~4s');
@@ -154,5 +172,5 @@ const STUBS = [
   errors.length ? errors.forEach(e => console.log(' X', e)) : console.log(' \u2713 NONE');
 
   await browser.close();
-  process.exit(passToast && writeOk ? 0 : 1);
+  process.exit(passToast && writeOk && passCenter && result.wrapperCoversViewport ? 0 : 1);
 })();
