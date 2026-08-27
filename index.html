@@ -1296,6 +1296,10 @@
                     snapshot.forEach(doc => {
                         state.busRoutes[doc.id] = doc.data().buses || [];
                     });
+                    // Re-render so members see bus numbers / driver numbers as soon as admins add them
+                    if (state.user) {
+                        renderEvents();
+                    }
                 });
             } catch (error) {
                 console.log('Firestore not available, using demo data');
@@ -2207,7 +2211,7 @@
         function getEventBusRoutes(eventId) {
             const routes = [];
             (state.busRoutes[eventId] || []).forEach(bus => {
-                (bus.routes || []).forEach(route => routes.push({ ...route, busName: bus.name }));
+                (bus.routes || []).forEach(route => routes.push({ ...route, busName: bus.name, busNumber: bus.number || '', driverNumber: bus.driverNumber || '' }));
             });
             return routes;
         }
@@ -2256,7 +2260,23 @@
                 responseHtml = `<div data-rsvp-section class="space-y-3 pt-4 border-t border-outline-variant"><p class="text-center font-label-lg text-label-lg text-on-surface">Please respond to this event</p><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button data-rsvp-status="attending" data-event-id="${event.id}" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">check_circle</span>Attending</button><button data-rsvp-status="not-attending" data-event-id="${event.id}" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">Not attending</button></div></div>`;
             }
 
-            const busHtml = event.type === 'Outstation' ? `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p>${busRoutes.length ? `<select data-pickup-select data-event-id="${event.id}" class="w-full h-14 px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"><option value="">Select your pickup point</option>${busRoutes.map(route => `<option value="${route.id}" ${userRsvp && userRsvp.pickupPoint === route.id ? 'selected' : ''}>${route.point} - ${route.time} (${route.busName})</option>`).join('')}</select>` : `<a href="bus-routes.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-xl flex items-center justify-center h-14 text-body-lg">View bus routes</a>`}</div>` : '';
+            let busHtml = '';
+            if (event.type === 'Outstation') {
+                const rsvpActiveForBusInfo = userRsvp && userRsvp.status === 'attending' && !['PENDING_APPROVAL', 'REJECTED'].includes(userRsvp.payment?.paymentStatus);
+                const selectedPickupRoute = rsvpActiveForBusInfo && userRsvp.pickupPoint ? busRoutes.find(route => route.id === userRsvp.pickupPoint) : null;
+                if (selectedPickupRoute) {
+                    // Member has chosen a pickup point - show only this route's bus number & driver number
+                    const busNumberValue = selectedPickupRoute.busNumber || 'To be announced';
+                    const driverNumberHtml = selectedPickupRoute.driverNumber
+                        ? `<a href="tel:${selectedPickupRoute.driverNumber.replace(/[^+0-9]/g, '')}" class="text-primary font-bold underline">${selectedPickupRoute.driverNumber}</a>`
+                        : '<span>To be announced</span>';
+                    busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Your pickup point &amp; bus</p><div class="p-4 bg-primary-fixed rounded-xl border-2 border-primary-container"><p class="font-body-lg text-body-lg font-bold text-on-surface">${selectedPickupRoute.point}</p><p class="font-label-md text-label-md text-on-surface-variant mb-3">${selectedPickupRoute.time} · ${selectedPickupRoute.busName}</p><div class="pt-3 border-t border-outline-variant space-y-2"><p class="font-label-md text-label-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="font-size:20px;">directions_bus</span>Bus number: <span class="font-bold">${busNumberValue}</span></p><p class="font-label-md text-label-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="font-size:20px;">call</span>Driver number: ${driverNumberHtml}</p></div></div>${(!selectedPickupRoute.busNumber || !selectedPickupRoute.driverNumber) ? '<p class="text-xs text-on-surface-variant mt-2 italic">Bus number and driver contact will appear here once finalized.</p>' : ''}</div>`;
+                } else if (busRoutes.length) {
+                    busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><select data-pickup-select data-event-id="${event.id}" class="w-full h-14 px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"><option value="">Select your pickup point</option>${busRoutes.map(route => `<option value="${route.id}" ${userRsvp && userRsvp.pickupPoint === route.id ? 'selected' : ''}>${route.point} - ${route.time} (${route.busName})</option>`).join('')}</select></div>`;
+                } else {
+                    busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><a href="bus-routes.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-xl flex items-center justify-center h-14 text-body-lg">View bus routes</a></div>`;
+                }
+            }
             const mapHtml = event.type === 'Bangalore' && event.location ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2">Open in Google Maps</p></a></div>` : '';
             const outstationHtml = event.type === 'Outstation' ? `<div class="mt-4 p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container"><p class="font-label-lg text-label-lg text-secondary mb-2">Outstation dates</p><p class="font-label-md text-label-md text-secondary">Event dates</p><p class="font-body-lg text-body-lg text-on-surface">${eventDateRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Departure to Bangalore arrival</p><p class="font-body-lg text-body-lg text-on-surface">${travelRange}</p></div>` : '';
 

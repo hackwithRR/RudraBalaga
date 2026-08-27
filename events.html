@@ -403,7 +403,7 @@
                     buses.forEach(bus => {
                         if (bus.routes) {
                             bus.routes.forEach(route => {
-                                allRoutes.push({ ...route, busName: bus.name });
+                                allRoutes.push({ ...route, busName: bus.name, busNumber: bus.number || '', driverNumber: bus.driverNumber || '' });
                             });
                         }
                     });
@@ -418,6 +418,10 @@
                                 <div class="p-3 rounded-lg border-2 border-primary-container bg-primary-fixed-dim">
                                     <p class="font-body-lg text-body-lg text-on-surface kannada-text">${selectedRoute.point}</p>
                                     <p class="font-label-md text-label-md text-on-surface-variant">${selectedRoute.time} (${selectedRoute.busName})</p>
+                                    <div class="mt-2 pt-2 border-t border-outline-variant">
+                                        <p class="font-label-md text-label-md text-on-surface-variant kannada-text"><span class="material-symbols-outlined text-secondary" style="font-size:16px;vertical-align:middle;">directions_bus</span> ಬಸ್ ಸಂಖ್ಯೆ: <span class="font-bold text-on-surface">${selectedRoute.busNumber || 'ಘೋಷಿಸಲಾಗುವುದು'}</span></p>
+                                        <p class="font-label-md text-label-md text-on-surface-variant kannada-text mt-1"><span class="material-symbols-outlined text-secondary" style="font-size:16px;vertical-align:middle;">call</span> ಡ್ರೈವರ್ ದೂರವಾಣಿ: ${selectedRoute.driverNumber ? `<a href="tel:${selectedRoute.driverNumber.replace(/[^+0-9]/g, '')}" class="font-bold text-primary underline">${selectedRoute.driverNumber}</a>` : '<span>ಘೋಷಿಸಲಾಗುವುದು</span>'}</p>
+                                    </div>
                                 </div>
                                 <p class="text-xs text-on-surface-variant mt-2 italic kannada-text">ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ ಮಾಡಲ್ಪಟ್ಟಿದೆ. <a href="bus-routes.html" class="text-primary font-bold kannada-text">ಬಸ್ ರೌಟ್ಸ್‌ನಲ್ಲಿ ಬದಲಿಸಿ</a></p>
                             </div>

@@ -326,7 +326,7 @@
                 buses.forEach(bus => {
                     if (bus.routes) {
                         bus.routes.forEach(route => {
-                            allRoutes.push({ ...route, busName: bus.name });
+                            allRoutes.push({ ...route, busName: bus.name, busNumber: bus.number || '', driverNumber: bus.driverNumber || '' });
                         });
                     }
                 });
@@ -362,10 +362,25 @@
                             ${hasSelectedPickup ? `
                                 <div class="mb-3">
                                     <p class="font-body-lg text-body-lg text-primary font-bold mb-2 kannada-text">ನಿಮ್ಮ ಆಯ್ಕೆ ಮಾಡಿದ ಪಿಕಪ್ ಪಾಯಿಂಟ್:</p>
-                                    <div class="p-3 rounded-lg border-2 border-primary-container bg-primary-fixed-dim">
-                                        <p class="font-body-lg text-body-lg text-on-surface kannada-text">${allRoutes.find(r => r.id === userRsvp.pickupPoint)?.point || 'ತಿದ್ದುಪಡೆಯಲಿಲ್ಲ'}</p>
-                                        <p class="font-label-md text-label-md text-on-surface-variant">${allRoutes.find(r => r.id === userRsvp.pickupPoint)?.time || ''} (${allRoutes.find(r => r.id === userRsvp.pickupPoint)?.busName || ''})</p>
-                                    </div>
+                                    ${(() => {
+                                        const myPickup = allRoutes.find(r => r.id === userRsvp.pickupPoint);
+                                        const pickupPointText = myPickup?.point || 'ತಿದ್ದುಪಡೆಯಲಿಲ್ಲ';
+                                        const pickupMetaText = `${myPickup?.time || ''} (${myPickup?.busName || ''})`;
+                                        const pickupBusNumber = myPickup?.busNumber || 'ಘೋಷಿಸಲಾಗುವುದು';
+                                        const pickupDriverHtml = myPickup?.driverNumber
+                                            ? `<a href="tel:${myPickup.driverNumber.replace(/[^+0-9]/g, '')}" class="font-bold text-primary underline kannada-text">${myPickup.driverNumber}</a>`
+                                            : '<span class="kannada-text">ಘೋಷಿಸಲಾಗುವುದು</span>';
+                                        return `
+                                            <div class="p-3 rounded-lg border-2 border-primary-container bg-primary-fixed-dim">
+                                                <p class="font-body-lg text-body-lg text-on-surface kannada-text">${pickupPointText}</p>
+                                                <p class="font-label-md text-label-md text-on-surface-variant">${pickupMetaText}</p>
+                                                <div class="mt-2 pt-2 border-t border-outline-variant">
+                                                    <p class="font-label-md text-label-md text-on-surface-variant kannada-text"><span class="material-symbols-outlined text-secondary" style="font-size:16px;vertical-align:middle;">directions_bus</span> ಬಸ್ ಸಂಖ್ಯೆ: <span class="font-bold text-on-surface">${pickupBusNumber}</span></p>
+                                                    <p class="font-label-md text-label-md text-on-surface-variant kannada-text mt-1"><span class="material-symbols-outlined text-secondary" style="font-size:16px;vertical-align:middle;">call</span> ಡ್ರೈವರ್ ದೂರವಾಣಿ: ${pickupDriverHtml}</p>
+                                                </div>
+                                            </div>
+                                        `;
+                                    })()}
                                 </div>
                             ` : `
                                 ${Object.entries(routesByBus).map(([busName, routes]) => `
