@@ -2722,8 +2722,15 @@
         const userRsvps = state.rsvps[state.user.uid] || {};
         const existingRsvp = userRsvps[eventId] || {};
 
+        // An admin can accept a payment first and reject it later (mistake or
+        // misunderstanding). In that state the RSVP is reset for a fresh response,
+        // so tapping "Attending" must restart the (re-)payment flow instead of
+        // showing the already-attending toast.
+        const paymentWasRejected = existingRsvp.status === 'attending' &&
+            existingRsvp.payment?.paymentStatus === 'REJECTED';
+
         // Already in the requested state - tell the user instead of re-saving/re-paying
-        if (existingRsvp.status === status) {
+        if (existingRsvp.status === status && !paymentWasRejected) {
             showRsvpToast(status === 'attending' ? 'You are already attending this event.' : 'You are already not attending this event.', true);
             renderEvents();
             return;
