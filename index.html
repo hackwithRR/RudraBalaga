@@ -1532,16 +1532,11 @@
                     return;
                 }
                 const file = document.getElementById('payment-screenshot').files[0];
-                uploadStatus.textContent = 'Uploading donation proof...';
+                uploadStatus.textContent = 'Compressing & uploading donation proof...';
                 uploadStatus.style.color = '';
                 try {
                     if (!file) throw new Error('Payment screenshot is required.');
-                    const screenshotBase64 = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                    });
+                    const screenshotBase64 = await compressImageToBase64(file);
                     const donationRecord = {
                         uid: state.user?.uid || '',
                         name: donorName,
@@ -2755,6 +2750,48 @@
         });
     }
 
+    // Compress a payment screenshot in the browser, then convert it to base64 for upload.
+    async function compressImageToBase64(file) {
+        const readAsDataURL = (blob) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+        if (!file || !file.type || !file.type.startsWith('image/')) {
+            throw new Error('Please attach a valid screenshot image (JPG or PNG).');
+        }
+        const dataUrl = await readAsDataURL(file);
+        // Already small: pass through unchanged, no recompression artifacts.
+        if (file.size <= 300 * 1024) return dataUrl;
+        const image = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error('Could not read the screenshot. Please upload a JPG or PNG image.'));
+            img.src = dataUrl;
+        });
+        const maxDimension = 1600;
+        const width = image.naturalWidth || image.width || 1;
+        const height = image.naturalHeight || image.height || 1;
+        const scale = Math.min(1, maxDimension / Math.max(width, height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(width * scale));
+        canvas.height = Math.max(1, Math.round(height * scale));
+        const context = canvas.getContext('2d');
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        // Step quality down until the payload stays safely under Firestore's 1MB doc limit.
+        const maxBytes = 350 * 1024;
+        let quality = 0.75;
+        let output = canvas.toDataURL('image/jpeg', quality);
+        while ((output.length * 0.75) > maxBytes && quality > 0.35) {
+            quality -= 0.1;
+            output = canvas.toDataURL('image/jpeg', quality);
+        }
+        return output;
+    }
+
     function showPaymentModal(event) {
         const amount = Number(event.amount || 0).toFixed(2);
         const upiId = event.upiId || window.paymentConfig?.upiId || 'YOUR_UPI_ID@bank';
@@ -2850,14 +2887,9 @@
             const file = document.getElementById('payment-screenshot').files[0];
             const status = document.getElementById('payment-upload-status');
             if (!file) return;
-            status.textContent = 'Uploading payment proof...';
+            status.textContent = 'Compressing & uploading payment proof...';
             try {
-                const screenshotBase64 = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
+                const screenshotBase64 = await compressImageToBase64(file);
                 const payment = {
                     paymentStatus: 'PENDING_APPROVAL',
                     amount: Number(event.amount),
