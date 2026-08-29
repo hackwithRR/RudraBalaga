@@ -308,3 +308,45 @@
         document.body.appendChild(toast);
         setTimeout(function () { toast.remove(); }, 5000);
     }
+
+    // ------------------------------------------------------------------
+    // Notification panel (slide-in card)
+    // ------------------------------------------------------------------
+    function ensurePanel() {
+        if (state.panelEl) return;
+        var panel = document.createElement('div');
+        panel.id = 'notifications-panel-backdrop';
+        panel.className = 'fixed inset-0 z-[90] bg-black/40 hidden';
+        panel.innerHTML =
+            '<div class="absolute top-0 right-0 h-full w-full max-w-md bg-surface-container-lowest shadow-2xl flex flex-col rounded-l-2xl overflow-hidden">' +
+                '<div class="flex items-center justify-between gap-3 px-4 py-4 border-b-2 border-primary-container">' +
+                    '<div class="flex items-center gap-2">' +
+                        '<span class="material-symbols-outlined text-primary" style="font-variation-settings: \'FILL\' 1;">notifications</span>' +
+                        '<h2 class="font-bold text-lg text-on-surface">Notifications</h2>' +
+                        '<span id="notifications-panel-count" class="text-sm text-on-surface-variant"></span>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1">' +
+                        '<button id="notifications-mark-all" type="button" class="touch-active h-11 px-3 rounded-xl bg-primary-container text-on-primary-container font-bold text-sm">Mark all read</button>' +
+                        '<button id="notifications-close" type="button" aria-label="Close notifications" class="touch-active flex items-center justify-center w-11 h-11 rounded-full bg-surface-container-high text-on-surface-variant">' +
+                            '<span class="material-symbols-outlined">close</span>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="notifications-push-row" class="px-3 pt-3 hidden">' +
+                    '<button id="notifications-enable-push" type="button" class="w-full h-12 rounded-xl bg-secondary-container text-on-secondary-container font-bold flex items-center justify-center gap-2">' +
+                        '<span class="material-symbols-outlined">notifications_active</span>' +
+                        '<span>Enable phone / laptop notifications</span>' +
+                    '</button>' +
+                    '<p class="text-xs text-on-surface-variant mt-1.5 px-1">Get alerts even when the app is closed (push).</p>' +
+                '</div>' +
+                '<div id="notifications-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>' +
+            '</div>';
+        document.body.appendChild(panel);
+        state.panelEl = panel;
+
+        panel.addEventListener('click', function (e) { if (e.target === panel) closePanel(); });
+        panel.querySelector('#notifications-close').addEventListener('click', closePanel);
+        panel.querySelector('#notifications-mark-all').addEventListener('click', markAllRead);
+        var pushBtn = panel.querySelector('#notifications-enable-push');
+        if (pushBtn) pushBtn.addEventListener('click', function () { enablePush(); });
+    }
