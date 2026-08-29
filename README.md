@@ -224,7 +224,10 @@ How it works: every page includes `notifications.js` (bell + badge + slide-in pa
 1. **VAPID key (required — the main reason push can be missing):** Firebase Console > ⚙️ Project settings > Cloud Messaging > Web push certificates > generate a key pair, then paste the **public key** into `notifications.js` (`PUSH_VAPID_KEY`). This app's key is already set; if push ever stops working, verify this key still matches the one in Firebase Console.
 2. Members tap **"Enable phone / laptop notifications"** inside the bell panel → their FCM token is saved to `fcmTokens`. Every page loads `firebase-messaging-compat.js`, so enabling works from any tab — home, events, essentials, bus routes, profile or admin.
 3. **In-app reminders** ("day before" / same-day) are created automatically on every member page whenever events load (index, events, essentials, bus-routes) — no server or billing needed. They arrive as a bell badge + toast.
-4. **Push delivery (free, no Blaze):** the included GitHub Action runs daily at 19:00 IST:
+4. **Push delivery (free, no Blaze):** two pieces keep members notified even when the app is **closed**:
+   - **In-app notifications** (bell/badge/toast) fire only while the app is open.
+   - **`tools/send-pending-pushes.mjs`** (runs every 5 minutes via `.github/workflows/push-fanout.yml`) reads the `notifications` collection for anything with `pushSent != true` and pushes it to the member's registered devices. So payment approved/rejected, announcements, event updates, bus info and reminders all arrive on the phone/laptop even when the app is closed — within ~5 minutes.
+   - The daily "day-before reminder" sender is `.github/workflows/daily-reminders.yml` (runs 19:00 IST).
    - Firebase Console > Project settings > Service accounts > **Generate new private key**
    - GitHub repo > Settings > Secrets and variables > Actions > New secret `FIREBASE_SERVICE_ACCOUNT` = full JSON contents
    - Push `service-account.json` is NEVER committed. The Action sends "day before" reminders via `tools/send-notifications.mjs`.

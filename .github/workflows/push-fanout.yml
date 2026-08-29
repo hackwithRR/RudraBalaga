@@ -1,0 +1,28 @@
+name: Push pending notifications
+
+# FREE closed-app push fan-out — runs every 5 minutes, no Firebase Blaze needed.
+# Uses the FIREBASE_SERVICE_ACCOUNT secret (already added) to send any
+# notification that hasn't been pushed yet to the member's registered devices.
+# This is what lets payment approved/rejected, announcements, event updates and
+# bus info reach members even when the app is closed.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # every 5 minutes
+  workflow_dispatch: {}     # allows manual "Run workflow" from the Actions tab
+
+jobs:
+  fanout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install firebase-admin
+        run: npm install --no-save firebase-admin
+      - name: Push pending notifications
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: node tools/send-pending-pushes.mjs

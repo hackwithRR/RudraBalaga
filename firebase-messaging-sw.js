@@ -23,7 +23,10 @@ try {
     messaging.onBackgroundMessage((payload) => {
         console.log('[firebase-messaging-sw] Background message received:', payload);
         const n = payload.notification || {};
-        const type = (payload.data && payload.data.type) || 'announcement';
+        const data = payload.data || {};
+        const type = data.type || 'announcement';
+        const title = n.title || data.title || 'Rudra Balaga';
+        const body = n.body || data.body || '';
         const icons = {
             event_new: 'icons/icon-192.png',
             event_updated: 'icons/icon-192.png',
@@ -37,14 +40,19 @@ try {
             announcement: 'icons/icon-192.png',
             reminder: 'icons/icon-192.png'
         };
-        self.registration.showNotification(n.title || 'Rudra Balaga', {
-            body: n.body || '',
-            icon: icons[type] || 'icons/icon-192.png',
-            badge: 'icons/icon-192.png',
-            tag: 'rudra-' + type + '-' + ((payload.data && payload.data.eventId) || Date.now()),
-            data: payload.data || {},
-            vibrate: [200, 100, 200]
-        });
+        // Only call showNotification when the browser did NOT auto-display a
+        // notification payload — avoids duplicates. Content (title/body) is taken
+        // from either payload.notification or payload.data so it always shows.
+        if (!n.title && !n.body) {
+            self.registration.showNotification(title, {
+                body: body,
+                icon: icons[type] || 'icons/icon-192.png',
+                badge: 'icons/icon-192.png',
+                tag: 'rudra-' + type + '-' + (data.eventId || Date.now()),
+                data: data,
+                vibrate: [200, 100, 200]
+            });
+        }
     });
 } catch (e) {
     // Messaging requires a valid setup; PWA caching must keep working regardless

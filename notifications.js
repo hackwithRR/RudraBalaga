@@ -115,6 +115,7 @@
             body: String(payload.body || ''),
             eventId: payload.eventId || null,
             read: false,
+            pushSent: false, // false => the server watcher will push this to the member's devices
             createdAt: serverTimestamp()
         };
         try {
@@ -150,6 +151,7 @@
                     body: String(payload.body || ''),
                     eventId: payload.eventId || null,
                     read: false,
+                    pushSent: false, // false => the server watcher will push this to the member's devices
                     createdAt: serverTimestamp()
                 });
             });

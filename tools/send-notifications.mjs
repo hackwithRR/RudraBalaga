@@ -74,7 +74,7 @@ async function sendToUids(uids, { title, body, type, eventId }) {
                 await getMessaging().send({
                     token,
                     notification: { title, body },
-                    data: { type: type || 'announcement', eventId: eventId || '' },
+                    data: { type: type || 'announcement', eventId: eventId || '', title: title || '', body: body || '' },
                     webpush: {
                         fcmOptions: { link: SITE_URL },
                         notification: { icon: ICON_URL, badge: ICON_URL, tag: `rudra-${type || 'msg'}-${eventId || Date.now()}` }
@@ -105,6 +105,7 @@ async function writeInAppNotifications(uids, payload) {
             batch.set(db.collection('notifications').doc(), {
                 uid, type: payload.type, title: payload.title, body: payload.body,
                 eventId: payload.eventId || null, read: false,
+                pushSent: true, // already delivered as push in this same run — watcher must not re-send
                 createdAt: new Date()
             });
         });
