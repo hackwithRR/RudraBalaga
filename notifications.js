@@ -294,7 +294,7 @@
         bell.setAttribute('title', 'Notifications');
         bell.className = 'touch-active relative flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant';
         bell.innerHTML =
-            '<img src="icons/icon-192.png" alt="Notifications" class="w-6 h-6">' +
+            '<span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">notifications</span>' +
             '<span id="notifications-badge" class="hidden absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-error text-white text-[11px] font-bold flex items-center justify-center leading-none">0</span>';
         bell.addEventListener('click', function () { openPanel(); });
 
