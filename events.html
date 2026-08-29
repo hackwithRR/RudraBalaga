@@ -213,6 +213,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="notifications.js"></script>
     <script src="pwa.js"></script>
@@ -292,6 +293,8 @@
                         state.events.push({ id: doc.id, ...doc.data() });
                     });
                     renderEvents();
+                    // "Day before" / same-day reminders as soon as events load or change
+                    if (window.Notifications && state.user) { try { Notifications.checkEventReminders(state.events); } catch (e) {} }
                 });
             } catch (error) {
                 console.log('Firestore not available, using demo data');
@@ -300,6 +303,7 @@
                     { id: 'demo-event-1', title: 'ರುದ್ರ ಅಭಿಷೇಕಂ', date: '2026-07-15', time: '06:00', type: 'ಬೆಂಗಳೂರು', location: 'ISKCON ದೇವಸ್ಥಾನ, ಬೆಂಗಳೂರು' }
                 ];
                 renderEvents();
+                if (window.Notifications && state.user) { try { Notifications.checkEventReminders(state.events); } catch (e) {} }
             }
         }
 
@@ -530,6 +534,14 @@
                     `;
                 }
                 
+                // Bangaluru events: embedded Google Maps preview (same as the home tab)
+                const isBangaloreEvent = e.type === 'Bangalore' || e.type === 'ಬೆಂಗಳೂರು' || e.type === 'Bengaluru';
+                const eventMapLink = e.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.location || '')}`;
+                const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(e.location || '')}&output=embed`;
+                const mapHtml = isBangaloreEvent && e.location
+                    ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen title="Map" src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2 kannada-text">Open in Google Maps</p></a></div>`
+                    : '';
+
                 return `
                     <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm" data-event-id="${e.id}">
                         <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -538,6 +550,7 @@
                         </div>
                         <p class="text-on-surface font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' && e.eventEndDate ? `${formatDate(e.date)} - ${formatDate(e.eventEndDate)}` : formatDate(e.date)} ರಂದು ${e.time} ಗಂಟೆಗೆ</p>
                         <p class="text-on-surface-variant font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' ? 'ಔಟ್ಸ್ಟೇಷನ್' : 'ಬೆಂಗಳೂರು'} - ${e.location}</p>
+                        ${mapHtml}
                         ${e.type === 'Outstation' ? (() => {
                             const outstationDates = Array.isArray(e.outstationDates) ? e.outstationDates : [];
                             const rangeDates = [e.departureDate, e.returnDate, ...outstationDates].filter(Boolean);

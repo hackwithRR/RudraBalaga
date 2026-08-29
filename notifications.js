@@ -338,6 +338,7 @@
                         '<span>Enable phone / laptop notifications</span>' +
                     '</button>' +
                     '<p class="text-xs text-on-surface-variant mt-1.5 px-1">Get alerts even when the app is closed (push).</p>' +
+                    '<p id="notifications-push-config-note" class="hidden text-xs text-error mt-1.5 px-1">Push is not configured yet — an admin must add the Firebase "Web Push certificate" key (Firebase Console &gt; Project settings &gt; Cloud Messaging). In-app notifications still work.</p>' +
                 '</div>' +
                 '<div id="notifications-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>' +
             '</div>';
@@ -362,6 +363,9 @@
         if (pushRow) {
             var pushReady = (typeof Notification !== 'undefined' && Notification.permission === 'granted') || pushTokenSaved;
             pushRow.classList.toggle('hidden', pushReady);
+            // Explain the missing Web Push certificate key to members (instead of a silent no-op).
+            var configNote = pushRow.querySelector('#notifications-push-config-note');
+            if (configNote) configNote.classList.toggle('hidden', pushIsConfigured());
         }
         if (!state.notifications.length) {
             listEl.innerHTML =
@@ -419,8 +423,17 @@
     // Set PUSH_VAPID_KEY below (Firebase Console > Project settings >
     // Cloud Messaging > Web Push certificates) to activate.
     // ------------------------------------------------------------------
-    var PUSH_VAPID_KEY = 'REPLACE_WITH_YOUR_WEB_PUSH_CERTIFICATE_PUBLIC_KEY';
+    var PUSH_VAPID_KEY = 'BHhS4k5C0L5urJkzMrL_xYDkK-FkOQNd9zj8iKTyuecx1VyCMAUtWeIU7GBkAKok-XrxO589uUxEHsUk5LuCKUk';
     var pushTokenSaved = false;
+
+    // Web Push needs a real VAPID public key from Firebase Console >
+    // Project settings > Cloud Messaging > "Web Push certificates".
+    // Until an admin pastes that key here, push cannot register tokens, so we
+    // surface it clearly (panel note + toast) instead of failing silently.
+    function pushIsConfigured() {
+        var key = String(PUSH_VAPID_KEY || '').trim();
+        return !!key && key !== 'REPLACE_WITH_YOUR_WEB_PUSH_CERTIFICATE_PUBLIC_KEY';
+    }
 
     function saveToken(uid, token) {
         var database = db();
@@ -444,6 +457,13 @@
             : Notification.requestPermission();
         return Promise.resolve(request).then(function (permission) {
             if (permission !== 'granted') return permission;
+            // Missing / placeholder VAPID key -> push will never register. Tell the
+            // member exactly what's missing (admins: see README > "Push notifications").
+            if (!pushIsConfigured()) {
+                console.warn('[Notifications] Push is not configured: set PUSH_VAPID_KEY (Firebase Console > Project settings > Cloud Messaging > Web Push certificates) in notifications.js.');
+                showToast({ type: 'announcement', title: 'Push not configured yet', body: 'An admin must add the Firebase Web Push certificate key. In-app notifications still work.' });
+                return permission;
+            }
             if (!window.firebase || !firebase.messaging) {
                 console.warn('[Notifications] firebase-messaging-compat.js not loaded on this page.');
                 return permission;
@@ -451,7 +471,7 @@
             try {
                 navigator.serviceWorker.register('firebase-messaging-sw.js').then(function (registration) {
                     var messaging = firebase.messaging();
-                    messaging.getToken({ vapidKey: PUSH_VAPID_KEY, serviceWorkerRegistration: registration })
+                    messaging.getToken({ vapidKey: PUSH_VAPID_KEY.trim(), serviceWorkerRegistration: registration })
                         .then(function (token) {
                             if (token) return saveToken(state.uid, token);
                         })
@@ -568,6 +588,7 @@
             formatEventDate: formatEventDate,
             relativeTime: relativeTime,
             NOTIF_TYPES: NOTIF_TYPES,
+            pushIsConfigured: pushIsConfigured,
             state: state
         }
     };

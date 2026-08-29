@@ -196,6 +196,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="notifications.js"></script>
     <script src="pwa.js"></script>
@@ -269,6 +270,8 @@
                         state.events.push({ id: doc.id, ...doc.data() });
                     });
                     renderOutstationEvents();
+                    // "Day before" / same-day reminders as soon as events load or change
+                    if (window.Notifications && state.user) { try { Notifications.checkEventReminders(state.events); } catch (e) {} }
                 });
             } catch (error) {
                 console.log('Firestore not available, using demo data');
@@ -277,6 +280,7 @@
                     { id: 'demo-event-1', title: 'ರುದ್ರ ಅಭಿಷೇಕಂ', date: '2026-07-15', time: '06:00', type: 'Outstation', location: 'ISKCON ದೇವಸ್ಥಾನ, ಬೆಂಗಳೂರು' }
                 ];
                 renderOutstationEvents();
+                if (window.Notifications && state.user) { try { Notifications.checkEventReminders(state.events); } catch (e) {} }
             }
         }
 

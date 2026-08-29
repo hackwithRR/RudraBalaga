@@ -221,9 +221,10 @@ How it works: every page includes `notifications.js` (bell + badge + slide-in pa
 
 ## Push notifications ("WhatsApp-style", free)
 
-1. **VAPID key:** Firebase Console > ⚙️ Project settings > Cloud Messaging > Web push certificates > generate a key pair, then paste the **public key** into `notifications.js` (`PUSH_VAPID_KEY`).
-2. Members tap **"Enable phone / laptop notifications"** inside the bell panel → their FCM token is saved to `fcmTokens`.
-3. **Sending (free, no Blaze):** the included GitHub Action runs daily at 19:00 IST:
+1. **VAPID key (required — the main reason push can be missing):** Firebase Console > ⚙️ Project settings > Cloud Messaging > Web push certificates > generate a key pair, then paste the **public key** into `notifications.js` (`PUSH_VAPID_KEY`). This app's key is already set; if push ever stops working, verify this key still matches the one in Firebase Console.
+2. Members tap **"Enable phone / laptop notifications"** inside the bell panel → their FCM token is saved to `fcmTokens`. Every page loads `firebase-messaging-compat.js`, so enabling works from any tab — home, events, essentials, bus routes, profile or admin.
+3. **In-app reminders** ("day before" / same-day) are created automatically on every member page whenever events load (index, events, essentials, bus-routes) — no server or billing needed. They arrive as a bell badge + toast.
+4. **Push delivery (free, no Blaze):** the included GitHub Action runs daily at 19:00 IST:
    - Firebase Console > Project settings > Service accounts > **Generate new private key**
    - GitHub repo > Settings > Secrets and variables > Actions > New secret `FIREBASE_SERVICE_ACCOUNT` = full JSON contents
    - Push `service-account.json` is NEVER committed. The Action sends "day before" reminders via `tools/send-notifications.mjs`.
@@ -233,7 +234,7 @@ How it works: every page includes `notifications.js` (bell + badge + slide-in pa
      GOOGLE_APPLICATION_CREDENTIALS=./service-account.json node tools/send-notifications.mjs reminders
      ```
    - Immediate broadcast: `node tools/send-notifications.mjs broadcast --title="..." --body="..."`
-4. **Platform notes:** Android + desktop browsers: push works right away. iPhone/iPad: push works after **Share → Add to Home Screen** (iOS 16.4+). Later, if you enable Blaze, the same logic can move to a Cloud Function trigger.
+5. **Platform notes:** Android + desktop browsers: push works right away. iPhone/iPad: push works after **Share → Add to Home Screen** (iOS 16.4+). Later, if you enable Blaze, the same logic can move to a Cloud Function trigger.
 
 ## Files
 
