@@ -157,7 +157,7 @@ async function runChecks(page, errors) {
   const expectedId = 'member-uid-1__day1__ev-tmr';
   const rem = reminder.find(w => w.doc === expectedId);
   check('reminder written with deterministic doc id', !!rem, 'id=' + expectedId);
-  check('reminder payload correct', !!rem && rem.data.type === 'reminder' && rem.data.title === 'Upcoming tomorrow: Test Yatra' && rem.data.body.includes('Tomorrow at 06:00'));
+  check('reminder payload correct', !!rem && rem.data.type === 'reminder' && rem.data.title === 'Upcoming tomorrow: Test Yatra' && rem.data.body.includes('Tomorrow') && rem.data.body.includes('Temple') && rem.data.body.includes('at 06:00'));
 
   // 7. Dedupe: same reminder not re-sent when already delivered
   const dedupe = await page.evaluate(async () => {

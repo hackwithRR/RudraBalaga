@@ -231,6 +231,7 @@
             if (!kind) return;
 
             var whenText = (kind === 'day1' ? 'Tomorrow' : 'Today') +
+                ' · ' + formatEventDate(ev.date) +
                 (ev.time ? ' at ' + ev.time : '') +
                 (ev.location ? ' · ' + ev.location : '');
             var payload = {
@@ -292,6 +293,25 @@
     // ------------------------------------------------------------------
     // Toast popup for newly arriving notifications
     // ------------------------------------------------------------------
+    // Show a real OS-level notification (Android/iOS/desktop banner) while
+    // the app is open — in addition to the in-app toast. This makes payment
+    // updates, announcements and reminders appear as an Android notification
+    // popup immediately, even before the FCM push sender runs.
+    function fireOsNotification(notif) {
+        try {
+            if (typeof Notification === 'undefined') return;
+            if (Notification.permission !== 'granted') return;
+            if (typeof notif === 'string') notif = { title: notif };
+            notif = notif || {};
+            var tag = 'rudra-' + (notif.eventId || 'n') + '-' + (notif.type || 'msg') + '-' + Date.now();
+            new Notification(notif.title || 'Rudra Balaga', {
+                body: notif.body || '',
+                icon: 'icons/icon-192.png',
+                badge: 'icons/icon-192.png',
+                tag: tag
+            });
+        } catch (e) { /* failed silently — in-app toast still works */ }
+    }
     function showToast(notif) {
         var meta = typeMeta(notif.type);
         var toast = document.createElement('div');
@@ -450,6 +470,51 @@
         } catch (e) { return Promise.resolve(); }
     }
 
+    // One FCM onMessage handler per page — shows foreground pushes as
+    // in-app toast + OS notification popup (never duplicates).
+    var pushListenerAttached = false;
+    function attachMessagingListener(messaging) {
+        if (pushListenerAttached || !messaging) return;
+        pushListenerAttached = true;
+        try {
+            messaging.onMessage(function (payload) {
+                var n = payload && payload.notification ? payload.notification : {};
+                var data = payload && payload.data ? payload.data : {};
+                var title = n.title || 'Rudra Balaga';
+                var body = n.body || '';
+                showToast({ type: data.type || 'announcement', title: title, body: body, eventId: data.eventId });
+                fireOsNotification({ type: data.type || 'announcement', title: title, body: body, eventId: data.eventId });
+            });
+        } catch (e) { /* fail-soft */ }
+    }
+
+    // Register the device token automatically when the user already granted
+    // permission — no need to tap the button again. This is the key step for
+    // push to reach Android / desktop even when they never open the panel.
+    function autoRegisterPush() {
+        if (!state.uid || pushTokenSaved) return;
+        if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+        if (!pushIsConfigured()) return;
+        if (!window.firebase || !firebase.messaging) return;
+        try {
+            navigator.serviceWorker.register('firebase-messaging-sw.js').then(function (registration) {
+                var messaging = firebase.messaging();
+                attachMessagingListener(messaging);
+                messaging.getToken({ vapidKey: PUSH_VAPID_KEY.trim(), serviceWorkerRegistration: registration })
+                    .then(function (token) {
+                        if (token) return saveToken(state.uid, token);
+                    })
+                    .catch(function (err) {
+                        console.warn('[Notifications] auto push token failed:', err && err.message);
+                    });
+            }).catch(function (err) {
+                console.warn('[Notifications] auto push SW register failed:', err && err.message);
+            });
+        } catch (e) {
+            console.warn('[Notifications] auto push init failed:', e && e.message);
+        }
+    }
+
     function enablePush() {
         if (typeof Notification === 'undefined') return Promise.resolve('unsupported');
         var request = Notification.permission === 'granted'
@@ -471,22 +536,14 @@
             try {
                 navigator.serviceWorker.register('firebase-messaging-sw.js').then(function (registration) {
                     var messaging = firebase.messaging();
+                    attachMessagingListener(messaging);
                     messaging.getToken({ vapidKey: PUSH_VAPID_KEY.trim(), serviceWorkerRegistration: registration })
                         .then(function (token) {
                             if (token) return saveToken(state.uid, token);
                         })
                         .catch(function (err) {
-                            console.warn('[Notifications] getToken failed (set PUSH_VAPID_KEY in notifications.js):', err && err.message);
+                            console.warn('[Notifications] getToken failed:', err && err.message);
                         });
-                    // Foreground pushes reuse the in-app toast + badge
-                    messaging.onMessage(function (payload) {
-                        var n = payload && payload.notification ? payload.notification : {};
-                        showToast({
-                            type: (payload && payload.data && payload.data.type) || 'announcement',
-                            title: n.title || 'Rudra Balaga',
-                            body: n.body || ''
-                        });
-                    });
                 }).catch(function (err) {
                     console.warn('[Notifications] service worker registration failed:', err && err.message);
                 });
@@ -549,7 +606,11 @@
                     if (state.firstSnapshotSeen) {
                         // Only toast genuinely-new docs (not the backlog on page load)
                         snapshot.docChanges().forEach(function (change) {
-                            if (change.type === 'added') showToast(change.doc.data());
+                            if (change.type === 'added') {
+                                var newNotif = change.doc.data();
+                                showToast(newNotif);
+                                fireOsNotification(newNotif);
+                            }
                         });
                     }
                     state.firstSnapshotSeen = true;
@@ -572,6 +633,9 @@
         state.firstSnapshotSeen = false;
         try { mountBell(); } catch (e) { /* header layout differences */ }
         attachListener();
+        // If the browser permission was already granted, register the token
+        // automatically so push works without tapping the panel button again.
+        autoRegisterPush();
     }
 
     window.Notifications = {

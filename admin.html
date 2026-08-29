@@ -3637,7 +3637,12 @@
             }).then(() => {
                 modal.remove(); loadPaymentReview();
                 // Real-time: tell the member their payment was approved / rejected
-                if (window.Notifications) { try { Notifications.notifyUser(userId, { type: status === 'APPROVED' ? 'payment_approved' : 'payment_rejected', title: status === 'APPROVED' ? 'Payment approved' : 'Payment rejected', body: status === 'APPROVED' ? 'Your payment for ' + (event && event.title ? event.title : 'the event') + ' was approved. See you there!' : 'Your payment for ' + (event && event.title ? event.title : 'the event') + ' was rejected. Please contact an admin or submit proof again.', eventId: eventId }); } catch (notifyErr) {} }
+                if (window.Notifications) { try {
+                    const evLabel = (event && event.title ? event.title : 'the event') +
+                        (event && event.location ? ' at ' + event.location : '') +
+                        (event && event.date ? ' (' + formatDate(event.date) + ')' : '');
+                    Notifications.notifyUser(userId, { type: status === 'APPROVED' ? 'payment_approved' : 'payment_rejected', title: status === 'APPROVED' ? 'Payment approved: ' + (event && event.title ? event.title : 'Event') : 'Payment rejected: ' + (event && event.title ? event.title : 'Event'), body: status === 'APPROVED' ? 'Your payment for ' + evLabel + ' was approved. See you there!' : 'Your payment for ' + evLabel + ' was rejected. Please contact an admin or submit proof again.', eventId: eventId });
+                } catch (notifyErr) {} }
             });
             document.getElementById('approve-payment').onclick = () => updateStatus('APPROVED');
             document.getElementById('reject-payment').onclick = () => updateStatus('REJECTED');
