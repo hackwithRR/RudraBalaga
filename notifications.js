@@ -167,12 +167,31 @@
         }, Promise.resolve());
     }
 
+            // Resolve the actual auth UID for a user document.
+    // Some schemas store the Firebase Auth UID in a `uid` field; others use
+    // the Firestore doc ID as the UID. This helper handles both safely.
+    function userDocUid(doc, data) {
+        if (!doc) return null;
+        return (data && typeof data.uid === 'string' && data.uid) || doc.id;
+    }
+
     function notifyAllUsers(payload) {
         var database = db();
         if (!database) return Promise.resolve();
         return database.collection('users').get().then(function (snapshot) {
             var uids = [];
-            snapshot.forEach(function (doc) { uids.push(doc.id); });
+            snapshot.forEach(function (doc) {
+                var uid = userDocUid(doc, doc.data());
+                if (uid) uids.push(uid);
+            });
+            // Log which UIDs have registered FCM tokens (for diagnostics)
+            database.collection('fcmTokens').get().then(function (tokenSnap) {
+                var tokenUids = {};
+                tokenSnap.forEach(function (tdoc) { tokenUids[tdoc.data().uid] = true; });
+                var reachable = uids.filter(function (u) { return tokenUids[u]; });
+                console.log('[Notifications] notifyAllUsers: ' + uids.length + ' users total, ' +
+                    reachable.length + ' with registered FCM tokens (' + tokenSnap.size + ' tokens)');
+            }).catch(function (e) { console.warn('[Notifications] token count check failed:', e && e.message); });
             return notifyUsers({ uids: uids, type: payload.type, title: payload.title, body: payload.body, eventId: payload.eventId });
         }).catch(function (err) {
             console.warn('[Notifications] notifyAllUsers failed:', err && err.message);
@@ -184,7 +203,10 @@
         if (!database) return Promise.resolve();
         return database.collection('users').where('role', '==', 'admin').get().then(function (snapshot) {
             var uids = [];
-            snapshot.forEach(function (doc) { uids.push(doc.id); });
+            snapshot.forEach(function (doc) {
+                var uid = userDocUid(doc, doc.data());
+                if (uid) uids.push(uid);
+            });
             if (!uids.length) return Promise.resolve();
             return notifyUsers({ uids: uids, type: payload.type, title: payload.title, body: payload.body, eventId: payload.eventId });
         }).catch(function (err) {
@@ -495,9 +517,26 @@
     // push to reach Android / desktop even when they never open the panel.
     function autoRegisterPush() {
         if (!state.uid || pushTokenSaved) return;
-        if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+        if (typeof Notification === 'undefined') return;
         if (!pushIsConfigured()) return;
         if (!window.firebase || !firebase.messaging) return;
+        // Auto-request permission on first load if not yet decided.
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission().then(function (permission) {
+                if (permission === 'granted') {
+                    registerPushToken();
+                }
+            }).catch(function (err) {
+                console.warn('[Notifications] permission request failed:', err && err.message);
+            });
+            return;
+        }
+        registerPushToken();
+    }
+
+    // Register the FCM token (called by both autoRegisterPush and enablePush)
+    function registerPushToken() {
+        if (!state.uid) return;
         try {
             navigator.serviceWorker.register('firebase-messaging-sw.js').then(function (registration) {
                 var messaging = firebase.messaging();
@@ -524,8 +563,6 @@
             : Notification.requestPermission();
         return Promise.resolve(request).then(function (permission) {
             if (permission !== 'granted') return permission;
-            // Missing / placeholder VAPID key -> push will never register. Tell the
-            // member exactly what's missing (admins: see README > "Push notifications").
             if (!pushIsConfigured()) {
                 console.warn('[Notifications] Push is not configured: set PUSH_VAPID_KEY (Firebase Console > Project settings > Cloud Messaging > Web Push certificates) in notifications.js.');
                 showToast({ type: 'announcement', title: 'Push not configured yet', body: 'An admin must add the Firebase Web Push certificate key. In-app notifications still work.' });
@@ -535,23 +572,7 @@
                 console.warn('[Notifications] firebase-messaging-compat.js not loaded on this page.');
                 return permission;
             }
-            try {
-                navigator.serviceWorker.register('firebase-messaging-sw.js').then(function (registration) {
-                    var messaging = firebase.messaging();
-                    attachMessagingListener(messaging);
-                    messaging.getToken({ vapidKey: PUSH_VAPID_KEY.trim(), serviceWorkerRegistration: registration })
-                        .then(function (token) {
-                            if (token) return saveToken(state.uid, token);
-                        })
-                        .catch(function (err) {
-                            console.warn('[Notifications] getToken failed:', err && err.message);
-                        });
-                }).catch(function (err) {
-                    console.warn('[Notifications] service worker registration failed:', err && err.message);
-                });
-            } catch (e) {
-                console.warn('[Notifications] push init failed:', e && e.message);
-            }
+            registerPushToken();
             return permission;
         });
     }
