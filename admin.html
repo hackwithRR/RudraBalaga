@@ -333,7 +333,8 @@
         }
 
         .tab-content button[type='submit'],
-        #edit-event-form button[type='submit'] {
+        #edit-event-form button[type='submit'],
+        #save-event-changes-btn {
             background: var(--admin-accent) !important;
             color: white !important;
             border-radius: 0.65rem !important;
@@ -439,11 +440,60 @@
         }
 
         /* Shared modal card behaviour (sheet-style, scrolls internally).
-           Applied to edit-event, member details, payment/donation review,
-           attendance and help modals. Replaces ad-hoc max-h-[90vh] utils
-           so dvh units and momentum scrolling win reliably on iOS. */
+           Applied to member details, payment/donation review, attendance
+           and help modals. Replaces ad-hoc max-h-[90vh] utils so dvh units
+           and momentum scrolling win reliably on iOS. */
         .admin-modal-card {
+            max-height: calc(100vh - 2rem);
             max-height: calc(100dvh - 2rem);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        /* ---- Event Edit modal: viewport-centered overlay ----
+           Lives at <body> level (see markup near the end of <body>) so `fixed inset-0`
+           is anchored to the real viewport. The card is a flex column: pinned header,
+           internally-scrollable form, pinned footer — the long form scrolls BETWEEN
+           the title bar and the action buttons instead of clipping off-screen. */
+        #event-edit-modal {
+            background: rgba(36, 27, 22, 0.66);
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+            opacity: 0;
+            transition: opacity 180ms ease;
+        }
+
+        #event-edit-modal.modal-open {
+            opacity: 1;
+        }
+
+        #event-edit-modal .edit-modal-card {
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 1.5rem);
+            max-height: calc(100dvh - 1.5rem);
+            overflow: hidden;
+            transform: translateY(12px) scale(0.97);
+            opacity: 0;
+            transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease;
+        }
+
+        #event-edit-modal.modal-open .edit-modal-card {
+            transform: none;
+            opacity: 1;
+        }
+
+        @media (min-width: 640px) {
+            #event-edit-modal .edit-modal-card {
+                max-height: calc(100vh - 3rem);
+                max-height: calc(100dvh - 3rem);
+            }
+        }
+
+        #event-edit-modal .edit-modal-body {
+            flex: 1 1 auto;
+            min-height: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
@@ -461,8 +511,7 @@
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
-            .tab-content > div,
-            #event-edit-modal > div {
+            .tab-content > div {
                 padding: 1.35rem !important;
             }
         }
@@ -514,10 +563,13 @@
                 margin-right: 0;
             }
 
-            /* Cards breathe less on phones */
-            .tab-content > div,
-            #event-edit-modal > div {
+                        /* Cards breathe less on phones */
+            .tab-content > div {
                 padding: 1.1rem !important;
+                border-radius: 0.9rem !important;
+            }
+
+            #event-edit-modal .edit-modal-card {
                 border-radius: 0.9rem !important;
             }
 
@@ -540,7 +592,7 @@
            Stat summary chips (payments/donations) intentionally stay 2-up. */
         @media (max-width: 380px) {
             .tab-content .grid-cols-2:not(#payments-summary):not(#donations-summary),
-            #event-edit-modal form > .grid-cols-2,
+            #event-edit-modal .edit-modal-footer,
             body > .fixed.inset-0 > .bg-white .grid-cols-2 {
                 grid-template-columns: 1fr;
             }
@@ -1092,7 +1144,7 @@
         </section>
 
         <!-- Event Edit Modal (Hidden by default) -->
-        <div id="event-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div id="event-edit-modal" class="hidden fixed inset-0 z-50 flex items-start justify-center sm:items-center bg-black bg-opacity-50 p-4">
             <div class="admin-modal-card bg-white rounded-xl p-6 w-full max-w-lg">
                 <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Edit Event</h3>
                 <form id="edit-event-form" class="space-y-4">
@@ -1223,9 +1275,12 @@
             </div>
         </div>
 
-    <!-- NOTE: Toast popup + Help button were moved OUT of <main> to direct <body> children
-         (just before the script tags) so they stay glued to the viewport no matter how far
-         the page is scrolled. See bottom of file. -->
+    <!-- NOTE: Toast popup, Help button and the Event Edit modal were moved OUT of <main>
+         to direct <body> children (just before the script tags) so they stay glued to the
+         viewport no matter how far the page is scrolled. #app-content keeps a GSAP inline
+         transform after the intro animation, and ANY transformed ancestor hijacks `fixed`
+         positioning for its descendants (the modal would pin to the page top instead of
+         the viewport center). See bottom of file. -->
 
     <!-- Action Buttons -->
     <section class="grid grid-cols-1 gap-3">
@@ -1235,6 +1290,88 @@
         </button>
     </section>
     </main>
+
+    <!-- Event Edit Modal: direct <body> child so `fixed inset-0` anchors to the real
+         viewport and the dialog always sits in the CENTER of the user's screen.
+         (#app-content keeps a GSAP inline transform after the intro animation, which
+         silently turns it into the containing block for fixed descendants and would pin
+         this dialog to the top of the page instead.) Card = pinned header + scrollable
+         form body + pinned action footer. -->
+    <div id="event-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="edit-event-modal-title">
+        <div class="edit-modal-card w-full max-w-lg sm:max-w-xl lg:max-w-2xl">
+            <header class="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 border-b border-outline-variant bg-surface-container-lowest">
+                <div class="min-w-0">
+                    <h3 id="edit-event-modal-title" class="font-headline-sm text-headline-sm text-primary">Edit Event</h3>
+                    <p class="text-xs sm:text-sm text-on-surface-variant mt-0.5">Update the event details, then save your changes.</p>
+                </div>
+                <button type="button" id="close-edit-modal-btn" class="touch-active shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest" aria-label="Close edit event window">
+                    <span class="material-symbols-outlined text-2xl">close</span>
+                </button>
+            </header>
+            <form id="edit-event-form" class="edit-modal-body space-y-4 px-4 py-5 sm:px-6">
+                <input type="hidden" id="edit-event-id">
+                <div>
+                    <label for="edit-event-title" class="block font-label-lg text-label-lg text-on-surface mb-2">Event Title</label>
+                    <input type="text" id="edit-event-title" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                </div>
+                <div>
+                    <label for="edit-event-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Event Start Date</label>
+                    <input type="date" id="edit-event-date" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                </div>
+                <div id="edit-event-end-date-section" class="hidden">
+                    <label for="edit-event-end-date" class="block font-label-lg text-label-lg text-on-surface mb-2">Event End Date</label>
+                    <input type="date" id="edit-event-end-date" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                </div>
+                <div>
+                    <label for="edit-event-time" class="block font-label-lg text-label-lg text-on-surface mb-2">Time</label>
+                    <input type="time" id="edit-event-time" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                </div>
+                <div>
+                    <label for="edit-event-type" class="block font-label-lg text-label-lg text-on-surface mb-2">Event Type</label>
+                    <select id="edit-event-type" required class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Outstation">Outstation</option>
+                    </select>
+                </div>
+                <label class="flex items-center gap-3 p-4 rounded-xl border border-outline-variant bg-surface-container-high cursor-pointer">
+                    <input type="checkbox" id="edit-event-is-outstation" class="w-5 h-5" />
+                    <span class="font-label-lg text-label-lg text-on-surface">Is this an Outstation Event?</span>
+                </label>
+                <div>
+                    <label for="edit-event-location" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Address</label>
+                    <textarea id="edit-event-location" rows="3" required class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"></textarea>
+                </div>
+                <div>
+                    <label for="edit-event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link (Optional)</label>
+                    <input type="url" id="edit-event-map-link" placeholder="https://maps.google.com/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                </div>
+                    <div>
+                        <label for="edit-event-limit" class="block font-label-lg text-label-lg text-on-surface mb-2">Member Limit</label>
+                        <select id="edit-event-limit" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                            <option value="">No Limit</option>
+                            <option value="50">50 Members</option>
+                            <option value="100">100 Members</option>
+                            <option value="150">150 Members</option>
+                            <option value="200">200 Members</option>
+                            <option value="custom">Custom Limit</option>
+                        </select>
+                    </div>
+                    <div id="edit-custom-limit-input" class="hidden">
+                        <label for="edit-event-custom-limit" class="block font-label-lg text-label-lg text-on-surface mb-2">Custom Limit Number</label>
+                        <input type="number" id="edit-event-custom-limit" placeholder="Enter custom limit" min="1" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                    </div>
+            </form>
+            <footer class="edit-modal-footer grid grid-cols-2 gap-3 px-4 py-4 sm:px-6 border-t border-outline-variant bg-surface-container-lowest">
+                <button type="button" id="cancel-edit-btn" class="w-full h-[56px] bg-surface-container-high text-on-surface-variant rounded-xl font-bold text-body-lg flex items-center justify-center touch-active">
+                    Cancel
+                </button>
+                <button type="submit" form="edit-event-form" id="save-event-changes-btn" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2 touch-active">
+                    <span class="material-symbols-outlined text-xl">save</span>
+                    Save Changes
+                </button>
+            </footer>
+        </div>
+    </div>
 
     <!-- Toast popup: full-viewport overlay pins the message to the EXACT screen center
          irrespective of how far the page is scrolled. Direct <body> child = zero quirks. -->
@@ -1342,6 +1479,10 @@
             ease: "power3.out",
             onComplete: () => {
                 document.getElementById("app-content").style.pointerEvents = "auto";
+                // Drop the intro tween's inline transform: a lingering transform turns
+                // #app-content into the containing block for `fixed` descendants, which
+                // pins in-page modals to the top of the document instead of the viewport.
+                gsap.set("#app-content", { clearProps: "transform" });
                 document.getElementById("loader-panel").remove();
                 initializeApp();
             }
@@ -1650,8 +1791,19 @@
             
             const cancelEditBtn = document.getElementById('cancel-edit-btn');
             if (cancelEditBtn) {
-                cancelEditBtn.addEventListener('click', () => {
-                    document.getElementById('event-edit-modal').classList.add('hidden');
+                cancelEditBtn.addEventListener('click', hideEventEditModal);
+            }
+
+            // Header (X) button + click-outside-the-card also close the edit modal
+            const closeEditModalBtn = document.getElementById('close-edit-modal-btn');
+            if (closeEditModalBtn) {
+                closeEditModalBtn.addEventListener('click', hideEventEditModal);
+            }
+
+            const eventEditModal = document.getElementById('event-edit-modal');
+            if (eventEditModal) {
+                eventEditModal.addEventListener('click', (e) => {
+                    if (e.target === eventEditModal) hideEventEditModal();
                 });
             }
             
@@ -2361,6 +2513,55 @@
             }).join('');
         }
         
+        // ---- Event edit modal: viewport-centered overlay helpers ----
+        // The modal is a direct <body> child, so `fixed inset-0` is always anchored to the
+        // real viewport (an ancestor with a transform would hijack its positioning).
+        let hideEventEditModalTimer = null;
+        let eventEditModalKeyHandler = null;
+
+        function showEventEditModal() {
+            const modal = document.getElementById('event-edit-modal');
+            if (!modal) return;
+            clearTimeout(hideEventEditModalTimer);
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // lock the page behind the overlay
+
+            // Double rAF so the un-hidden state paints before the transition starts
+            requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add('modal-open')));
+
+            eventEditModalKeyHandler = (e) => {
+                if (e.key === 'Escape') hideEventEditModal();
+            };
+            document.addEventListener('keydown', eventEditModalKeyHandler);
+
+            // Autofocus the first field on pointer-precise devices only
+            // (avoids popping the on-screen keyboard open on phones).
+            if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+                setTimeout(() => {
+                    const titleInput = document.getElementById('edit-event-title');
+                    if (titleInput && !modal.classList.contains('hidden')) titleInput.focus({ preventScroll: true });
+                }, 240);
+            }
+        }
+
+        function hideEventEditModal() {
+            const modal = document.getElementById('event-edit-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            clearTimeout(hideEventEditModalTimer);
+
+            modal.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            if (eventEditModalKeyHandler) {
+                document.removeEventListener('keydown', eventEditModalKeyHandler);
+                eventEditModalKeyHandler = null;
+            }
+
+            // Wait for the fade-out before display:none (reduced-motion makes it instant)
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            hideEventEditModalTimer = setTimeout(() => modal.classList.add('hidden'), reduceMotion ? 0 : 200);
+        }
+
         // Open edit event modal
         function openEditEventModal(eventId) {
             const event = state.events.find(e => e.id === eventId);
@@ -2420,7 +2621,7 @@
                 document.getElementById('edit-outstation-dates-section').classList.add('hidden');
             }
             
-            document.getElementById('event-edit-modal').classList.remove('hidden');
+            showEventEditModal();
         }
         
         // Save edited event
@@ -2506,7 +2707,7 @@
             
             firebaseDb.collection('events').doc(eventId).update(updateData).then(() => {
                 alert('Event updated successfully!');
-                document.getElementById('event-edit-modal').classList.add('hidden');
+                hideEventEditModal();
             });
         }
 
