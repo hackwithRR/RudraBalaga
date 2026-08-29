@@ -653,6 +653,7 @@
             relativeTime: relativeTime,
             NOTIF_TYPES: NOTIF_TYPES,
             pushIsConfigured: pushIsConfigured,
+            PUSH_VAPID_KEY: PUSH_VAPID_KEY,
             state: state
         }
     };

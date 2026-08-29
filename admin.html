@@ -898,6 +898,22 @@
                     </button>
                 </form>
             </div>
+
+            <!-- Notifications Self-Test -->
+            <div class="bg-surface-container-lowest border-2 border-outline-variant rounded-xl p-6 shadow-sm mt-4">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="font-headline-sm text-headline-sm text-primary">Test Notifications</h3>
+                        <p class="text-on-surface-variant text-sm mt-1">Sends a test notification to your own account and shows exactly what works on THIS browser / phone — so you can see why push may not be arriving.</p>
+                    </div>
+                    <span class="material-symbols-outlined text-secondary text-3xl">notifications_active</span>
+                </div>
+                <button id="test-notification-btn" type="button" class="w-full h-[60px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-xl">notifications_active</span>
+                    Send test notification to me
+                </button>
+                <div id="test-notification-results" class="hidden mt-4 rounded-xl border border-outline-variant bg-surface-container-high p-4 text-sm space-y-2 break-words"></div>
+            </div>
         </section>
 
         <!-- Add Event Tab Content -->
@@ -1799,6 +1815,12 @@
             const createAnnouncementForm = document.getElementById('create-announcement-form');
             if (createAnnouncementForm) {
                 createAnnouncementForm.addEventListener('submit', createAnnouncement);
+            }
+
+            // Test notifications button
+            const testNotifBtn = document.getElementById('test-notification-btn');
+            if (testNotifBtn) {
+                testNotifBtn.addEventListener('click', sendTestNotification);
             }
             
             // Attendance buttons
@@ -3138,6 +3160,77 @@
                 const editedEvent = (state.events || []).find(ev => ev.id === eventId);
                 if (window.Notifications) { try { Notifications.notifyAllUsers({ type: 'event_updated', title: 'Event updated: ' + ((editedEvent && editedEvent.title) || 'Event'), body: 'The event details have changed. Please check the latest schedule.', eventId: eventId }); } catch (notifyErr) {} }
             });
+        }
+
+        // Send a test notification to the admin's own account + run full diagnostics.
+        // The in-app write goes through the same path members use, and we also
+        // attempt an FCM token fetch so the results show ANY blocker clearly.
+        async function sendTestNotification() {
+            const resultsEl = document.getElementById('test-notification-results');
+            const btn = document.getElementById('test-notification-btn');
+            if (!resultsEl || !state.user) return;
+            if (btn) btn.disabled = true;
+            const lines = [];
+            const add = (ok, text) => lines.push((ok ? '✅ ' : '❌ ') + text);
+
+            // 1. Browser-level notification support
+            if (typeof Notification === 'undefined') {
+                add(false, 'This device/browser does not support notifications here. iOS Safari needs the app installed via Share → Add to Home Screen.');
+            } else {
+                add(true, 'Notification API is available. Current permission: ' + Notification.permission);
+                if (Notification.permission !== 'granted') {
+                    add(false, 'Permission is NOT granted on this browser. Click "Enable phone / laptop notifications" in the bell panel, then run this again.');
+                }
+            }
+
+            // 2. Push configuration + FCM SDK
+            const notifApi = window.Notifications;
+            const configured = !!notifApi && notifApi._internal.pushIsConfigured();
+            add(configured, 'Web Push (VAPID) key in notifications.js: ' + (configured ? 'configured' : 'NOT configured (placeholder still there)'));
+            const messagingLoaded = typeof firebase !== 'undefined' && typeof firebase.messaging === 'function';
+            add(messagingLoaded, 'Firebase messaging SDK loaded on this page: ' + (messagingLoaded ? 'yes' : 'NO'));
+
+            // 3. Try to fetch + save an FCM token (only if everything above is OK)
+            let tokenResult = 'skipped';
+            if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && messagingLoaded && configured) {
+                try {
+                    const registration = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+                    const messaging = firebase.messaging();
+                    const token = await messaging.getToken({ vapidKey: notifApi._internal.PUSH_VAPID_KEY.trim(), serviceWorkerRegistration: registration });
+                    if (token) {
+                        tokenResult = 'token fetched ✓ (first 12 chars: ' + token.slice(0, 12) + '…)';
+                        try {
+                            await notifApi.notifyUser(state.user.uid, { type: 'announcement', title: 'Internal token check', body: 'Token saved successfully.', eventId: null });
+                        } catch (e) { /* ignore - we already assert Firestore below */ }
+                    } else {
+                        tokenResult = 'getToken returned no token (Firebase project may not be set up for web push)';
+                    }
+                } catch (err) {
+                    tokenResult = 'getToken FAILED: ' + (err && (err.code || err.message) ? (err.code || err.message) : String(err));
+                }
+                add(tokenResult.indexOf('FAILED') === -1 && tokenResult.indexOf('no token') === -1, 'FCM token: ' + tokenResult);
+            } else {
+                add(false, 'FCM token fetch skipped — ' + (Notification.permission === 'granted' ? 'check the items above' : 'permission not granted here'));
+            }
+
+            // 4. Write an in-app notification for yourself (same exact path members use)
+            const stamp = new Date().toLocaleString();
+            try {
+                await notifApi.notifyUser(state.user.uid, {
+                    type: 'announcement',
+                    title: 'Test notification',
+                    body: 'This is a test from the admin panel at ' + stamp + '. If you can read this in the bell, in-app notifications work fully.',
+                    eventId: null
+                });
+                add(true, 'Firestore write SUCCEEDED — bell + OS popup should arrive instantly on this device and on reopen on others.');
+            } catch (err) {
+                add(false, 'In-app notification write FAILED: ' + (err && (err.message || err) || err));
+            }
+
+            resultsEl.innerHTML = lines.map(h => `<div>${h}</div>`).join('');
+            resultsEl.classList.remove('hidden');
+            if (btn) btn.disabled = false;
+            showToast('Test done');
         }
 
         // Create announcement (Admin)
