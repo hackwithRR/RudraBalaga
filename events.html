@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ಇವೆಂಟ್ಸ್ ಇತಿಹಾಸ - ರುದ್ರ ಪರಾಯಣ</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#ff5722" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Rudra Balaga" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -208,6 +214,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="notifications.js"></script>
+    <script src="pwa.js"></script>
     <script>
         // State Management
         const state = {
@@ -229,6 +237,8 @@
             firebaseAuth.onAuthStateChanged(user => {
                 if (user) {
                     state.user = user;
+                    // Real-time notification center (bell + badge + panel + toasts)
+                    if (window.Notifications) { try { Notifications.init({ uid: user.uid }); } catch (e) {} }
                     loadUserData(user);
                     loadEvents();
                     loadRsvps();

@@ -168,4 +168,78 @@ const firebaseConfig = {
 - Large touch targets (56-60px)
 - Clean, uncluttered interface
 - Saffron/orange color scheme (#ff5722)
-- Premium loading screen with Trishul/Shivling animation# RudraBalaga
+- Premium loading screen with Trishul/Shivling animation
+
+---
+
+# Real-Time Notification System
+
+## What members get
+
+| Trigger | What happens |
+|---|---|
+| Admin creates an event | All members get "New event: …" instantly (bell + toast + panel) |
+| Admin approves/rejects a payment | That member is notified instantly |
+| Admin approves/rejects a donation | The donor is notified instantly |
+| Admin saves bus number / driver number | All attending members get a "Bus update" with bus no. + driver phone |
+| Admin sends an announcement | All members get it as a notification |
+| Event is tomorrow / today | Members see a reminder (bell + toast on open); with push enabled it arrives even when the app is closed |
+| Member submits payment / donation proof | Admins get "submitted for review" |
+
+How it works: every page includes `notifications.js` (bell + badge + slide-in panel + live toasts) and listens to the `notifications` Firestore collection in real time. `pwa.js` makes the app installable (Chrome ⋮ menu → **Install Rudra Balaga**, Android → **Add to Home Screen**, iOS Safari Share → **Add to Home Screen**).
+
+## Firestore collections used
+
+- `notifications/{autoId}` — one doc per recipient: `{ uid, type, title, body, eventId, read, createdAt }`
+- `fcmTokens/{token}` — push tokens: `{ uid, platform, updatedAt }`
+- `pushMeta/{reminder_kind_eventId}` — ensures each push reminder is sent exactly once
+
+## Security rules (add to your existing rules)
+
+```
+    // Notifications - each user reads/marks only their own; members may create own reminders, admins may fan out
+    match /notifications/{notifId} {
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow create: if request.auth != null && (
+        request.resource.data.uid == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      allow update, delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+
+    // Push tokens - a user manages only their own tokens; admins can read for sending
+    match /fcmTokens/{tokenId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.resource.data.uid == request.auth.uid;
+    }
+
+    // pushMeta - only admins / Cloud Function (admin SDK bypasses rules)
+    match /pushMeta/{metaId} {
+      allow read, write: if request.auth != null;
+    }
+```
+
+## Push notifications ("WhatsApp-style", free)
+
+1. **VAPID key:** Firebase Console > ⚙️ Project settings > Cloud Messaging > Web push certificates > generate a key pair, then paste the **public key** into `notifications.js` (`PUSH_VAPID_KEY`).
+2. Members tap **"Enable phone / laptop notifications"** inside the bell panel → their FCM token is saved to `fcmTokens`.
+3. **Sending (free, no Blaze):** the included GitHub Action runs daily at 19:00 IST:
+   - Firebase Console > Project settings > Service accounts > **Generate new private key**
+   - GitHub repo > Settings > Secrets and variables > Actions > New secret `FIREBASE_SERVICE_ACCOUNT` = full JSON contents
+   - Push `service-account.json` is NEVER committed. The Action sends "day before" reminders via `tools/send-notifications.mjs`.
+   - Manual test: Actions tab → "Daily event reminders (push)" → Run workflow, or locally:
+     ```bash
+     npm install firebase-admin
+     GOOGLE_APPLICATION_CREDENTIALS=./service-account.json node tools/send-notifications.mjs reminders
+     ```
+   - Immediate broadcast: `node tools/send-notifications.mjs broadcast --title="..." --body="..."`
+4. **Platform notes:** Android + desktop browsers: push works right away. iPhone/iPad: push works after **Share → Add to Home Screen** (iOS 16.4+). Later, if you enable Blaze, the same logic can move to a Cloud Function trigger.
+
+## Files
+
+- `notifications.js` — bell, badge, panel, toasts, reminders, push token capture (all pages)
+- `pwa.js` — service-worker registration + "Install App" banner
+- `firebase-messaging-sw.js` — service worker: offline shell + FCM background push
+- `manifest.json`, `icons/` — PWA identity (app icon, name, colors)
+- `tools/send-notifications.mjs` + `.github/workflows/daily-reminders.yml` — free push sender
+# RudraBalaga

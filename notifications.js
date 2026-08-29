@@ -350,3 +350,225 @@
         var pushBtn = panel.querySelector('#notifications-enable-push');
         if (pushBtn) pushBtn.addEventListener('click', function () { enablePush(); });
     }
+
+    function renderPanel() {
+        if (!state.panelEl) return;
+        var listEl = state.panelEl.querySelector('#notifications-list');
+        var countEl = state.panelEl.querySelector('#notifications-panel-count');
+        var pushRow = state.panelEl.querySelector('#notifications-push-row');
+        if (countEl) {
+            countEl.textContent = state.unreadCount > 0 ? '(' + state.unreadCount + ' unread)' : '';
+        }
+        if (pushRow) {
+            var pushReady = (typeof Notification !== 'undefined' && Notification.permission === 'granted') || pushTokenSaved;
+            pushRow.classList.toggle('hidden', pushReady);
+        }
+        if (!state.notifications.length) {
+            listEl.innerHTML =
+                '<div class="flex flex-col items-center justify-center text-center py-16 px-6 text-on-surface-variant">' +
+                    '<span class="material-symbols-outlined text-5xl mb-3 opacity-60">notifications_off</span>' +
+                    '<p class="font-label-lg text-label-lg">No notifications yet</p>' +
+                    '<p class="text-sm mt-1">Event updates, payment status and bus info will appear here.</p>' +
+                '</div>';
+            return;
+        }
+        listEl.innerHTML = state.notifications.map(function (n, idx) {
+            var meta = typeMeta(n.type);
+            var unread = !n.read;
+            return '<button type="button" data-notif-idx="' + idx + '" class="w-full text-left flex items-start gap-3 p-4 rounded-xl border ' +
+                (unread ? 'bg-primary-fixed border-primary-container' : 'bg-white border-outline-variant opacity-80') +
+                '">' +
+                '<span class="material-symbols-outlined mt-0.5 ' + (unread ? 'text-primary' : 'text-on-surface-variant') + '" style="font-variation-settings: \'FILL\' 1;">' + esc(meta.icon) + '</span>' +
+                '<span class="flex-1 min-w-0">' +
+                    '<span class="flex items-center gap-2">' +
+                        '<span class="font-bold font-label-lg text-label-lg text-on-surface leading-snug">' + esc(n.title) + '</span>' +
+                        (unread ? '<span class="w-2 h-2 rounded-full bg-error shrink-0"></span>' : '') +
+                    '</span>' +
+                    (n.body ? '<span class="block text-sm text-on-surface-variant mt-0.5 break-words">' + esc(n.body) + '</span>' : '') +
+                    '<span class="block text-xs text-on-surface-variant mt-1.5">' + esc(meta.label) + ' · ' + esc(relativeTime(n.createdAt, n.__receivedAt)) + '</span>' +
+                '</span>' +
+            '</button>';
+        }).join('');
+
+        Array.prototype.forEach.call(listEl.querySelectorAll('[data-notif-idx]'), function (btn) {
+            btn.addEventListener('click', function () {
+                var n = state.notifications[Number(btn.getAttribute('data-notif-idx'))];
+                if (n) markRead(n);
+            });
+        });
+    }
+
+    function openPanel() {
+        ensurePanel();
+        state.panelOpen = true;
+        renderPanel();
+        state.panelEl.classList.remove('hidden');
+    }
+
+    function closePanel() {
+        state.panelOpen = false;
+        if (state.panelEl) state.panelEl.classList.add('hidden');
+    }
+
+    // ------------------------------------------------------------------
+    // Push notifications (Tier 2) — free via Firebase Cloud Messaging.
+    // 1) User taps "Enable phone / laptop notifications" in the panel
+    // 2) We ask the browser for permission and get an FCM token
+    // 3) Token is stored in Firestore `fcmTokens/{token}` for the sender
+    //    (GitHub Action cron / Cloud Function) to deliver pushes.
+    // Set PUSH_VAPID_KEY below (Firebase Console > Project settings >
+    // Cloud Messaging > Web Push certificates) to activate.
+    // ------------------------------------------------------------------
+    var PUSH_VAPID_KEY = 'REPLACE_WITH_YOUR_WEB_PUSH_CERTIFICATE_PUBLIC_KEY';
+    var pushTokenSaved = false;
+
+    function saveToken(uid, token) {
+        var database = db();
+        if (!database || !uid || !token) return Promise.resolve();
+        pushTokenSaved = true;
+        try {
+            return database.collection('fcmTokens').doc(token).set({
+                uid: uid,
+                platform: navigator.userAgent || '',
+                updatedAt: serverTimestamp()
+            }).catch(function (err) {
+                console.warn('[Notifications] token save failed:', err && err.message);
+            });
+        } catch (e) { return Promise.resolve(); }
+    }
+
+    function enablePush() {
+        if (typeof Notification === 'undefined') return Promise.resolve('unsupported');
+        var request = Notification.permission === 'granted'
+            ? Promise.resolve('granted')
+            : Notification.requestPermission();
+        return Promise.resolve(request).then(function (permission) {
+            if (permission !== 'granted') return permission;
+            if (!window.firebase || !firebase.messaging) {
+                console.warn('[Notifications] firebase-messaging-compat.js not loaded on this page.');
+                return permission;
+            }
+            try {
+                navigator.serviceWorker.register('firebase-messaging-sw.js').then(function (registration) {
+                    var messaging = firebase.messaging();
+                    messaging.getToken({ vapidKey: PUSH_VAPID_KEY, serviceWorkerRegistration: registration })
+                        .then(function (token) {
+                            if (token) return saveToken(state.uid, token);
+                        })
+                        .catch(function (err) {
+                            console.warn('[Notifications] getToken failed (set PUSH_VAPID_KEY in notifications.js):', err && err.message);
+                        });
+                    // Foreground pushes reuse the in-app toast + badge
+                    messaging.onMessage(function (payload) {
+                        var n = payload && payload.notification ? payload.notification : {};
+                        showToast({
+                            type: (payload && payload.data && payload.data.type) || 'announcement',
+                            title: n.title || 'Rudra Balaga',
+                            body: n.body || ''
+                        });
+                    });
+                }).catch(function (err) {
+                    console.warn('[Notifications] service worker registration failed:', err && err.message);
+                });
+            } catch (e) {
+                console.warn('[Notifications] push init failed:', e && e.message);
+            }
+            return permission;
+        });
+    }
+
+    // ------------------------------------------------------------------
+    // Read state
+    // ------------------------------------------------------------------
+    function markRead(notif) {
+        if (!notif) return;
+        if (!notif.read && notif.ref) {
+            try {
+                notif.ref.update({ read: true }).catch(function (err) {
+                    console.warn('[Notifications] markRead failed:', err && err.message);
+                });
+            } catch (e) { /* fail-soft */ }
+        }
+        if (!notif.read) {
+            notif.read = true;
+            state.unreadCount = Math.max(0, state.unreadCount - 1);
+            updateBadge();
+        }
+        if (state.panelOpen) renderPanel();
+    }
+
+    function markAllRead() {
+        state.notifications.filter(function (n) { return !n.read; }).forEach(markRead);
+    }
+
+    // ------------------------------------------------------------------
+    // Real-time listener — member sees new notifications instantly
+    // ------------------------------------------------------------------
+    function attachListener() {
+        var database = db();
+        if (!database || state.unsubscribe) return;
+        try {
+            state.unsubscribe = database.collection('notifications')
+                .where('uid', '==', state.uid)
+                .onSnapshot(function (snapshot) {
+                    var docs = [];
+                    var nowMs = Date.now();
+                    snapshot.forEach(function (d) {
+                        var data = d.data();
+                        data.id = d.id;
+                        data.ref = d.ref;
+                        data.__receivedAt = nowMs;
+                        docs.push(data);
+                    });
+                    docs.sort(function (a, b) { return notifTimeMs(b) - notifTimeMs(a); });
+                    state.notifications = docs;
+                    state.unreadCount = docs.filter(function (n) { return !n.read; }).length;
+                    updateBadge();
+                    if (state.panelOpen) renderPanel();
+
+                    if (state.firstSnapshotSeen) {
+                        // Only toast genuinely-new docs (not the backlog on page load)
+                        snapshot.docChanges().forEach(function (change) {
+                            if (change.type === 'added') showToast(change.doc.data());
+                        });
+                    }
+                    state.firstSnapshotSeen = true;
+                }, function (err) {
+                    console.warn('[Notifications] listener error (check security rules):', err && err.message);
+                });
+        } catch (e) {
+            console.warn('[Notifications] could not attach listener:', e && e.message);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Public API
+    // ------------------------------------------------------------------
+    function init(opts) {
+        opts = opts || {};
+        if (!db() || !opts.uid) return; // demo mode / Firestore unavailable -> silent no-op
+        state.uid = opts.uid;
+        state.isAdmin = !!opts.isAdmin;
+        state.firstSnapshotSeen = false;
+        try { mountBell(); } catch (e) { /* header layout differences */ }
+        attachListener();
+    }
+
+    window.Notifications = {
+        init: init,
+        notifyUser: notifyUser,
+        notifyUsers: notifyUsers,
+        notifyAllUsers: notifyAllUsers,
+        notifyAdmins: notifyAdmins,
+        checkEventReminders: checkEventReminders,
+        enablePush: enablePush,
+        // exposed for tests
+        _internal: {
+            reminderDocId: reminderDocId,
+            formatEventDate: formatEventDate,
+            relativeTime: relativeTime,
+            NOTIF_TYPES: NOTIF_TYPES,
+            state: state
+        }
+    };
+})();

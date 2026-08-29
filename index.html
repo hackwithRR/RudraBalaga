@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ರುದ್ರ ಪರಾಯಣ - ಸಭಿಕೆದರು ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#ff5722" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Rudra Balaga" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -1089,6 +1095,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="notifications.js"></script>
+    <script src="pwa.js"></script>
     <script>
         // State Management
         const state = {
@@ -1181,6 +1189,7 @@
             firebaseAuth.onAuthStateChanged(user => {
                 if (user) {
                     state.user = user;
+                    initNotificationsCenter(user);
                     loadUserData(user);
                     loadEvents();
                     loadRsvps();
@@ -1192,6 +1201,20 @@
                     window.location.href = 'login.html';
                 }
             });
+        }
+
+        // Real-time notification center: bell + badge + panel + live toasts.
+        // Also computes "day before" / same-day event reminders (deduped per user+event).
+        function initNotificationsCenter(user) {
+            if (!window.Notifications) return;
+            try {
+                Notifications.init({ uid: user.uid, isAdmin: false });
+                if (state.events && state.events.length) {
+                    Notifications.checkEventReminders(state.events);
+                }
+            } catch (e) {
+                console.log('Notifications unavailable:', e);
+            }
         }
 
         // Apply time-of-day greeting to the welcome hero
@@ -1262,6 +1285,8 @@
                         state.events.push({ id: doc.id, ...doc.data() });
                     });
                     renderEvents();
+                    // "Day before" / same-day reminders as soon as events load or change
+                    if (window.Notifications && state.user) { try { Notifications.checkEventReminders(state.events); } catch (e) {} }
                 });
             } catch (error) {
                 console.log('Firestore not available, using demo data');
@@ -1549,6 +1574,8 @@
                         submittedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     await firebaseDb.collection('donations').add(donationRecord);
+                    // Real-time: notify admins to review this donation proof (best-effort)
+                    if (window.Notifications) { try { Notifications.notifyAdmins({ type: 'donation_submitted', title: 'Donation proof submitted', body: (donorName || 'A member') + ' donated ₹' + amount + '. Please review.', eventId: null }); } catch (e) {} }
                     modal.remove();
                     const toast = document.createElement('div');
                     toast.className = 'fixed top-20 left-0 right-0 mx-auto z-50 bg-secondary-container text-on-secondary-container px-6 py-4 rounded-xl shadow-lg max-w-sm';
@@ -2926,8 +2953,10 @@
                 };
                 if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
                 state.rsvps[state.user.uid][event.id] = { ...(state.rsvps[state.user.uid][event.id] || {}), status: 'attending', payment };
-                await firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: state.rsvps[state.user.uid][event.id] }, { merge: true });
-                modal.remove();
+                    await firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: state.rsvps[state.user.uid][event.id] }, { merge: true });
+                    // Real-time: notify admins to review this payment proof (best-effort)
+                    if (window.Notifications) { try { Notifications.notifyAdmins({ type: 'payment_submitted', title: 'Payment proof submitted', body: ((state.userData && state.userData.name) || state.user.displayName || 'A member') + ' submitted payment proof for ' + (event.title || 'an event') + '. Please review.', eventId: event.id }); } catch (e) {} }
+                    modal.remove();
                 renderEvents();
             } catch (error) {
                 console.error('Payment proof upload failed:', error);

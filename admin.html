@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>ಅಡ್ಮಿನ್ - ರುದ್ರ ಪರಾಯಣ</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#ff5722" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Rudra Balaga" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -1533,6 +1539,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="notifications.js"></script>
+    <script src="pwa.js"></script>
     <script>
         // Build stamp - printed to console on every load so a stale-cached tab is immediately obvious
         const APP_BUILD = 'admin-2026-08-27 responsive-v1';
@@ -1636,6 +1644,8 @@
                         .then(doc => {
                             if (doc.exists && doc.data().role === 'admin') {
                                 state.user = user;
+                                // Real-time notification center for the admin (payment/donation submissions etc.)
+                                if (window.Notifications) { try { Notifications.init({ uid: user.uid, isAdmin: true }); } catch (e) {} }
                                 loadEvents();
                                 loadRsvps();
                                 loadBusRoutesFromDb();
@@ -2755,6 +2765,23 @@
             try {
                 firebaseDb.collection('busRoutes').doc(eventId).set({
                     buses: updatedBuses
+                }).then(() => {
+                    // Real-time: tell attending members their bus number & driver contact (best-effort)
+                    if (window.Notifications) {
+                        try {
+                            const busEvent = (state.events || []).find(ev => ev.id === eventId);
+                            const bus = (updatedBuses || []).find(b => b.id === busId);
+                            if (busEvent && bus && (bus.number || bus.driverNumber)) {
+                                const recipients = Object.keys(state.rsvps || {}).filter(uidKey => {
+                                    const rsvp = (state.rsvps[uidKey] || {})[eventId];
+                                    return rsvp && rsvp.status === 'attending' && rsvp.payment?.paymentStatus !== 'REJECTED';
+                                });
+                                if (recipients.length) {
+                                    Notifications.notifyUsers({ uids: recipients, type: 'bus_info', title: 'Bus update: ' + (busEvent.title || 'outstation event'), body: 'Bus "' + bus.name + '"' + (bus.number ? ' (No. ' + bus.number + ')' : '') + (bus.driverNumber ? ' · Driver: ' + bus.driverNumber : '') + '. Check your pickup point & time on the event page.', eventId: eventId });
+                                }
+                            }
+                        } catch (notifyErr) {}
+                    }
                 });
             } catch (err) {
                 console.error('Error saving bus details: ', err);
@@ -3106,6 +3133,9 @@
             firebaseDb.collection('events').doc(eventId).update(updateData).then(() => {
                 alert('Event updated successfully!');
                 hideEventEditModal();
+                // Real-time: tell members the event details changed (best-effort)
+                const editedEvent = (state.events || []).find(ev => ev.id === eventId);
+                if (window.Notifications) { try { Notifications.notifyAllUsers({ type: 'event_updated', title: 'Event updated: ' + ((editedEvent && editedEvent.title) || 'Event'), body: 'The event details have changed. Please check the latest schedule.', eventId: eventId }); } catch (notifyErr) {} }
             });
         }
 
@@ -3130,6 +3160,7 @@
                     }).then(() => {
                         alert('Announcement sent successfully!');
                         e.target.reset();
+                        if (window.Notifications) { try { Notifications.notifyAllUsers({ type: 'announcement', title: title, body: content }); } catch (notifyErr) {} }
                     });
                 };
                 reader.readAsDataURL(imageFile);
@@ -3141,6 +3172,7 @@
                 }).then(() => {
                     alert('Announcement sent successfully!');
                     e.target.reset();
+                    if (window.Notifications) { try { Notifications.notifyAllUsers({ type: 'announcement', title: title, body: content }); } catch (notifyErr) {} }
                 });
             }
         }
@@ -3336,7 +3368,10 @@
                 } : null;
             }
 
-            firebaseDb.collection('events').add(eventData);
+            firebaseDb.collection('events').add(eventData).then(() => {
+                // Real-time: notify all members about the new event (best-effort)
+                if (window.Notifications) { try { Notifications.notifyAllUsers({ type: 'event_new', title: 'New event: ' + title, body: formatDate(date) + (time ? ' at ' + time : '') + (location ? ' · ' + location : ''), eventId: null }); } catch (notifyErr) {} }
+            }).catch(err => console.error('Error creating event: ', err));
 
             e.target.reset();
             document.getElementById('custom-limit-input').classList.add('hidden');
@@ -3572,7 +3607,11 @@
                 paymentStatus: status,
                 reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 reviewedBy: state.user?.uid || null
-            }).then(() => { modal.remove(); loadDonations(); });
+            }).then(() => {
+                modal.remove(); loadDonations();
+                // Real-time: tell the donor their donation was approved / rejected
+                if (window.Notifications && donation.uid) { try { Notifications.notifyUser(donation.uid, { type: status === 'APPROVED' ? 'donation_approved' : 'donation_rejected', title: status === 'APPROVED' ? 'Donation approved' : 'Donation not approved', body: status === 'APPROVED' ? 'Your donation of ₹' + (Number(donation.amount) || 0) + ' was approved. Thank you for your generosity!' : 'Your donation of ₹' + (Number(donation.amount) || 0) + ' could not be approved. Please contact an admin.', eventId: null }); } catch (notifyErr) {} }
+            });
             document.getElementById('approve-donation').onclick = () => updateStatus('APPROVED');
             document.getElementById('reject-donation').onclick = () => updateStatus('REJECTED');
         }
@@ -3594,7 +3633,11 @@
                 [`${eventId}.payment.paymentStatus`]: status,
                 [`${eventId}.payment.reviewedAt`]: firebase.firestore.FieldValue.serverTimestamp(),
                 [`${eventId}.payment.reviewedBy`]: state.user?.uid || null
-            }).then(() => { modal.remove(); loadPaymentReview(); });
+            }).then(() => {
+                modal.remove(); loadPaymentReview();
+                // Real-time: tell the member their payment was approved / rejected
+                if (window.Notifications) { try { Notifications.notifyUser(userId, { type: status === 'APPROVED' ? 'payment_approved' : 'payment_rejected', title: status === 'APPROVED' ? 'Payment approved' : 'Payment rejected', body: status === 'APPROVED' ? 'Your payment for ' + (event && event.title ? event.title : 'the event') + ' was approved. See you there!' : 'Your payment for ' + (event && event.title ? event.title : 'the event') + ' was rejected. Please contact an admin or submit proof again.', eventId: eventId }); } catch (notifyErr) {} }
+            });
             document.getElementById('approve-payment').onclick = () => updateStatus('APPROVED');
             document.getElementById('reject-payment').onclick = () => updateStatus('REJECTED');
         }

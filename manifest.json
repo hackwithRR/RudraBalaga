@@ -1,0 +1,22 @@
+{
+  "name": "Rudra Balaga — Rudra Parayana",
+  "short_name": "Rudra Balaga",
+  "description": "Community app for the Rudra Parayana chanting group — events, RSVPs, bus routes, payments and announcements.",
+  "id": "rudra-balaga",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fbf7f2",
+  "theme_color": "#ff5722",
+  "lang": "kn",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Events", "url": "events.html" },
+    { "name": "Bus Routes", "url": "bus-routes.html" }
+  ]
+}

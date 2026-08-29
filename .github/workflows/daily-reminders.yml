@@ -1,0 +1,28 @@
+name: Daily event reminders (push)
+
+# FREE WhatsApp-style reminder sender — runs daily, no Firebase Blaze needed.
+# One-time setup (see README > "Push notifications"):
+#   1. Repo Settings > Secrets and variables > Actions > New repository secret
+#      Name: FIREBASE_SERVICE_ACCOUNT   Value: (full contents of the service-account JSON)
+#   2. Done. The cron below sends "day before" push reminders at ~19:00 IST.
+
+on:
+  schedule:
+    - cron: '30 13 * * *'   # 13:30 UTC = 19:00 IST every day
+  workflow_dispatch: {}      # allows manual "Run workflow" from the Actions tab
+
+jobs:
+  reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install firebase-admin
+        run: npm install --no-save firebase-admin
+      - name: Send day-before reminders
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: node tools/send-notifications.mjs reminders
