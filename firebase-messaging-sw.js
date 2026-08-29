@@ -60,7 +60,7 @@ try {
 }
 
 // ---------------- PWA offline shell ----------------
-const CACHE = 'rudra-balaga-v1';
+const CACHE = 'rudra-balaga-v2';
 const PRECACHE = [
     './',
     'index.html',
