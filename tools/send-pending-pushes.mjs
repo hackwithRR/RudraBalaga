@@ -62,6 +62,8 @@ async function loadTokensByUid() {
 
 async function run() {
     const byUid = await loadTokensByUid();
+    console.log('Loaded FCM tokens for UIDs:', [...byUid.keys()]);
+
     const pending = [];
     const snap = await db.collection('notifications').where('pushSent', '==', false).limit(500).get();
     snap.forEach((doc) => pending.push({ id: doc.id, ...doc.data() }));
@@ -72,7 +74,9 @@ async function run() {
     const stale = [];
     for (const notif of pending) {
         const tokens = byUid.get(notif.uid) || [];
+        console.log(`  → ${notif.title} (UID: ${notif.uid}) | tokens: ${tokens.length}`);
         if (!tokens.length) {
+            console.log(`    ⚠️  Skipped — no FCM tokens for UID ${notif.uid}`);
             skipped++;
             try { await db.collection('notifications').doc(notif.id).update({ pushSent: true }); } catch (e) {}
             continue;
