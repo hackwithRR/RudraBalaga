@@ -912,6 +912,11 @@
                     <span class="material-symbols-outlined text-xl">notifications_active</span>
                     Send test notification to me
                 </button>
+                <button id="test-notification-all-btn" type="button" class="w-full h-[60px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg flex items-center justify-center gap-2 mt-3">
+                    <span class="material-symbols-outlined text-xl">campaign</span>
+                    Send test notification to EVERYONE
+                </button>
+                <p class="text-xs text-on-surface-variant mt-2">Everyone online sees it in the bell immediately; members who enabled phone/laptop notifications get a push within ~5 minutes even with the app closed.</p>
                 <div id="test-notification-results" class="hidden mt-4 rounded-xl border border-outline-variant bg-surface-container-high p-4 text-sm space-y-2 break-words"></div>
             </div>
         </section>
@@ -1821,6 +1826,10 @@
             const testNotifBtn = document.getElementById('test-notification-btn');
             if (testNotifBtn) {
                 testNotifBtn.addEventListener('click', sendTestNotification);
+            }
+            const testNotifAllBtn = document.getElementById('test-notification-all-btn');
+            if (testNotifAllBtn) {
+                testNotifAllBtn.addEventListener('click', sendTestNotificationToEveryone);
             }
             
             // Attendance buttons
@@ -3231,6 +3240,32 @@
             resultsEl.classList.remove('hidden');
             if (btn) btn.disabled = false;
             showToast('Test done');
+        }
+
+        // Send a test notification to EVERY registered member.
+        // Uses the same fan-out path as real announcements: writes one in-app
+        // notification per member (pushSent: false) so it shows instantly for
+        // anyone online and is pushed to their devices within ~5 min by the
+        // GitHub watcher when the app is closed.
+        async function sendTestNotificationToEveryone() {
+            if (!window.Notifications || !state.user) { showToast('Notifications not available', 'error'); return; }
+            const countText = 'This will send a test notification to ALL registered members (in-app instantly, phone push within ~5 min for those who enabled it). Continue?';
+            if (!confirm(countText)) return;
+            const btn = document.getElementById('test-notification-all-btn');
+            if (btn) btn.disabled = true;
+            try {
+                const stamp = new Date().toLocaleString();
+                await Notifications.notifyAllUsers({
+                    type: 'announcement',
+                    title: 'Test notification 🤝',
+                    body: 'This is a test announcement sent to everyone at ' + stamp + '. If you see this, notifications are working!',
+                    eventId: null
+                });
+                showToast('Test notification sent to everyone!');
+            } catch (err) {
+                showToast('Failed: ' + (err && (err.message || err) || err), 'error');
+            }
+            if (btn) btn.disabled = false;
         }
 
         // Create announcement (Admin)
