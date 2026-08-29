@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - allow read/write for all (for demo mode)
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    // Events collection - allow read/write for all
+    match /events/{eventId} {
+      allow read, write: if true;
+    }
+
+    // Bus routes collection - allow read/write for all
+    match /busRoutes/{eventId} {
+      allow read, write: if true;
+    }
+
+    // RSVPs collection - allow read/write for all
+    match /rsvps/{userId} {
+      allow read, write: if true;
+    }
+
+    // Announcements collection - allow read/write for all
+    match /announcements/{announcementId} {
+      allow read, write: if true;
+    }
+
+    // Attendance collection - allow read/write for all
+    match /attendance/{attendanceId} {
+      allow read, write: if true;
+    }
+
+    // Donations collection - allow read/write for all
+    match /donations/{donationId} {
+      allow read, write: if true;
+    }
+
+    //                 NOTIFICATIONS ADD-ON (in-app + push)
+    // Notifications - one doc per recipient; used by the bell/badge/panel/toasts
+    // and the client-side day-before reminders. Without this match every
+    // notification read/write is DENIED by Firestore's default rule.
+    match /notifications/{notifId} {
+      allow read, write: if true;
+    }
+
+    // Push tokens - FCM device tokens saved when a member taps
+    // "Enable phone / laptop notifications" in the bell panel.
+    match /fcmTokens/{tokenId} {
+      allow read, write: if true;
+    }
+
+    // pushMeta - guards the daily push sender so each reminder is sent once.
+    match /pushMeta/{metaId} {
+      allow read, write: if true;
+    }
+  }
+}
