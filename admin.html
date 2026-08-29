@@ -117,6 +117,58 @@
             transform: scale(0.96);
             transition: transform 0.1s ease;
         }
+
+        /* ---- Admin button polish: consistent elevation, press feedback & focus rings ----
+           .btn-active is carried by nearly every action button in the panel (forms, downloads,
+           dialog CTAs). These rules give them a uniform, responsive feel on desktop + touch. */
+        .btn-active {
+            transition: transform 120ms ease, box-shadow 180ms ease, filter 180ms ease;
+            box-shadow: 0 1px 2px rgba(27, 28, 28, 0.10), 0 2px 8px rgba(27, 28, 28, 0.08);
+        }
+        .btn-active:hover { filter: brightness(1.04); }
+        .btn-active:active { transform: scale(0.97); box-shadow: none; }
+
+        button:focus-visible,
+        a:focus-visible,
+        select:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid #ff5722;
+            outline-offset: 2px;
+        }
+
+        /* Icon-only destructive button ("×" on bus cards) gets a real touch target */
+        .remove-bus {
+            min-width: 40px;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            transition: background-color 140ms ease, transform 120ms ease;
+        }
+        .remove-bus:hover { background-color: #ffdad6; }
+        .remove-bus:active { transform: scale(0.92); }
+
+        /* Button labels always stay on ONE line - no mid-label wrapping / squashed text */
+        button { white-space: nowrap; }
+        button > .material-symbols-outlined { flex-shrink: 0; }
+
+        /* 2-up button pairs inside tabs (Download PDF / Consolidated, etc.):
+           smaller labels on phones so icon + text always fit side by side */
+        @media (max-width: 480px) {
+            .tab-content .grid-cols-2 > button {
+                font-size: 0.875rem !important;
+            }
+        }
+
+        /* Very narrow phones (<=400px): one step smaller labels on every tab-content
+           button so the longest label + icon still fits on a single line without clipping */
+        @media (max-width: 400px) {
+            .tab-content button {
+                font-size: 1rem !important;
+            }
+        }
         .orange-glow { 
             filter: drop-shadow(0 0 14px rgba(255, 87, 34, 0.75)); 
         }
@@ -456,7 +508,8 @@
            is anchored to the real viewport. The card is a flex column: pinned header,
            internally-scrollable form, pinned footer — the long form scrolls BETWEEN
            the title bar and the action buttons instead of clipping off-screen. */
-        #event-edit-modal {
+        #event-edit-modal,
+        #copy-routes-modal {
             background: rgba(36, 27, 22, 0.66);
             -webkit-backdrop-filter: blur(6px);
             backdrop-filter: blur(6px);
@@ -464,13 +517,18 @@
             transition: opacity 180ms ease;
         }
 
-        #event-edit-modal.modal-open {
+        #event-edit-modal.modal-open,
+        #copy-routes-modal.modal-open {
             opacity: 1;
         }
 
-        #event-edit-modal .edit-modal-card {
+        #event-edit-modal .edit-modal-card,
+        #copy-routes-modal .edit-modal-card {
             display: flex;
             flex-direction: column;
+            background: #ffffff; /* solid card - body must never show the dimmed backdrop through */
+            border-radius: 1rem;
+            box-shadow: 0 24px 64px rgba(36, 27, 22, 0.35), 0 4px 16px rgba(36, 27, 22, 0.18);
             max-height: calc(100vh - 1.5rem);
             max-height: calc(100dvh - 1.5rem);
             overflow: hidden;
@@ -479,19 +537,22 @@
             transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease;
         }
 
-        #event-edit-modal.modal-open .edit-modal-card {
+        #event-edit-modal.modal-open .edit-modal-card,
+        #copy-routes-modal.modal-open .edit-modal-card {
             transform: none;
             opacity: 1;
         }
 
         @media (min-width: 640px) {
-            #event-edit-modal .edit-modal-card {
+            #event-edit-modal .edit-modal-card,
+            #copy-routes-modal .edit-modal-card {
                 max-height: calc(100vh - 3rem);
                 max-height: calc(100dvh - 3rem);
             }
         }
 
-        #event-edit-modal .edit-modal-body {
+        #event-edit-modal .edit-modal-body,
+        #copy-routes-modal .edit-modal-body {
             flex: 1 1 auto;
             min-height: 0;
             overflow-y: auto;
@@ -569,7 +630,8 @@
                 border-radius: 0.9rem !important;
             }
 
-            #event-edit-modal .edit-modal-card {
+            #event-edit-modal .edit-modal-card,
+            #copy-routes-modal .edit-modal-card {
                 border-radius: 0.9rem !important;
             }
 
@@ -593,6 +655,7 @@
         @media (max-width: 380px) {
             .tab-content .grid-cols-2:not(#payments-summary):not(#donations-summary),
             #event-edit-modal .edit-modal-footer,
+            #copy-routes-modal .edit-modal-footer,
             body > .fixed.inset-0 > .bg-white .grid-cols-2 {
                 grid-template-columns: 1fr;
             }
@@ -972,6 +1035,11 @@
                     
                     <!-- Bus Management Section -->
                     <div id="bus-management-section" class="hidden">
+                        <!-- Reuse routes from a previous outstation event (opens a compact dialog) -->
+                        <button type="button" id="open-copy-routes-modal-btn" class="w-full h-[44px] bg-tertiary-container text-on-tertiary rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2 mb-4">
+                            <span class="material-symbols-outlined text-xl">content_copy</span>
+                            Reuse Previous Routes
+                        </button>
                         <div class="p-4 bg-surface-container-high rounded-xl border-2 border-secondary-container mb-4">
                             <h4 class="font-label-lg text-label-lg text-secondary mb-3">Manage Buses</h4>
                             <form id="add-bus-form" class="space-y-3 mb-4">
@@ -979,7 +1047,10 @@
                                     <label for="bus-name" class="block font-label-lg text-label-lg text-on-surface mb-2">Bus Name</label>
                                     <input type="text" id="bus-name" required class="w-full h-[50px] px-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg" placeholder="Enter bus name">
                                 </div>
-                                <button type="submit" class="w-full h-[44px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active">Add Bus</button>
+                                <button type="submit" class="w-full h-[44px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-xl">add_circle</span>
+                                    Add Bus
+                                </button>
                             </form>
                             
                             <form id="bus-route-form" class="space-y-3 hidden">
@@ -997,7 +1068,10 @@
                                     <label for="pickup-time" class="block font-label-lg text-label-lg text-on-surface mb-2">Pickup Time</label>
                                     <input type="time" id="pickup-time" required class="w-full h-[50px] px-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                                 </div>
-                                <button type="submit" class="w-full h-[44px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active">Add Pickup Point</button>
+                                <button type="submit" class="w-full h-[44px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-xl">add_location</span>
+                                    Add Pickup Point
+                                </button>
                             </form>
                         </div>
                         
@@ -1361,13 +1435,77 @@
                         <input type="number" id="edit-event-custom-limit" placeholder="Enter custom limit" min="1" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                     </div>
             </form>
-            <footer class="edit-modal-footer grid grid-cols-2 gap-3 px-4 py-4 sm:px-6 border-t border-outline-variant bg-surface-container-lowest">
+            <footer class="edit-modal-footer grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 py-4 sm:px-6 border-t border-outline-variant bg-surface-container-lowest">
                 <button type="button" id="cancel-edit-btn" class="w-full h-[56px] bg-surface-container-high text-on-surface-variant rounded-xl font-bold text-body-lg flex items-center justify-center touch-active">
                     Cancel
                 </button>
                 <button type="submit" form="edit-event-form" id="save-event-changes-btn" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2 touch-active">
                     <span class="material-symbols-outlined text-xl">save</span>
                     Save Changes
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Reuse Bus Routes Modal: direct <body> child so `fixed inset-0` anchors to the real
+         viewport (same reasoning as the Event Edit modal above). Compact dialog: pick a
+         previous outstation event and copy its buses & pickup points into the selected one. -->
+    <div id="copy-routes-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="copy-routes-modal-title">
+        <div class="edit-modal-card w-full max-w-md">
+            <header class="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 border-b border-outline-variant bg-surface-container-lowest">
+                <div class="min-w-0">
+                    <h3 id="copy-routes-modal-title" class="font-headline-sm text-headline-sm text-primary">Reuse Bus Routes</h3>
+                    <p class="text-xs sm:text-sm text-on-surface-variant mt-0.5">Copy buses &amp; pickup points from a previous outstation event.</p>
+                </div>
+                <button type="button" id="close-copy-routes-modal-btn" class="touch-active shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest" aria-label="Close reuse routes window">
+                    <span class="material-symbols-outlined text-2xl">close</span>
+                </button>
+            </header>
+            <div class="edit-modal-body px-4 py-5 sm:px-6">
+                <!-- What gets copied (and what doesn't) -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Bus names
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Pickup points &amp; times
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container text-on-error-container text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm">cancel</span>
+                        Bus number
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container text-on-error-container text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm">cancel</span>
+                        Driver phone
+                    </span>
+                </div>
+
+                <p class="font-label-lg text-label-lg text-on-surface mb-2">Copy routes from</p>
+                <!-- Hidden source of truth, kept in sync with the tappable cards below -->
+                <select id="copy-routes-source-select" class="hidden" tabindex="-1" aria-hidden="true">
+                    <option value="">Select a previous outstation event</option>
+                </select>
+                <div id="copy-routes-source-list" class="space-y-2" role="listbox" aria-label="Previous outstation events"></div>
+                <div id="copy-routes-empty-msg" class="hidden mt-2 p-4 rounded-xl border-2 border-dashed border-outline-variant text-center">
+                    <span class="material-symbols-outlined text-3xl text-on-surface-variant">directions_bus</span>
+                    <p class="text-sm text-on-surface-variant mt-1">No other outstation events have bus routes yet - add buses &amp; pickup points manually the first time.</p>
+                </div>
+
+                <!-- Copy preview -->
+                <div id="copy-routes-summary" class="hidden mt-4 p-3 rounded-xl bg-tertiary-container/20 border border-tertiary-container/60">
+                    <p id="copy-routes-summary-text" class="font-bold text-sm text-on-surface"></p>
+                    <p class="text-xs text-on-surface-variant mt-1">Bus number &amp; driver phone start empty - fill them in Bus Details once finalized.</p>
+                </div>
+            </div>
+            <footer class="edit-modal-footer grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 py-4 sm:px-6 border-t border-outline-variant bg-surface-container-lowest">
+                <button type="button" id="cancel-copy-routes-btn" class="w-full h-[56px] bg-surface-container-high text-on-surface-variant rounded-xl font-bold text-body-lg flex items-center justify-center touch-active">
+                    Cancel
+                </button>
+                <button type="button" id="copy-routes-btn" class="w-full h-[56px] bg-tertiary-container text-on-tertiary rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2 touch-active">
+                    <span class="material-symbols-outlined text-xl">content_copy</span>
+                    Copy Routes
                 </button>
             </footer>
         </div>
@@ -1854,6 +1992,32 @@
                 });
             }
             
+            // Reuse routes from a previous outstation event (Admin)
+            const openCopyRoutesModalBtn = document.getElementById('open-copy-routes-modal-btn');
+            if (openCopyRoutesModalBtn) {
+                openCopyRoutesModalBtn.addEventListener('click', openCopyRoutesModal);
+            }
+
+            const closeCopyRoutesModalBtn = document.getElementById('close-copy-routes-modal-btn');
+            if (closeCopyRoutesModalBtn) {
+                closeCopyRoutesModalBtn.addEventListener('click', hideCopyRoutesModal);
+            }
+
+            const cancelCopyRoutesBtn = document.getElementById('cancel-copy-routes-btn');
+            if (cancelCopyRoutesBtn) {
+                cancelCopyRoutesBtn.addEventListener('click', hideCopyRoutesModal);
+            }
+
+            const copyRoutesSourceSelect = document.getElementById('copy-routes-source-select');
+            if (copyRoutesSourceSelect) {
+                copyRoutesSourceSelect.addEventListener('change', updateCopyRoutesSummary);
+            }
+
+            const copyRoutesBtn = document.getElementById('copy-routes-btn');
+            if (copyRoutesBtn) {
+                copyRoutesBtn.addEventListener('click', copyBusRoutesFromEvent);
+            }
+
             // Add bus form
             const addBusForm = document.getElementById('add-bus-form');
             if (addBusForm) {
@@ -2099,6 +2263,7 @@
             }
 
             busManagementSection.classList.remove('hidden');
+            populateCopyRoutesSourceSelect();
 
             const buses = state.busRoutes[eventId] || [];
             if (busSelect) {
@@ -2197,8 +2362,8 @@
                                                         <span class="text-on-surface-variant text-sm">${route.time}</span>
                                                     </div>
                                                     <div class="flex items-center gap-2 shrink-0">
-                                                        <button type="button" class="edit-route-btn touch-active bg-secondary-container text-on-secondary-container px-3 py-1.5 rounded-lg font-bold text-sm" data-route-id="${route.id}" data-bus-id="${bus.id}" data-event-id="${eventId}">Edit</button>
-                                                        <button type="button" class="remove-route text-error font-bold" data-route-id="${route.id}" data-bus-id="${bus.id}" data-event-id="${eventId}">Remove</button>
+                                                        <button type="button" class="edit-route-btn touch-active bg-secondary-container text-on-secondary-container inline-flex items-center justify-center min-h-[36px] px-3 rounded-lg font-bold text-sm" data-route-id="${route.id}" data-bus-id="${bus.id}" data-event-id="${eventId}">Edit</button>
+                                                        <button type="button" class="remove-route touch-active inline-flex items-center justify-center min-h-[36px] px-3 rounded-lg font-bold text-sm text-error hover:bg-error-container transition-colors" data-route-id="${route.id}" data-bus-id="${bus.id}" data-event-id="${eventId}">Remove</button>
                                                     </div>
                                                 </li>
                                             `).join('')}
@@ -2283,6 +2448,239 @@
             });
 
             displayBusRoutes();
+        }
+
+        // ---- Reuse bus routes from a previous outstation event (Admin) ----
+
+        // Outstation events (other than the given one) that already have buses configured
+        function getBusRouteSourceEvents(excludeEventId) {
+            return state.events
+                .filter(event => event.type === 'Outstation' && event.id !== excludeEventId)
+                .filter(event => (state.busRoutes[event.id] || []).length > 0)
+                .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        }
+
+        // Fill the hidden select + tappable source-event cards inside the dialog
+        function populateCopyRoutesSourceSelect() {
+            const targetEventId = document.getElementById('bus-routes-users-event-select')?.value;
+            const sourceSelect = document.getElementById('copy-routes-source-select');
+            const sourceList = document.getElementById('copy-routes-source-list');
+            const emptyMsg = document.getElementById('copy-routes-empty-msg');
+            if (!sourceSelect) return;
+
+            const previousValue = sourceSelect.value;
+            const sources = getBusRouteSourceEvents(targetEventId);
+
+            sourceSelect.innerHTML = '<option value="">Select a previous outstation event</option>';
+            if (sourceList) sourceList.innerHTML = '';
+            sources.forEach(event => {
+                const buses = state.busRoutes[event.id] || [];
+                const routeCount = buses.reduce((sum, bus) => sum + ((bus.routes && bus.routes.length) || 0), 0);
+                const busLabel = `${buses.length} bus${buses.length === 1 ? '' : 'es'}`;
+                const pointLabel = `${routeCount} pickup point${routeCount === 1 ? '' : 's'}`;
+
+                const option = document.createElement('option');
+                option.value = event.id;
+                option.textContent = `${event.title} (${formatDate(event.date)}) - ${busLabel}, ${pointLabel}`;
+                sourceSelect.appendChild(option);
+
+                if (!sourceList) return;
+                const isSelected = event.id === previousValue;
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.dataset.eventId = event.id;
+                card.setAttribute('role', 'option');
+                card.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                card.className = `copy-source-card w-full text-left p-3 rounded-xl border-2 bg-white flex items-center justify-between gap-3 transition-all touch-active ${isSelected ? 'border-tertiary bg-tertiary-container/10 shadow-sm' : 'border-outline-variant hover:border-tertiary/50'}`;
+                card.innerHTML = `
+                    <span class="min-w-0">
+                        <span class="block font-bold text-on-surface truncate">${event.title}</span>
+                        <span class="block text-xs sm:text-sm text-on-surface-variant">${formatDate(event.date)}</span>
+                    </span>
+                    <span class="flex flex-col items-end gap-1 shrink-0">
+                        <span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[11px] font-bold whitespace-nowrap">${busLabel}</span>
+                        <span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-[11px] font-bold whitespace-nowrap">${pointLabel}</span>
+                    </span>`;
+                card.addEventListener('click', () => selectCopyRoutesSource(event.id));
+                sourceList.appendChild(card);
+            });
+
+            if (emptyMsg) {
+                emptyMsg.classList.toggle('hidden', sources.length > 0);
+            }
+
+            syncCopySourceCards();
+            updateCopyRoutesSummary();
+        }
+
+        // Mirror the hidden select's value onto the source-event cards
+        function syncCopySourceCards() {
+            const sourceSelect = document.getElementById('copy-routes-source-select');
+            const currentValue = sourceSelect ? sourceSelect.value : '';
+            document.querySelectorAll('#copy-routes-source-list .copy-source-card').forEach(card => {
+                const isSelected = card.dataset.eventId === currentValue;
+                card.classList.toggle('border-tertiary', isSelected);
+                card.classList.toggle('bg-tertiary-container/10', isSelected);
+                card.classList.toggle('shadow-sm', isSelected);
+                card.classList.toggle('border-outline-variant', !isSelected);
+                card.classList.toggle('hover:border-tertiary/50', !isSelected);
+                card.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+            });
+        }
+
+        // Pick a source event from the card list
+        function selectCopyRoutesSource(eventId) {
+            const sourceSelect = document.getElementById('copy-routes-source-select');
+            if (!sourceSelect) return;
+            sourceSelect.value = eventId || '';
+            syncCopySourceCards();
+            updateCopyRoutesSummary();
+        }
+
+        // Show how much will be copied for the currently chosen source event
+        function updateCopyRoutesSummary() {
+            const summary = document.getElementById('copy-routes-summary');
+            const summaryText = document.getElementById('copy-routes-summary-text');
+            const sourceSelect = document.getElementById('copy-routes-source-select');
+            if (!summary || !summaryText || !sourceSelect) return;
+
+            const sourceEvent = state.events.find(event => event.id === sourceSelect.value);
+            const buses = sourceEvent ? (state.busRoutes[sourceEvent.id] || []) : [];
+
+            if (!sourceEvent || !buses.length) {
+                summaryText.textContent = '';
+                summary.classList.add('hidden');
+                return;
+            }
+
+            const routeCount = buses.reduce((sum, bus) => sum + ((bus.routes && bus.routes.length) || 0), 0);
+            summaryText.textContent = `Will copy ${buses.length} bus${buses.length === 1 ? '' : 'es'} & ${routeCount} pickup point${routeCount === 1 ? '' : 's'} from "${sourceEvent.title}".`;
+            summary.classList.remove('hidden');
+        }
+
+        // ---- Reuse Bus Routes dialog: viewport-centered overlay helpers ----
+        // Same pattern as the Event Edit modal (double rAF fade-in, Escape to close,
+        // body scroll lock, fade-out before display:none).
+        let hideCopyRoutesModalTimer = null;
+        let copyRoutesModalKeyHandler = null;
+
+        function showCopyRoutesModal() {
+            const modal = document.getElementById('copy-routes-modal');
+            if (!modal) return;
+            clearTimeout(hideCopyRoutesModalTimer);
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // lock the page behind the overlay
+
+            // Double rAF so the un-hidden state paints before the transition starts
+            requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add('modal-open')));
+
+            copyRoutesModalKeyHandler = (e) => {
+                if (e.key === 'Escape') hideCopyRoutesModal();
+            };
+            document.addEventListener('keydown', copyRoutesModalKeyHandler);
+        }
+
+        function hideCopyRoutesModal() {
+            const modal = document.getElementById('copy-routes-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            clearTimeout(hideCopyRoutesModalTimer);
+
+            modal.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            if (copyRoutesModalKeyHandler) {
+                document.removeEventListener('keydown', copyRoutesModalKeyHandler);
+                copyRoutesModalKeyHandler = null;
+            }
+
+            // Wait for the fade-out before display:none (reduced-motion makes it instant)
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            hideCopyRoutesModalTimer = setTimeout(() => modal.classList.add('hidden'), reduceMotion ? 0 : 200);
+        }
+
+        // Open the Reuse Bus Routes dialog for the currently selected outstation event
+        function openCopyRoutesModal() {
+            const modal = document.getElementById('copy-routes-modal');
+            if (!modal) return;
+            if (!document.getElementById('bus-routes-users-event-select')?.value) {
+                showToast('Select an outstation event first.', 'error');
+                return;
+            }
+
+            populateCopyRoutesSourceSelect();
+
+            // Start fresh each time the dialog opens
+            const sourceSelect = document.getElementById('copy-routes-source-select');
+            if (sourceSelect) sourceSelect.value = '';
+            updateCopyRoutesSummary();
+
+            showCopyRoutesModal();
+        }
+
+        // Copy all buses & pickup points from a previous outstation event into the selected one (Admin)
+        function copyBusRoutesFromEvent() {
+            const targetEventId = document.getElementById('bus-routes-users-event-select')?.value;
+            const sourceEventId = document.getElementById('copy-routes-source-select')?.value;
+
+            if (!targetEventId) {
+                showToast('Select an outstation event first.', 'error');
+                return;
+            }
+            if (!sourceEventId) {
+                showToast('Select a previous event to copy routes from.', 'error');
+                return;
+            }
+            if (sourceEventId === targetEventId) return;
+
+            const sourceEvent = state.events.find(event => event.id === sourceEventId);
+            const targetEvent = state.events.find(event => event.id === targetEventId);
+            const sourceBuses = state.busRoutes[sourceEventId] || [];
+            if (!sourceBuses.length) {
+                showToast('The selected event has no bus routes to copy.', 'error');
+                return;
+            }
+
+            const routeCount = sourceBuses.reduce((sum, bus) => sum + ((bus.routes && bus.routes.length) || 0), 0);
+            const existingBuses = state.busRoutes[targetEventId] || [];
+            if (existingBuses.length > 0) {
+                const replace = confirm(
+                    `${targetEvent ? targetEvent.title : 'This event'} already has ${existingBuses.length} bus${existingBuses.length === 1 ? '' : 'es'}. ` +
+                    `Copying will REPLACE them with ${sourceBuses.length} bus${sourceBuses.length === 1 ? '' : 'es'} / ${routeCount} pickup point${routeCount === 1 ? '' : 's'} from "${sourceEvent ? sourceEvent.title : 'the selected event'}". Continue?`
+                );
+                if (!replace) return;
+            }
+
+            // Deep-copy buses/routes with fresh unique IDs so the new event owns independent
+            // entities - member RSVPs store route IDs, so they must never be shared across events.
+            const stamp = Date.now();
+            const rand = () => Math.random().toString(16).slice(2, 8);
+            const copiedBuses = sourceBuses.map((bus, busIndex) => ({
+                id: `bus-${stamp}-${busIndex}-${rand()}`,
+                name: bus.name || '',
+                // Bus number & driver phone are per-trip logistics that usually change - never copied
+                number: '',
+                driverNumber: '',
+                routes: (bus.routes || []).map((route, routeIndex) => ({
+                    id: `route-${stamp}-${busIndex}-${routeIndex}-${rand()}`,
+                    point: route.point || '',
+                    time: route.time || ''
+                }))
+            }));
+
+            state.busRoutes[targetEventId] = copiedBuses;
+            state.selectedBusId = copiedBuses[0].id;
+            state.pointName = '';
+            state.pointTime = '';
+            state.editingRoute = null;
+            state.busDetailDrafts = {};
+
+            firebaseDb.collection('busRoutes').doc(targetEventId).set({
+                buses: copiedBuses
+            });
+
+            hideCopyRoutesModal();
+            displayBusRoutes();
+            showToast(`Copied ${copiedBuses.length} bus${copiedBuses.length === 1 ? '' : 'es'} & ${routeCount} pickup point${routeCount === 1 ? '' : 's'} from ${sourceEvent ? sourceEvent.title : 'previous event'}. Bus number & driver phone start empty - update in Bus Details.`);
         }
 
         // Show toast popup notification (Admin)
