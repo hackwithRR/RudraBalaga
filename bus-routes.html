@@ -155,7 +155,7 @@
         <!-- Outstation Events List -->
         <section>
             <div id="outstation-events-list" class="space-y-4">
-                <p class="text-on-surface-variant kannada-text">ಹೊರಊರಿನ ಕಾರ್ಯಕ್ರಮಗಳು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
+                <p class="text-on-surface-variant kannada-text">ಹೊರಊರಿನ ಕಾರ್ಯಕ್ರಮ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
             </div>
         </section>
     </main>
@@ -197,7 +197,7 @@
             <!-- Events -->
             <a class="app-nav-item" href="events.html">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
-                <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮಗಳು</span>
+                <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮ</span>
             </a>
             <!-- Bus Routes (Active) -->
             <a class="app-nav-item is-active" href="bus-routes.html" aria-current="page">
@@ -346,7 +346,7 @@
             const outstationEvents = state.events.filter(e => e.type === 'Outstation');
             
             if (outstationEvents.length === 0) {
-                outstationEventsList.innerHTML = '<p class="text-on-surface-variant kannada-text">ಹೊರಊರಿನ ಕಾರ್ಯಕ್ರಮಗಳು ಕಂಡುಹಿದ್ದಲ್ಲಿಲ್ಲ.</p>';
+                outstationEventsList.innerHTML = '<p class="text-on-surface-variant kannada-text">ಹೊರಊರಿನ ಕಾರ್ಯಕ್ರಮ ಕಂಡುಹಿದ್ದಲ್ಲಿಲ್ಲ.</p>';
                 return;
             }
 
