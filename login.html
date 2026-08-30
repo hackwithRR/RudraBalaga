@@ -92,13 +92,36 @@
 
                     <!-- Trishul Layer -->
                     <g id="final-trishul" fill="none" stroke="#ff5722" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 orange-glow">
-                        <line x1="200" y1="40" x2="200" y2="240" stroke-width="4" />
-                        <path d="M 200,5 C 196,20 195,35 195,45 L 205,45 C 205,35 204,20 200,5 Z" fill="#ff5722" />
-                        <path d="M 165,35 C 165,70 190,75 195,75 M 165,35 C 172,45 180,50 188,52" />
-                        <path d="M 235,35 C 235,70 210,75 205,75 M 235,35 C 228,45 220,50 212,52" />
-                        <path d="M 188,95 L 212,95 L 190,115 L 212,115 Z" fill="#ffffff" stroke-width="2" />
-                        <line x1="188" y1="95" x2="212" y2="115" stroke-width="1.5" />
-                        <line x1="212" y1="95" x2="188" y2="115" stroke-width="1.5" />
+                        <!-- ── TRISHUL HEAD (top) ── -->
+                        <!-- Center prong: leaf blade -->
+                        <path d="M 200,8 C 193.5,19 192.5,36 197,54 L 203,54 C 207.5,36 206.5,19 200,8 Z" fill="#ff5722" stroke="none" />
+                        <path d="M 200,16 C 197,26 196.5,40 198.5,50" stroke="#ffffff" stroke-width="1" opacity="0.5" />
+                        <!-- Left prong -->
+                        <path d="M 197,58 C 185.5,55 177,47 175.5,36" stroke-width="3" />
+                        <path d="M 175.5,10 C 169.5,19 168.5,32 173,44 L 182,41 C 183,30 181,19 175.5,10 Z" fill="#ff5722" stroke="none" />
+                        <path d="M 176,17 C 172.5,25 172.5,34 174.5,41" stroke="#ffffff" stroke-width="0.9" opacity="0.45" />
+                        <!-- Right prong: mirrored -->
+                        <path d="M 203,58 C 214.5,55 223,47 224.5,36" stroke-width="3" />
+                        <path d="M 224.5,10 C 230.5,19 231.5,32 227,44 L 218,41 C 217,30 219,19 224.5,10 Z" fill="#ff5722" stroke="none" />
+                        <path d="M 224,17 C 227.5,25 227.5,34 225.5,41" stroke="#ffffff" stroke-width="0.9" opacity="0.45" />
+                        <!-- Crescent crossguard -->
+                        <path d="M 184,54 C 191,62 209,62 216,54 L 211,62 C 205,69 195,69 189,62 Z" fill="#ff5722" stroke="none" />
+                        <!-- Short shaft stub (stops well above damaru) -->
+                        <line x1="200" y1="66" x2="200" y2="70" stroke-width="4" />
+                        <!-- ── GAP ── -->
+                        <!-- ── DAMARU (middle: above the shivling, below the trishul head) ── -->
+                        <path d="M 182,76 C 193,80.5 198,85 198,89 C 198,93 193,97.5 182,102 L 218,102 C 207,97.5 202,93 202,89 C 202,85 207,80.5 218,76 Z" fill="#ff5722" stroke="none" />
+                        <ellipse cx="182" cy="76" rx="4.5" ry="2.2" fill="#ff5722" stroke="none" />
+                        <ellipse cx="218" cy="76" rx="4.5" ry="2.2" fill="#ff5722" stroke="none" />
+                        <ellipse cx="182" cy="102" rx="4.5" ry="2.2" fill="#ff5722" stroke="none" />
+                        <ellipse cx="218" cy="102" rx="4.5" ry="2.2" fill="#ff5722" stroke="none" />
+                        <path d="M 184,77.5 Q 197.5,83 197.5,89 Q 197.5,95 184,100.5" stroke="#ffffff" stroke-width="1" opacity="0.45" fill="none" />
+                        <path d="M 216,77.5 Q 202.5,83 202.5,89 Q 202.5,95 216,100.5" stroke="#ffffff" stroke-width="1" opacity="0.45" fill="none" />
+                        <!-- Damaru string beads -->
+                        <circle cx="178.5" cy="79.5" r="1.5" fill="#ff5722" stroke="none" />
+                        <circle cx="221.5" cy="79.5" r="1.5" fill="#ff5722" stroke="none" />
+                        <circle cx="178.5" cy="98.5" r="1.5" fill="#ff5722" stroke="none" />
+                        <circle cx="221.5" cy="98.5" r="1.5" fill="#ff5722" stroke="none" />
                     </g>
 
                     <!-- Shivling Layer -->
