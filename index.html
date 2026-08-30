@@ -600,17 +600,44 @@
             box-shadow: 0 10px 24px rgba(36, 107, 104, 0.24) !important;
         }
 
-        #view-scripts-btn {
-            min-height: 8rem;
-            background: #eef5f1 !important;
-            border: 1px solid #c9dfd7 !important;
-            color: var(--home-teal) !important;
-            box-shadow: 0 10px 24px rgba(36, 107, 104, 0.08) !important;
+        #view-scripts-btn,
+        .scriptures-entry {
+            background: linear-gradient(135deg, #fff3e6, #ffe9d2) !important;
+            border: 1.5px solid #ffd6a6 !important;
+            color: #7c3d00 !important;
+            min-height: 4.5rem;
+            box-shadow: 0 4px 14px rgba(255, 153, 51, 0.15) !important;
+            transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        #view-scripts-btn:hover {
-            transform: translateY(-3px);
-            background: #e2f0eb !important;
+        #view-scripts-btn:active,
+        .scriptures-entry:active {
+            transform: scale(0.975);
+            box-shadow: 0 2px 8px rgba(255, 153, 51, 0.2) !important;
+        }
+
+        @media (hover: hover) {
+            #view-scripts-btn:hover,
+            .scriptures-entry:hover {
+                transform: none;
+                border-color: #ff9933 !important;
+                box-shadow: 0 8px 22px rgba(255, 153, 51, 0.28) !important;
+            }
+        }
+
+        .scriptures-entry-icon {
+            width: 3.25rem;
+            height: 3.25rem;
+            background: linear-gradient(135deg, #ffab4f, #ff9933);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(255, 153, 51, 0.4);
+        }
+
+        @media (max-width: 360px) {
+            .scriptures-entry { gap: 0.75rem; padding: 0.85rem; }
+            .scriptures-entry-icon { width: 2.75rem; height: 2.75rem; }
+            .scriptures-entry-icon .material-symbols-outlined { font-size: 27px !important; }
         }
 
         .payment-modal-backdrop {
@@ -1065,9 +1092,15 @@
             </div>
             <!-- Quick Access -->
             <div class="grid grid-cols-1 gap-stack-md">
-                <button id="view-scripts-btn" class="touch-active bg-surface-container border border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center gap-2 text-center kannada-text">
-                    <span class="material-symbols-outlined text-primary text-4xl" data-icon="menu_book">menu_book</span>
-                    <span class="font-label-lg text-label-lg kannada-text">ಸ್ಕ್ರಿಪ್ಟ್ಸ್ ನೋಡಿರಿ</span>
+                <button id="view-scripts-btn" type="button" aria-label="Open Sacred Scriptures reader" class="scriptures-entry w-full flex items-center gap-4 text-left rounded-2xl p-4 sm:p-5 kannada-text">
+                    <span class="scriptures-entry-icon flex items-center justify-center shrink-0 rounded-2xl">
+                        <span class="material-symbols-outlined" style="font-size:32px;font-variation-settings: 'FILL' 1;">auto_stories</span>
+                    </span>
+                    <span class="flex-1 min-w-0">
+                        <span class="block font-bold text-lg leading-snug">ಪವಿತ್ರ ಗ್ರಂಥಗಳು</span>
+                        <span class="block text-sm opacity-80 kannada-text" style="line-height:1.5;">Sacred Scriptures · ಓದಿ</span>
+                    </span>
+                    <span class="material-symbols-outlined shrink-0 opacity-70">chevron_right</span>
                 </button>
             </div>
         </section>
@@ -1140,6 +1173,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="notifications.js"></script>
+    <script src="scriptures.js"></script>
     <script src="pwa.js"></script>
     <script>
         // State Management
@@ -1729,43 +1763,9 @@
             }
         }
         
-        // Show scripts modal
+        // Show scripts modal — unified sacred scriptures e-reader
         function showScriptsModal() {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-xl p-6 w-full max-w-lg">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಕ್ರೆಡ್ ಸ್ಕ್ರಿಪ್ಟ್ಸ್</h3>
-                        <button id="close-scripts-modal" class="text-2xl text-on-surface-variant">&times;</button>
-                    </div>
-                    <div class="space-y-4">
-                        <button id="rudra-chamakam-btn" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
-                            <span class="material-symbols-outlined" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
-                            ರುದ್ರ ಚಮಕಮ್
-                        </button>
-                        <button id="rudra-namakam-btn" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
-                            <span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
-                            ರುದ್ರ ನಮಕಮ್
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            document.getElementById('close-scripts-modal').addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-            
-            document.getElementById('rudra-chamakam-btn').addEventListener('click', () => {
-                document.body.removeChild(modal);
-                showChamakam();
-            });
-            
-            document.getElementById('rudra-namakam-btn').addEventListener('click', () => {
-                document.body.removeChild(modal);
-                showNamakam();
-            });
+            if (typeof window.openScriptures === 'function') { window.openScriptures(); return; }
         }
         
         // Show Rudra Chamakam

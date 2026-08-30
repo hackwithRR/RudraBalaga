@@ -122,6 +122,40 @@
             transform: scale(0.96);
             transition: transform 0.1s ease;
         }
+
+        /* --- Sacred Scriptures entry button --- */
+        .scriptures-entry {
+            background: linear-gradient(135deg, #fff3e6, #ffe9d2);
+            border: 1.5px solid #ffd6a6;
+            color: #7c3d00;
+            min-height: 4.5rem;
+            box-shadow: 0 4px 14px rgba(255, 153, 51, 0.15);
+            transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .scriptures-entry:active {
+            transform: scale(0.975);
+            box-shadow: 0 2px 8px rgba(255, 153, 51, 0.2);
+        }
+        @media (hover: hover) {
+            .scriptures-entry:hover {
+                border-color: #ff9933;
+                box-shadow: 0 8px 22px rgba(255, 153, 51, 0.28);
+            }
+        }
+        .scriptures-entry-icon {
+            width: 3.25rem;
+            height: 3.25rem;
+            background: linear-gradient(135deg, #ffab4f, #ff9933);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(255, 153, 51, 0.4);
+        }
+        @media (max-width: 360px) {
+            .scriptures-entry { gap: 0.75rem; padding: 0.85rem; }
+            .scriptures-entry-icon { width: 2.75rem; height: 2.75rem; }
+            .scriptures-entry-icon .material-symbols-outlined { font-size: 27px !important; }
+        }
+
         .kannada-text {
             line-height: 1.8;
         }
@@ -183,21 +217,21 @@
 
         <!-- View Scripts Section -->
         <section>
-            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+            <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-5 shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="material-symbols-outlined text-secondary" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
                     <span class="font-label-lg text-label-lg text-secondary kannada-text">ಸಕ್ರೆಡ್ ಸ್ಕ್ರಿಪ್ಟ್ಸ್</span>
                 </div>
-                <div class="space-y-3">
-                    <button id="rudra-chamakam-btn" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
-                        <span class="material-symbols-outlined" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
-                        ರುದ್ರ ಚಮಕಮ್
-                    </button>
-                    <button id="rudra-namakam-btn" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
-                        <span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
-                        ರುದ್ರ ನಮಕಮ್
-                    </button>
-                </div>
+                <button id="scriptures-btn" type="button" aria-label="Open Sacred Scriptures reader" class="scriptures-entry w-full flex items-center gap-4 text-left rounded-2xl p-4 sm:p-5 kannada-text">
+                    <span class="scriptures-entry-icon flex items-center justify-center shrink-0 rounded-2xl">
+                        <span class="material-symbols-outlined" style="font-size:32px;font-variation-settings: 'FILL' 1;">auto_stories</span>
+                    </span>
+                    <span class="flex-1 min-w-0">
+                        <span class="block font-bold text-lg leading-snug">ಪವಿತ್ರ ಗ್ರಂಥಗಳು</span>
+                        <span class="block text-sm opacity-80 kannada-text" style="line-height:1.5;">Sacred Scriptures · ಓದಿ</span>
+                    </span>
+                    <span class="material-symbols-outlined shrink-0 opacity-70">chevron_right</span>
+                </button>
             </div>
         </section>
 
@@ -308,6 +342,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="notifications.js"></script>
+    <script src="scriptures.js"></script>
     <script src="pwa.js"></script>
     <script>
         // State Management
@@ -800,8 +835,9 @@
         
         // Add event listeners
         document.getElementById('help-btn').addEventListener('click', showHelpModal);
-        document.getElementById('rudra-chamakam-btn').addEventListener('click', showChamakam);
-        document.getElementById('rudra-namakam-btn').addEventListener('click', showNamakam);
+        document.getElementById('scriptures-btn').addEventListener('click', () => {
+            if (typeof window.openScriptures === 'function') window.openScriptures();
+        });
         document.getElementById('reset-checklist-btn').addEventListener('click', resetChecklist);
         document.getElementById('view-donations-btn').addEventListener('click', showMyDonationsModal);
     </script>
