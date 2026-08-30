@@ -2322,6 +2322,13 @@
 
             const eventPaymentChip = (event.type === 'Outstation' && event.requiresPayment === true) ? (() => {
                 const ps = userRsvp?.payment?.paymentStatus;
+                const ownTransport = userRsvp?.transportMode === 'own';
+                
+                // Own transport - no payment needed
+                if (ownTransport) {
+                    return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-300"><span class="material-symbols-outlined" style="font-size:14px;">directions_car</span>Own transport</span>`;
+                }
+                
                 let label, cls, icon;
                 if (ps === 'APPROVED') { label = 'Paid'; cls = 'bg-green-100 text-green-800 border border-green-300'; icon = 'verified'; }
                 else if (ps === 'PENDING_APPROVAL') { label = 'Under review'; cls = 'bg-amber-100 text-amber-800 border border-amber-300'; icon = 'hourglass_top'; }
@@ -2331,10 +2338,19 @@
             })() : '';
 
             let responseHtml;
-            if (userRsvp && userRsvp.status === 'attending' && !['PENDING_APPROVAL', 'REJECTED'].includes(userRsvp.payment?.paymentStatus)) {
-                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">You are attending this event</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>${canEdit ? changeResponseSectionHtml(!registrationClosed) : ''}`;
+            const ownTransport = userRsvp?.transportMode === 'own';
+            const isAttendingNoPaymentNeeded = userRsvp && userRsvp.status === 'attending' && ownTransport;
+            const isAttendingWithApprovedPayment = userRsvp && userRsvp.status === 'attending' && !['PENDING_APPROVAL', 'REJECTED'].includes(userRsvp.payment?.paymentStatus);
+            
+            if (isAttendingNoPaymentNeeded || isAttendingWithApprovedPayment) {
+                // Show appropriate message based on how they're attending
+                let attendingMessage = 'You are attending this event';
+                if (ownTransport) {
+                    attendingMessage = 'You are attending this event (Own transportation)';
+                }
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">${attendingMessage}</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>${canEdit ? changeResponseSectionHtml(!registrationClosed) : ''}`;
             } else if (userRsvp?.status === 'attending' && userRsvp?.payment?.paymentStatus === 'PENDING_APPROVAL') {
-                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-amber-50 rounded-xl text-center"><p class="font-body-lg text-body-lg text-amber-900 font-bold">Payment proof is pending approval</p><p class="text-sm text-amber-800 mt-1">Your attendance will be confirmed after admin verification.</p></div></div>`;
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-amber-50 rounded-xl text-center"><p class="font-body-lg text-body-lg text-amber-900 font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">hourglass_top</span>Waiting for admin approval</p><p class="text-sm text-amber-800 mt-1">Your payment is under review. You will be marked attending once the admin approves it.</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg mt-3"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>`;
             } else if (userRsvp?.payment?.paymentStatus === 'REJECTED' && userRsvp.status === 'attending') {
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">cancel</span>Payment rejected by admin</p><p class="text-sm text-on-error-container mt-1">Your RSVP has been reset — please respond again. If you attend, you'll need to submit a fresh payment.</p></div>${canEdit ? (registrationClosed ? `${registrationClosedHtml}${rsvpButtonsHtml(false)}` : rsvpButtonsHtml(true)) : ''}</div>`;
             } else if (userRsvp && userRsvp.status === 'not-attending') {
@@ -2350,22 +2366,31 @@
 
             let busHtml = '';
             if (event.type === 'Outstation') {
-                const rsvpActiveForBusInfo = userRsvp && userRsvp.status === 'attending' && !['PENDING_APPROVAL', 'REJECTED'].includes(userRsvp.payment?.paymentStatus);
-                const selectedPickupRoute = rsvpActiveForBusInfo && userRsvp.pickupPoint ? busRoutes.find(route => route.id === userRsvp.pickupPoint) : null;
-                if (selectedPickupRoute) {
-                    // Member has chosen a pickup point - show only this route's bus number & driver number
-                    const busNumberValue = selectedPickupRoute.busNumber || 'To be announced';
-                    const driverNumberHtml = selectedPickupRoute.driverNumber
-                        ? `<a href="tel:${selectedPickupRoute.driverNumber.replace(/[^+0-9]/g, '')}" class="text-primary font-bold underline">${selectedPickupRoute.driverNumber}</a>`
-                        : '<span>To be announced</span>';
-                    busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Your pickup point &amp; bus</p><div class="p-4 bg-primary-fixed rounded-xl border-2 border-primary-container"><p class="font-body-lg text-body-lg font-bold text-on-surface">${selectedPickupRoute.point}</p><p class="font-label-md text-label-md text-on-surface-variant mb-3">${selectedPickupRoute.time} · ${selectedPickupRoute.busName}</p><div class="pt-3 border-t border-outline-variant space-y-2"><p class="font-label-md text-label-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="font-size:20px;">directions_bus</span>Bus number: <span class="font-bold">${busNumberValue}</span></p><p class="font-label-md text-label-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="font-size:20px;">call</span>Driver number: ${driverNumberHtml}</p></div></div>${(!selectedPickupRoute.busNumber || !selectedPickupRoute.driverNumber) ? '<p class="text-xs text-on-surface-variant mt-2 italic">Bus number and driver contact will appear here once finalized.</p>' : ''}</div>`;
-                } else if (busRoutes.length) {
-                    busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><select data-pickup-select data-event-id="${event.id}" class="w-full h-14 px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"><option value="">Select your pickup point</option>${busRoutes.map(route => `<option value="${route.id}" ${userRsvp && userRsvp.pickupPoint === route.id ? 'selected' : ''}>${route.point} - ${route.time} (${route.busName})</option>`).join('')}</select></div>`;
-                } else {
-                    busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><a href="bus-routes.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-xl flex items-center justify-center h-14 text-body-lg">View bus routes</a></div>`;
+                // Only show bus selection for users who selected bus transport or haven't chosen yet
+                const showBusSelection = userRsvp?.status !== 'attending' || 
+                    !ownTransport || 
+                    (userRsvp?.status === 'attending' && !userRsvp?.transportMode);
+                
+                if (showBusSelection) {
+                    const rsvpActiveForBusInfo = userRsvp && userRsvp.status === 'attending' && 
+                        !['PENDING_APPROVAL', 'REJECTED'].includes(userRsvp.payment?.paymentStatus) &&
+                        !ownTransport;
+                    const selectedPickupRoute = rsvpActiveForBusInfo && userRsvp.pickupPoint ? busRoutes.find(route => route.id === userRsvp.pickupPoint) : null;
+                    if (selectedPickupRoute) {
+                        // Member has chosen a pickup point - show only this route's bus number & driver number
+                        const busNumberValue = selectedPickupRoute.busNumber || 'To be announced';
+                        const driverNumberHtml = selectedPickupRoute.driverNumber
+                            ? `<a href="tel:${selectedPickupRoute.driverNumber.replace(/[^+0-9]/g, '')}" class="text-primary font-bold underline">${selectedPickupRoute.driverNumber}</a>`
+                            : '<span>To be announced</span>';
+                        busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Your pickup point &amp; bus</p><div class="p-4 bg-primary-fixed rounded-xl border-2 border-primary-container"><p class="font-body-lg text-body-lg font-bold text-on-surface">${selectedPickupRoute.point}</p><p class="font-label-md text-label-md text-on-surface-variant mb-3">${selectedPickupRoute.time} · ${selectedPickupRoute.busName}</p><div class="pt-3 border-t border-outline-variant space-y-2"><p class="font-label-md text-label-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="font-size:20px;">directions_bus</span>Bus number: <span class="font-bold">${busNumberValue}</span></p><p class="font-label-md text-label-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="font-size:20px;">call</span>Driver number: ${driverNumberHtml}</p></div></div>${(!selectedPickupRoute.busNumber || !selectedPickupRoute.driverNumber) ? '<p class="text-xs text-on-surface-variant mt-2 italic">Bus number and driver contact will appear here once finalized.</p>' : ''}</div>`;
+                    } else if (busRoutes.length) {
+                        busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><select data-pickup-select data-event-id="${event.id}" class="w-full h-14 px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"><option value="">Select your pickup point</option>${busRoutes.map(route => `<option value="${route.id}" ${userRsvp && userRsvp.pickupPoint === route.id ? 'selected' : ''}>${route.point} - ${route.time} (${route.busName})</option>`).join('')}</select></div>`;
+                    } else {
+                        busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><a href="bus-routes.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-xl flex items-center justify-center h-14 text-body-lg">View bus routes</a></div>`;
+                    }
                 }
             }
-            const mapHtml = event.type === 'Bangalore' && event.location ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2">Open in Google Maps</p></a></div>` : '';
+            const mapHtml = (event.type === 'Bangalore' || event.type === 'Outstation') && event.location ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2">Open in Google Maps</p></a></div>` : '';
             const outstationHtml = event.type === 'Outstation' ? `<div class="mt-4 p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container"><p class="font-label-lg text-label-lg text-secondary mb-2">Outstation dates</p><p class="font-label-md text-label-md text-secondary">Event dates</p><p class="font-body-lg text-body-lg text-on-surface">${eventDateRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Departure to Bangalore arrival</p><p class="font-body-lg text-body-lg text-on-surface">${travelRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Last date to register</p><p class="font-body-lg text-body-lg ${registrationClosed ? 'text-error font-bold' : 'text-on-surface'}">${registrationDeadlineText}</p>${registrationClosed ? '<p class="font-label-md text-label-md text-error mt-1">Registration is over</p>' : ''}</div>` : '';
 
             return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Upcoming event</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><div class="shrink-0 flex flex-col items-end gap-1.5"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span>${eventPaymentChip}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Event dates</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Time</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Location</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p></div></div>${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
@@ -2776,8 +2801,12 @@
         if (status === 'attending' && currentEvent.type === 'Outstation' && currentEvent.requiresPayment === true) {
             const payStatus = existingRsvp.payment && existingRsvp.payment.paymentStatus;
             const alreadyPaid = payStatus && payStatus !== 'REJECTED';
+            
             if (!alreadyPaid) {
-                showPaymentModal(currentEvent);
+                // Show transport option modal (own/bus)
+                // If bus selected, payment will be required
+                // If own transport selected, no payment needed
+                showTransportOptionModal(currentEvent);
                 return;
             }
         }
@@ -2789,11 +2818,21 @@
 
         if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
         const rsvpData = { ...(state.rsvps[state.user.uid][currentEvent.id] || {}), status };
-        // Keep the payment record when switching to not-attending so an already-paid member
-        // does not have to re-pay if they later switch back to attending. Only a rejected
-        // payment is dropped (a fresh one is required for the booking).
-        if (status === 'not-attending' && rsvpData.payment && rsvpData.payment.paymentStatus === 'REJECTED') {
-            delete rsvpData.payment;
+        // When switching to not-attending: clear the transport choice & pickup point so
+        // that re-selecting attending asks the own/bus question again - but ONLY if the
+        // user isn't an already-paid traveller (their booking is preserved). A rejected
+        // payment is dropped (a fresh one is required for booking).
+        if (status === 'not-attending') {
+            const hasActivePayment = rsvpData.payment && rsvpData.payment.paymentStatus !== 'REJECTED';
+            if (!hasActivePayment) {
+                delete rsvpData.transportMode;
+                delete rsvpData.pickupPoint;
+            }
+            if (rsvpData.payment && rsvpData.payment.paymentStatus === 'REJECTED') {
+                delete rsvpData.payment;
+                delete rsvpData.transportMode;
+                delete rsvpData.pickupPoint;
+            }
         }
         state.rsvps[state.user.uid][currentEvent.id] = rsvpData;
         renderEvents();
@@ -2965,6 +3004,85 @@
                 status.textContent = 'Upload failed. Please try again or contact an admin.';
             }
         });
+    }
+
+    // Show transport option modal for outstation events (user pays)
+    function showTransportOptionModal(event) {
+        const modal = document.createElement('div');
+        modal.className = 'payment-modal-backdrop fixed inset-0 z-50 flex items-center justify-center';
+        modal.id = 'transport-option-modal';
+        modal.innerHTML = `
+            <div class="payment-modal bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-full">
+                <div class="payment-modal-header flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="payment-method-icon material-symbols-outlined">directions_car</span>
+                        <div class="min-w-0">
+                            <h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Choose your transport</h3>
+                            <p class="text-sm text-on-surface-variant truncate">${event.title}</p>
+                        </div>
+                    </div>
+                    <button id="close-transport-modal" aria-label="Close" class="shrink-0 w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xl leading-none">&times;</button>
+                </div>
+                <div class="payment-modal-body space-y-4">
+                    <div class="p-4 bg-surface-container-high rounded-xl border border-outline-variant">
+                        <p class="text-sm text-on-surface-variant">How will you travel to this outstation event?</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button type="button" id="select-own-transport" class="touch-active w-full h-20 rounded-xl bg-surface-container-high text-on-surface font-bold flex flex-col items-center justify-center gap-2 border-2 border-outline-variant hover:border-primary-container">
+                            <span class="material-symbols-outlined text-3xl">directions_car</span>
+                            <span>Own transportation</span>
+                            <span class="text-xs text-on-surface-variant font-normal">No payment required</span>
+                        </button>
+                        <button type="button" id="select-bus-transport" class="touch-active w-full h-20 rounded-xl bg-surface-container-high text-on-surface font-bold flex flex-col items-center justify-center gap-2 border-2 border-outline-variant hover:border-primary-container">
+                            <span class="material-symbols-outlined text-3xl">directions_bus</span>
+                            <span>Bus</span>
+                            <span class="text-xs text-on-surface-variant font-normal">Payment required</span>
+                        </button>
+                    </div>
+                    <div class="p-4 bg-surface-container-high rounded-xl border border-outline-variant">
+                        <div class="flex items-start gap-2">
+                            <span class="material-symbols-outlined text-secondary shrink-0" style="font-size:18px;">info</span>
+                            <div class="text-sm text-on-surface-variant">
+                                <p><strong>Own transportation:</strong> You arrange your own travel. No payment needed.</p>
+                                <p class="mt-1"><strong>Bus:</strong> Travel with the group. Payment is required to confirm your seat.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        document.body.appendChild(modal);
+        
+        // Close when tapping the backdrop
+        modal.addEventListener('click', (clickEvent) => {
+            if (clickEvent.target === modal) modal.remove();
+        });
+        
+        document.getElementById('close-transport-modal').onclick = () => modal.remove();
+        
+        // Own transportation selected - mark as attending without payment
+        document.getElementById('select-own-transport').onclick = () => {
+            modal.remove();
+            const rsvpData = {
+                ...state.rsvps[state.user.uid]?.[event.id],
+                status: 'attending',
+                transportMode: 'own',
+                pickupPoint: null
+            };
+            if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
+            state.rsvps[state.user.uid][event.id] = rsvpData;
+            renderEvents();
+            firebaseDb.collection('rsvps').doc(state.user.uid).set({
+                [event.id]: rsvpData
+            }, { merge: true }).then(() => {
+                showRsvpToast('You are attending! (Own transportation)', false);
+            });
+        };
+        
+        // Bus selected - show payment modal
+        document.getElementById('select-bus-transport').onclick = () => {
+            modal.remove();
+            showPaymentModal(event);
+        };
     }
 
     function setPickupPoint(e, eventId) {

@@ -142,6 +142,55 @@
         .kannada-text {
             line-height: 1.8;
         }
+        
+        /* Toast animations */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 1; transform: translateX(-50%) translateY(0); }
+            to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+        
+        /* Modern transport option modal */
+        .transport-modal {
+            border: 1px solid #e7d9ce;
+            border-radius: 1.5rem !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-height: calc(100dvh - 2rem);
+        }
+        @supports (height: 100dvh) {
+            .transport-modal { max-height: calc(100dvh - 2rem); }
+        }
+        .transport-option-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .transport-option-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-container);
+        }
+        .transport-option-card:active {
+            transform: scale(0.98);
+        }
+        .transport-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            color: #c2410c;
+        }
+        @media (min-width: 640px) {
+            .transport-icon-wrapper {
+                width: 4rem;
+                height: 4rem;
+            }
+        }
     </style>
 </head>
 <body class="font-body-md text-body-md pb-32">
@@ -395,21 +444,26 @@
                 const isLimitReached = e.limit && attendingCount >= e.limit;
                 
                 // Determine status display
+                const ownTransport = userRsvp?.transportMode === 'own';
+                
                 let status, statusColor;
                 if (isRejected) {
                     status = 'Payment rejected by admin - please respond again';
                     statusColor = 'text-error font-bold';
                 } else if (userRsvp && userRsvp.status === 'attending' && userRsvp.payment?.paymentStatus === 'PENDING_APPROVAL') {
-                    status = 'Payment proof pending approval';
-                    statusColor = 'text-amber-700';
+                    status = 'Waiting for admin approval';
+                    statusColor = 'text-amber-700 font-bold';
                 } else if (userRsvp && userRsvp.status === 'attending' && userRsvp.payment?.paymentStatus === 'APPROVED') {
                     status = 'Paid - attending';
+                    statusColor = 'text-green-700';
+                } else if (userRsvp && userRsvp.status === 'attending' && ownTransport) {
+                    status = 'Attending - Own transportation';
                     statusColor = 'text-green-700';
                 } else if (userRsvp && userRsvp.status === 'not-attending') {
                     status = 'ಹಾಜರಾಗಿಲ್ಲ';
                     statusColor = 'text-error';
                 } else if (userRsvp && userRsvp.status === 'attending' && requiresPayment) {
-                    status = 'Attending - payment not completed';
+                    status = 'Waiting for payment or approval';
                     statusColor = 'text-amber-700';
                 } else if (userRsvp) {
                     status = userRsvp.status === 'attending' ? 'ಹಾಜರಾಗಿದ್ದೀರಿ' : 'ಹಾಜರಾಗಿಲ್ಲ';
@@ -429,7 +483,8 @@
                 let paymentBadgeHtml = '';
                 if (requiresPayment) {
                     let badgeLabel, badgeClasses, badgeIcon;
-                    if (payStatus === 'APPROVED') { badgeLabel = 'Paid'; badgeClasses = 'bg-green-100 text-green-800 border-green-300'; badgeIcon = 'verified'; }
+                    if (ownTransport) { badgeLabel = 'Own transport'; badgeClasses = 'bg-green-100 text-green-800 border-green-300'; badgeIcon = 'directions_car'; }
+                    else if (payStatus === 'APPROVED') { badgeLabel = 'Paid'; badgeClasses = 'bg-green-100 text-green-800 border-green-300'; badgeIcon = 'verified'; }
                     else if (payStatus === 'PENDING_APPROVAL') { badgeLabel = 'Under review'; badgeClasses = 'bg-amber-100 text-amber-800 border-amber-300'; badgeIcon = 'hourglass_top'; }
                     else if (payStatus === 'REJECTED') { badgeLabel = 'Payment rejected'; badgeClasses = 'bg-red-100 text-red-700 border-red-300'; badgeIcon = 'cancel'; }
                     else { badgeLabel = `₹${Number(e.amount || 0)} - Not paid`; badgeClasses = 'bg-surface-container-high text-on-surface-variant border-outline-variant'; badgeIcon = 'currency_rupee'; }
@@ -534,11 +589,12 @@
                     `;
                 }
                 
-                // Bangaluru events: embedded Google Maps preview (same as the home tab)
+                // Bangalore & Outstation events: embedded Google Maps preview
                 const isBangaloreEvent = e.type === 'Bangalore' || e.type === 'ಬೆಂಗಳೂರು' || e.type === 'Bengaluru';
+                const isOutstationEvent = e.type === 'Outstation';
                 const eventMapLink = e.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.location || '')}`;
                 const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(e.location || '')}&output=embed`;
-                const mapHtml = isBangaloreEvent && e.location
+                const mapHtml = (isBangaloreEvent || isOutstationEvent) && e.location
                     ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen title="Map" src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2 kannada-text">Open in Google Maps</p></a></div>`
                     : '';
 
@@ -602,19 +658,23 @@
             });
         }
         
-        // Show a toast notification
+        // Show a toast notification (responsive & modern)
         function showEventsToast(message, isInfo) {
             const toast = document.createElement('div');
-            toast.className = `fixed top-20 left-0 right-0 mx-auto z-50 px-6 py-4 rounded-xl shadow-lg max-w-sm ${isInfo ? 'bg-surface-container-high text-on-surface-variant' : 'bg-primary-container text-on-primary-container'}`;
+            toast.className = `fixed top-4 left-1/2 -translate-x-1/2 z-[100] px-4 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-2xl max-w-[90vw] sm:max-w-md w-auto backdrop-blur-sm ${isInfo ? 'bg-surface-container-high/95 text-on-surface-variant' : 'bg-primary-container/95 text-on-primary-container'}`;
+            toast.style.animation = 'slideDown 0.3s ease-out';
             toast.innerHTML = `
-                <div class="flex items-center justify-center gap-3 font-body-lg text-body-lg">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">${isInfo ? 'info' : 'check_circle'}</span>
-                    <span class="kannada-text">${message}</span>
+                <div class="flex items-center gap-3 font-body-lg text-body-lg">
+                    <span class="material-symbols-outlined shrink-0" style="font-variation-settings: 'FILL' 1;">${isInfo ? 'info' : 'check_circle'}</span>
+                    <span class="kannada-text flex-1">${message}</span>
                 </div>
             `;
             document.body.appendChild(toast);
             setTimeout(() => {
-                if (toast.parentNode) toast.parentNode.removeChild(toast);
+                if (toast.parentNode) {
+                    toast.style.animation = 'slideUp 0.3s ease-in';
+                    setTimeout(() => toast.remove(), 300);
+                }
             }, 3000);
         }
 
@@ -648,13 +708,42 @@
 
             // Find the event
             const event = state.events.find(e => e.id === eventId);
-
+            
+            // Get existing RSVP data
+            const existingRsvp = (state.rsvps[state.user.uid] && state.rsvps[state.user.uid][eventId]) || {};
+            const paymentWasRejected = existingRsvp.status === 'attending' && existingRsvp.payment?.paymentStatus === 'REJECTED';
+            const ownTransport = existingRsvp.transportMode === 'own';
+            const alreadyPaid = existingRsvp.payment?.paymentStatus && existingRsvp.payment.paymentStatus !== 'REJECTED';
+            
             // Already in the requested state - tell the user instead of re-saving/re-paying
-            if (rsvpEditMode[eventId] !== undefined && status === rsvpEditMode[eventId]) {
-                showEventsToast(status === 'attending' ? 'ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿದ್ದೀರಿ.' : 'ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿಲ್ಲ ಎಂದು ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ.', true);
-                delete rsvpEditMode[eventId];
-                renderEvents();
-                return;
+            // Exception: if payment was rejected or if attending via bus but not yet paid, allow re-payment
+            if (existingRsvp.status === status && !paymentWasRejected) {
+                if (status === 'attending' && event && event.type === 'Outstation' && event.requiresPayment === true) {
+                    // If own transport, already attending - no need to re-select
+                    if (ownTransport) {
+                        showEventsToast('ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿದ್ದೀರಿ (Own transportation).', true);
+                        delete rsvpEditMode[eventId];
+                        renderEvents();
+                        return;
+                    }
+                    // If already paid, already attending
+                    if (alreadyPaid) {
+                        showEventsToast('ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿದ್ದೀರಿ (Paid).', true);
+                        delete rsvpEditMode[eventId];
+                        renderEvents();
+                        return;
+                    }
+                } else if (status === 'attending') {
+                    showEventsToast('ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿದ್ದೀರಿ.', true);
+                    delete rsvpEditMode[eventId];
+                    renderEvents();
+                    return;
+                } else if (status === 'not-attending') {
+                    showEventsToast('ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿಲ್ಲ ಎಂದು ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ.', true);
+                    delete rsvpEditMode[eventId];
+                    renderEvents();
+                    return;
+                }
             }
 
             // Do not accept registrations after the last date to register
@@ -663,14 +752,16 @@
                 return;
             }
 
-            // Outstation events require payment. If the member has already paid (payment was
-            // not rejected), don't ask them to pay again when they switch back to attending.
+            // Outstation events: check if payment is required and show transport option modal
             if (status === 'attending' && event && event.type === 'Outstation' && event.requiresPayment === true) {
-                const currentRsvp = state.rsvps[state.user.uid] && state.rsvps[state.user.uid][eventId];
-                const payStatus = currentRsvp && currentRsvp.payment && currentRsvp.payment.paymentStatus;
-                const alreadyPaid = payStatus && payStatus !== 'REJECTED';
-                if (!alreadyPaid) {
-                    showPaymentModal(event);
+                // If already own transport or already paid, no need to show modal
+                if (ownTransport || alreadyPaid) {
+                    // Already handled above in the "already in requested state" check
+                } else {
+                    // Show transport option modal (own/bus)
+                    // If bus selected, payment will be required
+                    // If own transport selected, no payment needed
+                    showTransportOptionModal(event);
                     return;
                 }
             }
@@ -697,11 +788,21 @@
                 status: status
             };
 
-            // Keep the payment record when switching to not-attending so an already-paid member
-            // does not have to re-pay if they later switch back to attending. Only a rejected
-            // payment is dropped (a fresh one is required for the booking).
-            if (status === 'not-attending' && rsvpData.payment && rsvpData.payment.paymentStatus === 'REJECTED') {
-                delete rsvpData.payment;
+            // When switching to not-attending: clear the transport choice & pickup point so
+            // that re-selecting attending asks the own/bus question again - but ONLY if the
+            // user isn't an already-paid traveller (their booking is preserved). A rejected
+            // payment is dropped (a fresh one is required for booking).
+            if (status === 'not-attending') {
+                const hasActivePayment = rsvpData.payment && rsvpData.payment.paymentStatus !== 'REJECTED';
+                if (!hasActivePayment) {
+                    delete rsvpData.transportMode;
+                    delete rsvpData.pickupPoint;
+                }
+                if (rsvpData.payment && rsvpData.payment.paymentStatus === 'REJECTED') {
+                    delete rsvpData.payment;
+                    delete rsvpData.transportMode;
+                    delete rsvpData.pickupPoint;
+                }
             }
 
             // Leaving edit mode - show the normal status view after saving.
@@ -870,6 +971,129 @@
                     uploadStatus.textContent = 'Upload failed. Please try again.';
                 }
             });
+        }
+
+        // Show transport option modal for outstation events (modern & responsive)
+        function showTransportOptionModal(event) {
+            const modal = document.createElement('div');
+            modal.className = 'payment-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4';
+            modal.id = 'transport-option-modal';
+            modal.innerHTML = `
+                <div class="transport-modal bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-full">
+                    <div class="p-5 sm:p-6">
+                        <div class="flex items-start justify-between gap-3 mb-5">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="transport-icon-wrapper">
+                                    <span class="material-symbols-outlined">directions_car</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Choose your transport</h3>
+                                    <p class="text-sm text-on-surface-variant truncate">${event.title}</p>
+                                </div>
+                            </div>
+                            <button id="close-transport-modal" aria-label="Close" class="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+                                <span class="material-symbols-outlined text-lg sm:text-xl">close</span>
+                            </button>
+                        </div>
+                        
+                        <p class="text-sm text-on-surface-variant mb-4">How will you travel to this outstation event?</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button type="button" id="select-own-transport" class="transport-option-card touch-active w-full p-4 sm:p-5 rounded-2xl bg-surface-container-high text-on-surface font-bold flex flex-col items-center justify-center gap-3 border-2 border-outline-variant hover:border-primary-container">
+                                <div class="transport-icon-wrapper">
+                                    <span class="material-symbols-outlined text-2xl sm:text-3xl">directions_car</span>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block text-sm sm:text-base">Own transportation</span>
+                                    <span class="block text-xs text-on-surface-variant font-normal mt-1">No payment required</span>
+                                </div>
+                            </button>
+                            <button type="button" id="select-bus-transport" class="transport-option-card touch-active w-full p-4 sm:p-5 rounded-2xl bg-surface-container-high text-on-surface font-bold flex flex-col items-center justify-center gap-3 border-2 border-outline-variant hover:border-primary-container">
+                                <div class="transport-icon-wrapper">
+                                    <span class="material-symbols-outlined text-2xl sm:text-3xl">directions_bus</span>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block text-sm sm:text-base">Bus</span>
+                                    <span class="block text-xs text-on-surface-variant font-normal mt-1">Payment required</span>
+                                </div>
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4 p-3 sm:p-4 bg-surface-container-high rounded-xl border border-outline-variant">
+                            <div class="flex items-start gap-2">
+                                <span class="material-symbols-outlined text-secondary shrink-0" style="font-size:18px;">info</span>
+                                <div class="text-xs sm:text-sm text-on-surface-variant">
+                                    <p><strong>Own transportation:</strong> You arrange your own travel. No payment needed.</p>
+                                    <p class="mt-1"><strong>Bus:</strong> Travel with the group. Payment is required to confirm your seat.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+                        <button id="close-transport-modal" aria-label="Close" class="shrink-0 w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xl leading-none">&times;</button>
+                    </div>
+                    <div class="payment-modal-body space-y-3 sm:space-y-4">
+                        <div class="p-4 bg-secondary-fixed rounded-xl border border-secondary-container">
+                            <p class="font-label-lg text-label-lg text-secondary mb-2">How will you travel to this outstation event?</p>
+                            <p class="text-sm text-on-surface-variant">Select your preferred mode of transportation.</p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button type="button" id="select-own-transport" class="touch-active w-full h-20 rounded-xl bg-surface-container-high text-on-surface font-bold flex flex-col items-center justify-center gap-2 border-2 border-outline-variant hover:border-primary-container">
+                                <span class="material-symbols-outlined text-3xl">directions_car</span>
+                                <span>Own transportation</span>
+                                <span class="text-xs text-on-surface-variant font-normal">No payment required</span>
+                            </button>
+                            <button type="button" id="select-bus-transport" class="touch-active w-full h-20 rounded-xl bg-surface-container-high text-on-surface font-bold flex flex-col items-center justify-center gap-2 border-2 border-outline-variant hover:border-primary-container">
+                                <span class="material-symbols-outlined text-3xl">directions_bus</span>
+                                <span>Bus</span>
+                                <span class="text-xs text-on-surface-variant font-normal">Payment required</span>
+                            </button>
+                        </div>
+                        <div class="p-4 bg-surface-container-high rounded-xl border border-outline-variant">
+                            <div class="flex items-start gap-2">
+                                <span class="material-symbols-outlined text-secondary shrink-0" style="font-size:18px;">info</span>
+                                <div class="text-sm text-on-surface-variant">
+                                    <p><strong>Own transportation:</strong> You arrange your own travel. No payment needed.</p>
+                                    <p class="mt-1"><strong>Bus:</strong> Travel with the group. Payment is required to confirm your seat.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+            
+            // Close when tapping the backdrop
+            modal.addEventListener('click', (clickEvent) => {
+                if (clickEvent.target === modal) modal.remove();
+            });
+            
+            document.getElementById('close-transport-modal').onclick = () => modal.remove();
+            
+            // Own transportation selected - mark as attending without payment
+            document.getElementById('select-own-transport').onclick = () => {
+                modal.remove();
+                const rsvpData = {
+                    ...state.rsvps[state.user.uid]?.[event.id],
+                    status: 'attending',
+                    transportMode: 'own',
+                    pickupPoint: null
+                };
+                if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
+                state.rsvps[state.user.uid][event.id] = rsvpData;
+                renderEvents();
+                firebaseDb.collection('rsvps').doc(state.user.uid).set({
+                    [event.id]: rsvpData
+                }, { merge: true }).then(() => {
+                    showEventsToast('ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ! (Own transportation)', false);
+                });
+            };
+            
+            // Bus selected - show payment modal
+            document.getElementById('select-bus-transport').onclick = () => {
+                modal.remove();
+                showPaymentModal(event);
+            };
         }
 
         // Show help modal
