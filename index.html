@@ -1007,7 +1007,7 @@
          <section id="view-all-events-section" class="hidden">
              <a href="events.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                  <span class="material-symbols-outlined" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
-                 ಎಲ್ಲಾರು ಇವೆಂಟ್ಸ್ ನೋಡಿರಿ
+                 ಎಲ್ಲಾರು ಕಾರ್ಯಕ್ರಮಗಳು ನೋಡಿರಿ
              </a>
          </section>
 
@@ -1016,11 +1016,11 @@
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="material-symbols-outlined text-secondary" data-icon="directions_bus" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
-                    <span class="font-label-lg text-label-lg text-secondary uppercase tracking-wider kannada-text">ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್</span>
+                    <span class="font-label-lg text-label-lg text-secondary uppercase tracking-wider kannada-text">ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್</span>
                 </div>
                 <div id="bus-notice" class="hidden p-4 bg-[#fff3e0] border border-primary-container rounded-xl text-primary text-center mb-3"></div>
                 <select id="bus-pickup-select" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg kannada-text">
-                    <option value="" class="kannada-text">ನಿಮ್ಮ ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆಮಾಡಿ</option>
+                    <option value="" class="kannada-text">ನಿಮ್ಮ ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆಮಾಡಿ</option>
                 </select>
             </div>
         </section>
@@ -1064,28 +1064,40 @@
         <span class="font-label-lg text-label-lg kannada-text">ಸಹಾಯ</span>
     </button>
 
-    <!-- BottomNavBar - Mobile First with Large Touch Targets -->
-    <nav class="fixed bottom-0 w-full z-50 bg-surface-container border-t-2 border-outline-variant shadow-lg">
-        <div class="flex justify-around items-center px-2 py-3 safe-area-inset-bottom">
+    <!-- BottomNavBar - Floating pill bar, large elderly-friendly touch targets -->
+    <style>
+        /* --- Modern bottom navigation (elderly-friendly) --- */
+        .app-bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:0 .75rem calc(.65rem + env(safe-area-inset-bottom));pointer-events:none;}
+        .app-bottom-nav-inner{pointer-events:auto;display:flex;align-items:stretch;justify-content:space-between;gap:.25rem;width:100%;max-width:34rem;margin:0 auto;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid #eadbd0;border-radius:999px;padding:.45rem;box-shadow:0 12px 32px rgba(36,27,22,.18),0 2px 8px rgba(36,27,22,.08);}
+        .app-nav-item{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:64px;border-radius:999px;text-decoration:none;color:#6b5648;transition:background .2s ease,color .2s ease,transform .12s ease;-webkit-tap-highlight-color:transparent;}
+        .app-nav-item:active{transform:scale(.93);}
+        .app-nav-icon{font-size:30px !important;line-height:1;}
+        .app-nav-label{font-size:.95rem;font-weight:700;line-height:1.15;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+        .app-nav-item.is-active{flex:1.7 1 0;flex-direction:row;gap:.55rem;padding:0 .7rem;background:linear-gradient(135deg,#ffab4f,#ff9933);color:#693800;box-shadow:0 4px 14px rgba(255,153,51,.45);}
+        .app-nav-item.is-active .app-nav-icon{font-size:32px !important;}
+        @media (max-width:380px){.app-nav-label{font-size:.8rem;}.app-nav-icon{font-size:27px !important;}.app-nav-item.is-active .app-nav-icon{font-size:29px !important;}}
+    </style>
+    <nav class="app-bottom-nav" aria-label="Main navigation">
+        <div class="app-bottom-nav-inner">
             <!-- Home (Active) -->
-            <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl bg-primary-container text-on-primary-container transition-all duration-150 touch-active" href="index.html">
-                <span class="material-symbols-outlined text-3xl text-on-primary-container mb-1" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
-                <span class="font-label-lg text-label-lg text-on-primary-container kannada-text">ಮುಖಪುಟ</span>
+            <a class="app-nav-item is-active" href="index.html" aria-current="page">
+                <span class="material-symbols-outlined app-nav-icon" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+                <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
-            <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="events.html">
-                <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="event">event</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಇವೆಂಟ್ಸ್</span>
+            <a class="app-nav-item" href="events.html">
+                <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
+                <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮಗಳು</span>
             </a>
             <!-- Bus Routes -->
-            <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="bus-routes.html">
-                <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="directions_bus">directions_bus</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಬಸ್</span>
+            <a class="app-nav-item" href="bus-routes.html">
+                <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus">directions_bus</span>
+                <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Essentials -->
-            <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="essentials.html">
-                <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="checklist">checklist</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಐಟಂಸ್</span>
+            <a class="app-nav-item" href="essentials.html">
+                <span class="material-symbols-outlined app-nav-icon" data-icon="checklist">checklist</span>
+                <span class="app-nav-label kannada-text">ಅಗತ್ಯಗಳು</span>
             </a>
         </div>
     </nav>
@@ -1416,10 +1428,21 @@
         // Setup all event listeners
         function setupEventListeners() {
             document.getElementById('events-list').addEventListener('click', (event) => {
-                const actionButton = event.target.closest('[data-rsvp-status], [data-edit-rsvp]');
+                const actionButton = event.target.closest('[data-rsvp-status], [data-edit-rsvp], [data-cancel-edit]');
                 if (!actionButton) return;
 
                 const eventId = actionButton.dataset.eventId;
+                if (actionButton.dataset.cancelEdit !== undefined && actionButton.dataset.cancelEdit !== null) {
+                    // Cancel edit: restore the status panel and hide the response buttons.
+                    // Note: [data-cancel-edit] has no data-event-id, so resolve the card first.
+                    const cancelCard = actionButton.closest('article[data-event-id]');
+                    if (!cancelCard) return;
+                    const cancelSection = cancelCard.querySelector('[data-rsvp-section]');
+                    const cancelStatus = cancelCard.querySelector('[data-rsvp-status-section]');
+                    if (cancelSection) cancelSection.classList.add('hidden');
+                    if (cancelStatus) cancelStatus.classList.remove('hidden');
+                    return;
+                }
                 if (actionButton.dataset.rsvpStatus) {
                     setRSVP(actionButton.dataset.rsvpStatus, eventId);
                 } else if (actionButton.dataset.editRsvp) {
@@ -1607,7 +1630,7 @@
 <p class="text-on-surface font-body-lg text-body-lg kannada-text">ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
                             <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
                                 <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
-                                <li>ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
+                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
                                 <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
                                 <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
                             </ul>
@@ -2318,21 +2341,19 @@
             const rsvpButtonsHtml = (allowAttending) => `<div class="grid grid-cols-1 md:grid-cols-2 gap-3">${allowAttending ? `<button data-rsvp-status="attending" data-event-id="${event.id}" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">check_circle</span>Attending</button>` : ''}<button data-rsvp-status="not-attending" data-event-id="${event.id}" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">Not attending</button></div>`;
             const registrationClosedHtml = `<div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">event_busy</span>Last date to register is over</p><p class="text-sm text-on-error-container mt-1">Registration closed on ${registrationDeadlineText}.</p></div>`;
             // Hidden response section revealed by the "Change response" button
-            const changeResponseSectionHtml = (allowAttending) => `<div data-rsvp-section class="hidden space-y-3 pt-4 border-t border-outline-variant">${registrationClosed ? '<p class="text-center font-label-lg text-label-lg text-on-surface">Registration is closed — you can only cancel your attendance.</p>' : '<p class="text-center font-label-lg text-label-lg text-on-surface">Please respond to this event</p>'}${rsvpButtonsHtml(allowAttending)}</div>`;
+            const changeResponseSectionHtml = (allowAttending) => `<div data-rsvp-section class="hidden space-y-3 pt-4 border-t border-outline-variant">${registrationClosed ? '<p class="text-center font-label-lg text-label-lg text-on-surface">Registration is closed — you can only cancel your attendance.</p>' : '<p class="text-center font-label-lg text-label-lg text-on-surface">Please respond to this event</p>'}${rsvpButtonsHtml(allowAttending)}<button type="button" data-cancel-edit="true" class="touch-active w-full text-on-surface-variant font-bold py-2 rounded-xl flex items-center justify-center gap-2 text-label-lg"><span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>Cancel</button></div>`;
 
             const eventPaymentChip = (event.type === 'Outstation' && event.requiresPayment === true) ? (() => {
                 const ps = userRsvp?.payment?.paymentStatus;
                 const ownTransport = userRsvp?.transportMode === 'own';
                 
-                // Own transport - no payment needed
-                if (ownTransport) {
-                    return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-300"><span class="material-symbols-outlined" style="font-size:14px;">directions_car</span>Own transport</span>`;
-                }
-                
+                // Payment state takes precedence over transport mode: a pending/rejected/approved
+                // payment always shows its own chip, never the green Own-transport tag.
                 let label, cls, icon;
-                if (ps === 'APPROVED') { label = 'Paid'; cls = 'bg-green-100 text-green-800 border border-green-300'; icon = 'verified'; }
-                else if (ps === 'PENDING_APPROVAL') { label = 'Under review'; cls = 'bg-amber-100 text-amber-800 border border-amber-300'; icon = 'hourglass_top'; }
+                if (ps === 'PENDING_APPROVAL') { label = 'Pending approval'; cls = 'bg-amber-100 text-amber-800 border border-amber-300'; icon = 'hourglass_top'; }
+                else if (ps === 'APPROVED') { label = 'Paid'; cls = 'bg-green-100 text-green-800 border border-green-300'; icon = 'verified'; }
                 else if (ps === 'REJECTED') { label = 'Payment rejected'; cls = 'bg-red-100 text-red-700 border border-red-300'; icon = 'cancel'; }
+                else if (ownTransport) { return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-300"><span class="material-symbols-outlined" style="font-size:14px;">directions_car</span>Own transport</span>`; }
                 else { label = `₹${Number(event.amount || 0)} · Not paid`; cls = 'bg-surface-container-high text-on-surface-variant border border-outline-variant'; icon = 'currency_rupee'; }
                 return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${cls}"><span class="material-symbols-outlined" style="font-size:14px;">${icon}</span>${label}</span>`;
             })() : '';
@@ -2341,18 +2362,20 @@
             const ownTransport = userRsvp?.transportMode === 'own';
             const isAttendingNoPaymentNeeded = userRsvp && userRsvp.status === 'attending' && ownTransport;
             const isAttendingWithApprovedPayment = userRsvp && userRsvp.status === 'attending' && !['PENDING_APPROVAL', 'REJECTED'].includes(userRsvp.payment?.paymentStatus);
-            
-            if (isAttendingNoPaymentNeeded || isAttendingWithApprovedPayment) {
+
+            // Pending/rejected payment states must be shown BEFORE the attending message,
+            // otherwise a pending user (or one with a stale own-transport flag) appears as attending.
+            if (userRsvp?.status === 'attending' && userRsvp?.payment?.paymentStatus === 'PENDING_APPROVAL') {
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-amber-50 rounded-xl text-center"><p class="font-body-lg text-body-lg text-amber-900 font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">hourglass_top</span>Waiting for admin approval</p><p class="text-sm text-amber-800 mt-1">Your payment is under review. You will be marked attending once the admin approves it.</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg mt-3"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>${canEdit ? changeResponseSectionHtml(!registrationClosed) : ''}`;
+            } else if (userRsvp?.payment?.paymentStatus === 'REJECTED' && userRsvp.status === 'attending') {
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">cancel</span>Payment rejected by admin</p><p class="text-sm text-on-error-container mt-1">Your RSVP has been reset — please respond again. If you attend, you'll need to submit a fresh payment.</p></div>${canEdit ? (registrationClosed ? `${registrationClosedHtml}${rsvpButtonsHtml(false)}` : rsvpButtonsHtml(true)) : ''}</div>`;
+            } else if (isAttendingNoPaymentNeeded || isAttendingWithApprovedPayment) {
                 // Show appropriate message based on how they're attending
                 let attendingMessage = 'You are attending this event';
                 if (ownTransport) {
                     attendingMessage = 'You are attending this event (Own transportation)';
                 }
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">${attendingMessage}</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>${canEdit ? changeResponseSectionHtml(!registrationClosed) : ''}`;
-            } else if (userRsvp?.status === 'attending' && userRsvp?.payment?.paymentStatus === 'PENDING_APPROVAL') {
-                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-amber-50 rounded-xl text-center"><p class="font-body-lg text-body-lg text-amber-900 font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">hourglass_top</span>Waiting for admin approval</p><p class="text-sm text-amber-800 mt-1">Your payment is under review. You will be marked attending once the admin approves it.</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg mt-3"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>`;
-            } else if (userRsvp?.payment?.paymentStatus === 'REJECTED' && userRsvp.status === 'attending') {
-                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">cancel</span>Payment rejected by admin</p><p class="text-sm text-on-error-container mt-1">Your RSVP has been reset — please respond again. If you attend, you'll need to submit a fresh payment.</p></div>${canEdit ? (registrationClosed ? `${registrationClosedHtml}${rsvpButtonsHtml(false)}` : rsvpButtonsHtml(true)) : ''}</div>`;
             } else if (userRsvp && userRsvp.status === 'not-attending') {
                 const canChangeResponse = canEdit && !registrationClosed;
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-primary-fixed rounded-xl text-center"><p class="font-body-lg text-body-lg text-on-primary-fixed">You are not attending this event</p></div>${canChangeResponse ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>${canChangeResponse ? changeResponseSectionHtml(true) : ''}`;
@@ -2782,10 +2805,17 @@
         // showing the already-attending toast.
         const paymentWasRejected = existingRsvp.status === 'attending' &&
             existingRsvp.payment?.paymentStatus === 'REJECTED';
+        const paymentIsPending = existingRsvp.status === 'attending' &&
+            existingRsvp.payment?.paymentStatus === 'PENDING_APPROVAL';
 
         // Already in the requested state - tell the user instead of re-saving/re-paying
         if (existingRsvp.status === status && !paymentWasRejected) {
-            showRsvpToast(status === 'attending' ? 'You are already attending this event.' : 'You are already not attending this event.', true);
+            showRsvpToast(
+                paymentIsPending && status === 'attending'
+                    ? 'Your payment is waiting for admin approval. You will be marked attending once it is verified.'
+                    : (status === 'attending' ? 'You are already attending this event.' : 'You are already not attending this event.'),
+                true
+            );
             renderEvents();
             return;
         }
@@ -2796,12 +2826,20 @@
             return;
         }
 
-        // Outstation events require payment. If the member has already paid (payment was
-        // not rejected), don't ask them to pay again when they switch back to attending.
+        // Outstation events require payment. The own/bus question must be asked whenever
+        // there is no confirmed payment: no payment yet, or a payment the admin rejected.
+        // A PENDING_APPROVAL payment blocks changes until the admin verifies it.
         if (status === 'attending' && currentEvent.type === 'Outstation' && currentEvent.requiresPayment === true) {
             const payStatus = existingRsvp.payment && existingRsvp.payment.paymentStatus;
-            const alreadyPaid = payStatus && payStatus !== 'REJECTED';
-            
+
+            if (payStatus === 'PENDING_APPROVAL') {
+                showRsvpToast('Your payment is waiting for admin approval. You can change your response once it is verified.', true);
+                renderEvents();
+                return;
+            }
+
+            const alreadyPaid = payStatus === 'APPROVED';
+
             if (!alreadyPaid) {
                 // Show transport option modal (own/bus)
                 // If bus selected, payment will be required
@@ -2993,7 +3031,7 @@
                     submittedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
-                state.rsvps[state.user.uid][event.id] = { ...(state.rsvps[state.user.uid][event.id] || {}), status: 'attending', payment };
+                state.rsvps[state.user.uid][event.id] = { ...(state.rsvps[state.user.uid][event.id] || {}), status: 'attending', transportMode: 'bus', pickupPoint: state.rsvps[state.user.uid][event.id]?.pickupPoint || null, payment };
                     await firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: state.rsvps[state.user.uid][event.id] }, { merge: true });
                     // Real-time: notify admins to review this payment proof (best-effort)
                     if (window.Notifications) { try { Notifications.notifyAdmins({ type: 'payment_submitted', title: 'Payment proof submitted', body: ((state.userData && state.userData.name) || state.user.displayName || 'A member') + ' submitted payment proof for ' + (event.title || 'an event') + '. Please review.', eventId: event.id }); } catch (e) {} }
@@ -3062,12 +3100,17 @@
         // Own transportation selected - mark as attending without payment
         document.getElementById('select-own-transport').onclick = () => {
             modal.remove();
+            const existing = state.rsvps[state.user.uid]?.[event.id] || {};
             const rsvpData = {
-                ...state.rsvps[state.user.uid]?.[event.id],
+                ...existing,
                 status: 'attending',
                 transportMode: 'own',
                 pickupPoint: null
             };
+            // Own transport needs no payment - drop any rejected/pending payment record
+            if (!existing.payment || existing.payment.paymentStatus !== 'APPROVED') {
+                delete rsvpData.payment;
+            }
             if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
             state.rsvps[state.user.uid][event.id] = rsvpData;
             renderEvents();
@@ -3078,9 +3121,17 @@
             });
         };
         
-        // Bus selected - show payment modal
+        // Bus selected - record the choice, then show payment modal
         document.getElementById('select-bus-transport').onclick = () => {
             modal.remove();
+            const existing = state.rsvps[state.user.uid]?.[event.id] || {};
+            const rsvpData = { ...existing, status: 'attending', transportMode: 'bus' };
+            // A rejected payment no longer counts - user must submit a fresh one
+            if (existing.payment && existing.payment.paymentStatus === 'REJECTED') delete rsvpData.payment;
+            if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
+            state.rsvps[state.user.uid][event.id] = rsvpData;
+            renderEvents();
+            firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: rsvpData }, { merge: true });
             showPaymentModal(event);
         };
     }

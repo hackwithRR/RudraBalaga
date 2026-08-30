@@ -3,7 +3,7 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ಇವೆಂಟ್ಸ್ ಇತಿಹಾಸ - ರುದ್ರ ಪರಾಯಣ</title>
+    <title>ಕಾರ್ಯಕ್ರಮಗಳು ಇತಿಹಾಸ - ರುದ್ರ ಪರಾಯಣ</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#ff5722" />
@@ -202,7 +202,7 @@
                 <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container">
                     <span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
                 </a>
-                <h1 class="text-xl font-bold text-primary kannada-text">ಇವೆಂಟ್ಸ್ ಇತಿಹಾಸ</h1>
+                <h1 class="text-xl font-bold text-primary kannada-text">ಕಾರ್ಯಕ್ರಮಗಳು ಇತಿಹಾಸ</h1>
             </div>
             <div class="flex items-center gap-2">
                 <div class="text-right">
@@ -221,7 +221,7 @@
         <!-- Events List -->
         <section>
             <div id="events-list" class="space-y-4">
-                <p class="text-on-surface-variant kannada-text">ಇವೆಂಟ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
+                <p class="text-on-surface-variant kannada-text">ಕಾರ್ಯಕ್ರಮಗಳು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
             </div>
         </section>
     </main>
@@ -232,28 +232,40 @@
         <span class="font-label-lg text-label-lg kannada-text">ಸಹಾಯ</span>
     </button>
 
-    <!-- BottomNavBar - Mobile First with Large Touch Targets -->
-    <nav class="fixed bottom-0 w-full z-50 bg-surface-container border-t-2 border-outline-variant shadow-lg">
-        <div class="flex justify-around items-center px-2 py-3 safe-area-inset-bottom">
+    <!-- BottomNavBar - Floating pill bar, large elderly-friendly touch targets -->
+    <style>
+        /* --- Modern bottom navigation (elderly-friendly) --- */
+        .app-bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:0 .75rem calc(.65rem + env(safe-area-inset-bottom));pointer-events:none;}
+        .app-bottom-nav-inner{pointer-events:auto;display:flex;align-items:stretch;justify-content:space-between;gap:.25rem;width:100%;max-width:34rem;margin:0 auto;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid #eadbd0;border-radius:999px;padding:.45rem;box-shadow:0 12px 32px rgba(36,27,22,.18),0 2px 8px rgba(36,27,22,.08);}
+        .app-nav-item{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:64px;border-radius:999px;text-decoration:none;color:#6b5648;transition:background .2s ease,color .2s ease,transform .12s ease;-webkit-tap-highlight-color:transparent;}
+        .app-nav-item:active{transform:scale(.93);}
+        .app-nav-icon{font-size:30px !important;line-height:1;}
+        .app-nav-label{font-size:.95rem;font-weight:700;line-height:1.15;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+        .app-nav-item.is-active{flex:1.7 1 0;flex-direction:row;gap:.55rem;padding:0 .7rem;background:linear-gradient(135deg,#ffab4f,#ff9933);color:#693800;box-shadow:0 4px 14px rgba(255,153,51,.45);}
+        .app-nav-item.is-active .app-nav-icon{font-size:32px !important;}
+        @media (max-width:380px){.app-nav-label{font-size:.8rem;}.app-nav-icon{font-size:27px !important;}.app-nav-item.is-active .app-nav-icon{font-size:29px !important;}}
+    </style>
+    <nav class="app-bottom-nav" aria-label="Main navigation">
+        <div class="app-bottom-nav-inner">
             <!-- Home -->
-            <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="index.html">
-                <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="home">home</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಮುಖಪುಟ</span>
+            <a class="app-nav-item" href="index.html">
+                <span class="material-symbols-outlined app-nav-icon" data-icon="home">home</span>
+                <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events (Active) -->
-            <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl bg-primary-container text-on-primary-container transition-all duration-150 touch-active" href="events.html">
-                <span class="material-symbols-outlined text-3xl text-on-primary-container mb-1" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
-                <span class="font-label-lg text-label-lg text-on-primary-container kannada-text">ಇವೆಂಟ್ಸ್</span>
+            <a class="app-nav-item is-active" href="events.html" aria-current="page">
+                <span class="material-symbols-outlined app-nav-icon" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
+                <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮಗಳು</span>
             </a>
             <!-- Bus Routes -->
-            <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="bus-routes.html">
-                <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="directions_bus">directions_bus</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಬಸ್</span>
+            <a class="app-nav-item" href="bus-routes.html">
+                <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus">directions_bus</span>
+                <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Essentials -->
-            <a class="flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all duration-150 touch-active" href="essentials.html">
-                <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1" data-icon="checklist">checklist</span>
-                <span class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ಐಟಂಸ್</span>
+            <a class="app-nav-item" href="essentials.html">
+                <span class="material-symbols-outlined app-nav-icon" data-icon="checklist">checklist</span>
+                <span class="app-nav-label kannada-text">ಅಗತ್ಯಗಳು</span>
             </a>
         </div>
     </nav>
@@ -417,7 +429,7 @@
             const eventsList = document.getElementById('events-list');
             
             if (state.events.length === 0) {
-                eventsList.innerHTML = '<p class="text-on-surface-variant kannada-text">ಯಾವುದೇನು ಇವೆಂಟ್ಸ್ ಕಂಡುಹಿದ್ದಲ್ಲಿಲ್ಲ.</p>';
+                eventsList.innerHTML = '<p class="text-on-surface-variant kannada-text">ಯಾವುದೇನು ಕಾರ್ಯಕ್ರಮಗಳು ಕಂಡುಹಿದ್ದಲ್ಲಿಲ್ಲ.</p>';
                 return;
             }
 
@@ -483,10 +495,12 @@
                 let paymentBadgeHtml = '';
                 if (requiresPayment) {
                     let badgeLabel, badgeClasses, badgeIcon;
-                    if (ownTransport) { badgeLabel = 'Own transport'; badgeClasses = 'bg-green-100 text-green-800 border-green-300'; badgeIcon = 'directions_car'; }
+                    // Payment state takes precedence over transport mode: a pending/rejected/approved
+                    // payment always shows its own badge, never the green Own-transport tag.
+                    if (payStatus === 'PENDING_APPROVAL') { badgeLabel = 'Pending approval'; badgeClasses = 'bg-amber-100 text-amber-800 border-amber-300'; badgeIcon = 'hourglass_top'; }
                     else if (payStatus === 'APPROVED') { badgeLabel = 'Paid'; badgeClasses = 'bg-green-100 text-green-800 border-green-300'; badgeIcon = 'verified'; }
-                    else if (payStatus === 'PENDING_APPROVAL') { badgeLabel = 'Under review'; badgeClasses = 'bg-amber-100 text-amber-800 border-amber-300'; badgeIcon = 'hourglass_top'; }
                     else if (payStatus === 'REJECTED') { badgeLabel = 'Payment rejected'; badgeClasses = 'bg-red-100 text-red-700 border-red-300'; badgeIcon = 'cancel'; }
+                    else if (ownTransport) { badgeLabel = 'Own transport'; badgeClasses = 'bg-green-100 text-green-800 border-green-300'; badgeIcon = 'directions_car'; }
                     else { badgeLabel = `₹${Number(e.amount || 0)} - Not paid`; badgeClasses = 'bg-surface-container-high text-on-surface-variant border-outline-variant'; badgeIcon = 'currency_rupee'; }
                     paymentBadgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-bold ${badgeClasses}"><span class="material-symbols-outlined" style="font-size:14px;">${badgeIcon}</span><span>${badgeLabel}</span></span>`;
                 }
@@ -510,16 +524,16 @@
                     if (selectedRoute) {
                         busRoutesHtml = `
                             <div class="mt-3 pt-3 border-t border-outline-variant">
-                                <p class="font-label-lg text-label-lg text-on-surface-variant mb-2 kannada-text">ನಿಮ್ಮ ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್:</p>
+                                <p class="font-label-lg text-label-lg text-on-surface-variant mb-2 kannada-text">ನಿಮ್ಮ ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್:</p>
                                 <div class="p-3 rounded-lg border-2 border-primary-container bg-primary-fixed-dim">
                                     <p class="font-body-lg text-body-lg text-on-surface kannada-text">${selectedRoute.point}</p>
                                     <p class="font-label-md text-label-md text-on-surface-variant">${selectedRoute.time} (${selectedRoute.busName})</p>
                                     <div class="mt-2 pt-2 border-t border-outline-variant">
-                                        <p class="font-label-md text-label-md text-on-surface-variant kannada-text"><span class="material-symbols-outlined text-secondary" style="font-size:16px;vertical-align:middle;">directions_bus</span> ಬಸ್ ಸಂಖ್ಯೆ: <span class="font-bold text-on-surface">${selectedRoute.busNumber || 'ಘೋಷಿಸಲಾಗುವುದು'}</span></p>
+                                        <p class="font-label-md text-label-md text-on-surface-variant kannada-text"><span class="material-symbols-outlined text-secondary" style="font-size:16px;vertical-align:middle;">directions_bus</span> ಬಸ್ / ರೈಲು ಸಂಖ್ಯೆ: <span class="font-bold text-on-surface">${selectedRoute.busNumber || 'ಘೋಷಿಸಲಾಗುವುದು'}</span></p>
                                         <p class="font-label-md text-label-md text-on-surface-variant kannada-text mt-1"><span class="material-symbols-outlined text-secondary" style="font-size:16px;vertical-align:middle;">call</span> ಡ್ರೈವರ್ ದೂರವಾಣಿ: ${selectedRoute.driverNumber ? `<a href="tel:${selectedRoute.driverNumber.replace(/[^+0-9]/g, '')}" class="font-bold text-primary underline">${selectedRoute.driverNumber}</a>` : '<span>ಘೋಷಿಸಲಾಗುವುದು</span>'}</p>
                                     </div>
                                 </div>
-                                <p class="text-xs text-on-surface-variant mt-2 italic kannada-text">ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ ಮಾಡಲ್ಪಟ್ಟಿದೆ. <a href="bus-routes.html" class="text-primary font-bold kannada-text">ಬಸ್ ರೌಟ್ಸ್‌ನಲ್ಲಿ ಬದಲಿಸಿ</a></p>
+                                <p class="text-xs text-on-surface-variant mt-2 italic kannada-text">ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ ಮಾಡಲ್ಪಟ್ಟಿದೆ. <a href="bus-routes.html" class="text-primary font-bold kannada-text">ಬಸ್ / ರೈಲು ರೌಟ್ಸ್‌ನಲ್ಲಿ ಬದಲಿಸಿ</a></p>
                             </div>
                         `;
                     }
@@ -605,7 +619,7 @@
                             ${paymentBadgeHtml}
                         </div>
                         <p class="text-on-surface font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' && e.eventEndDate ? `${formatDate(e.date)} - ${formatDate(e.eventEndDate)}` : formatDate(e.date)} ರಂದು ${e.time} ಗಂಟೆಗೆ</p>
-                        <p class="text-on-surface-variant font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' ? 'ಔಟ್ಸ್ಟೇಷನ್' : 'ಬೆಂಗಳೂರು'} - ${e.location}</p>
+                        <p class="text-on-surface-variant font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' ? 'ಹೊರಊರಿನ' : 'ಬೆಂಗಳೂರು'} - ${e.location}</p>
                         ${mapHtml}
                         ${e.type === 'Outstation' ? (() => {
                             const outstationDates = Array.isArray(e.outstationDates) ? e.outstationDates : [];
@@ -616,7 +630,7 @@
 
                             return visibleRange ? `
                                 <div class="mt-2 p-3 bg-secondary-fixed rounded-lg border-2 border-secondary-container">
-                                    <p class="font-label-lg text-label-lg text-secondary mb-1 kannada-text">ಔಟ್ಸ್ಟೇಷನ್ ಇವೆಂಟ್ ತಾರೆಗಳು</p>
+                                    <p class="font-label-lg text-label-lg text-secondary mb-1 kannada-text">ಹೊರಊರಿನ ಇವೆಂಟ್ ತಾರೆಗಳು</p>
                                     <p class="font-body-lg text-body-lg text-on-surface kannada-text">${eventRange}</p>
                                     <p class="font-label-md text-label-md text-secondary mt-2 kannada-text">Event end date</p>
                                     <p class="font-body-lg text-body-lg text-on-surface kannada-text">${eventEndDate}</p>
@@ -712,16 +726,24 @@
             // Get existing RSVP data
             const existingRsvp = (state.rsvps[state.user.uid] && state.rsvps[state.user.uid][eventId]) || {};
             const paymentWasRejected = existingRsvp.status === 'attending' && existingRsvp.payment?.paymentStatus === 'REJECTED';
+            const paymentIsPending = existingRsvp.status === 'attending' && existingRsvp.payment?.paymentStatus === 'PENDING_APPROVAL';
             const ownTransport = existingRsvp.transportMode === 'own';
-            const alreadyPaid = existingRsvp.payment?.paymentStatus && existingRsvp.payment.paymentStatus !== 'REJECTED';
+            const alreadyPaid = existingRsvp.payment?.paymentStatus === 'APPROVED';
             
             // Already in the requested state - tell the user instead of re-saving/re-paying
             // Exception: if payment was rejected or if attending via bus but not yet paid, allow re-payment
             if (existingRsvp.status === status && !paymentWasRejected) {
                 if (status === 'attending' && event && event.type === 'Outstation' && event.requiresPayment === true) {
                     // If own transport, already attending - no need to re-select
-                    if (ownTransport) {
+                    if (ownTransport && !paymentIsPending) {
                         showEventsToast('ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿದ್ದೀರಿ (Own transportation).', true);
+                        delete rsvpEditMode[eventId];
+                        renderEvents();
+                        return;
+                    }
+                    // Payment waiting for admin approval - cannot change until verified
+                    if (paymentIsPending) {
+                        showEventsToast('Your payment is waiting for admin approval. You will be marked attending once it is verified.', true);
                         delete rsvpEditMode[eventId];
                         renderEvents();
                         return;
@@ -754,6 +776,13 @@
 
             // Outstation events: check if payment is required and show transport option modal
             if (status === 'attending' && event && event.type === 'Outstation' && event.requiresPayment === true) {
+                // Payment pending admin approval - block changes until verified
+                if (paymentIsPending) {
+                    showEventsToast('Your payment is waiting for admin approval. You can change your response once it is verified.', true);
+                    delete rsvpEditMode[eventId];
+                    renderEvents();
+                    return;
+                }
                 // If already own transport or already paid, no need to show modal
                 if (ownTransport || alreadyPaid) {
                     // Already handled above in the "already in requested state" check
@@ -963,7 +992,7 @@
                     if (!file) throw new Error('Payment screenshot is required.');
                     const screenshotBase64 = await compressImageToBase64(file);
                     const payment = { paymentStatus: 'PENDING_APPROVAL', amount: Number(event.amount), paymentDescription: event.paymentDescription || '', screenshotBase64, utrNumber: document.getElementById('payment-utr').value.trim(), submittedAt: firebase.firestore.FieldValue.serverTimestamp() };
-                    await firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: { ...(state.rsvps[state.user.uid]?.[event.id] || {}), status: 'attending', payment } }, { merge: true });
+                    await firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: { ...(state.rsvps[state.user.uid]?.[event.id] || {}), status: 'attending', transportMode: 'bus', pickupPoint: state.rsvps[state.user.uid]?.[event.id]?.pickupPoint || null, payment } }, { merge: true });
                     modal.remove();
                     renderEvents();
                 } catch (error) {
@@ -1031,37 +1060,6 @@
                     </div>
                 </div>`;
             document.body.appendChild(modal);
-                        <button id="close-transport-modal" aria-label="Close" class="shrink-0 w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xl leading-none">&times;</button>
-                    </div>
-                    <div class="payment-modal-body space-y-3 sm:space-y-4">
-                        <div class="p-4 bg-secondary-fixed rounded-xl border border-secondary-container">
-                            <p class="font-label-lg text-label-lg text-secondary mb-2">How will you travel to this outstation event?</p>
-                            <p class="text-sm text-on-surface-variant">Select your preferred mode of transportation.</p>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button type="button" id="select-own-transport" class="touch-active w-full h-20 rounded-xl bg-surface-container-high text-on-surface font-bold flex flex-col items-center justify-center gap-2 border-2 border-outline-variant hover:border-primary-container">
-                                <span class="material-symbols-outlined text-3xl">directions_car</span>
-                                <span>Own transportation</span>
-                                <span class="text-xs text-on-surface-variant font-normal">No payment required</span>
-                            </button>
-                            <button type="button" id="select-bus-transport" class="touch-active w-full h-20 rounded-xl bg-surface-container-high text-on-surface font-bold flex flex-col items-center justify-center gap-2 border-2 border-outline-variant hover:border-primary-container">
-                                <span class="material-symbols-outlined text-3xl">directions_bus</span>
-                                <span>Bus</span>
-                                <span class="text-xs text-on-surface-variant font-normal">Payment required</span>
-                            </button>
-                        </div>
-                        <div class="p-4 bg-surface-container-high rounded-xl border border-outline-variant">
-                            <div class="flex items-start gap-2">
-                                <span class="material-symbols-outlined text-secondary shrink-0" style="font-size:18px;">info</span>
-                                <div class="text-sm text-on-surface-variant">
-                                    <p><strong>Own transportation:</strong> You arrange your own travel. No payment needed.</p>
-                                    <p class="mt-1"><strong>Bus:</strong> Travel with the group. Payment is required to confirm your seat.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-            document.body.appendChild(modal);
             
             // Close when tapping the backdrop
             modal.addEventListener('click', (clickEvent) => {
@@ -1073,12 +1071,17 @@
             // Own transportation selected - mark as attending without payment
             document.getElementById('select-own-transport').onclick = () => {
                 modal.remove();
+                const existing = state.rsvps[state.user.uid]?.[event.id] || {};
                 const rsvpData = {
-                    ...state.rsvps[state.user.uid]?.[event.id],
+                    ...existing,
                     status: 'attending',
                     transportMode: 'own',
                     pickupPoint: null
                 };
+                // Own transport needs no payment - drop any rejected/pending payment record
+                if (!existing.payment || existing.payment.paymentStatus !== 'APPROVED') {
+                    delete rsvpData.payment;
+                }
                 if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
                 state.rsvps[state.user.uid][event.id] = rsvpData;
                 renderEvents();
@@ -1089,9 +1092,17 @@
                 });
             };
             
-            // Bus selected - show payment modal
+            // Bus selected - record the choice, then show payment modal
             document.getElementById('select-bus-transport').onclick = () => {
                 modal.remove();
+                const existing = state.rsvps[state.user.uid]?.[event.id] || {};
+                const rsvpData = { ...existing, status: 'attending', transportMode: 'bus' };
+                // A rejected payment no longer counts - user must submit a fresh one
+                if (existing.payment && existing.payment.paymentStatus === 'REJECTED') delete rsvpData.payment;
+                if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
+                state.rsvps[state.user.uid][event.id] = rsvpData;
+                renderEvents();
+                firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: rsvpData }, { merge: true });
                 showPaymentModal(event);
             };
         }
@@ -1112,7 +1123,7 @@
                             <p class="text-on-surface font-body-lg text-body-lg kannada-text">ದಯವಿಟ್ಟು ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
                             <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
                                 <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
-                                <li>ಬಸ್ ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
+                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
                                 <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
                                 <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
                             </ul>
