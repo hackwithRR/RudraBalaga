@@ -4093,7 +4093,8 @@
         .badge-pending { background: #fef3c7; color: #92400e; }
         .badge-unpaid { background: #fee2e2; color: #991b1b; }
         .badge-na { background: #f0e4d8; color: #8a7566; }
-        table.data { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        table.data { width: 100%; border-collapse: collapse; margin-top: 6px; table-layout: fixed; }
+        table.data th, table.data td { word-break: break-word; overflow-wrap: anywhere; }
         table.data th { background: #8f4e00; color: #ffffff; text-align: left; font-size: 11px; font-weight: 700; padding: 8px 10px; }
         table.data th:first-child { border-top-left-radius: 8px; }
         table.data th:last-child { border-top-right-radius: 8px; }
@@ -4106,7 +4107,7 @@
         .subcard-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
         .subcard-head h4 { margin: 0; font-size: 12.5px; font-weight: 700; color: #ad2c00; }
         .time-chip { font-size: 10px; font-weight: 700; color: #554336; background: #f0e4d8; border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
-        .member-line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 2px; border-bottom: 1px dotted #e7d9ce; font-size: 12px; }
+        .member-line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 2px; border-bottom: 1px dotted #e7d9ce; font-size: 12px; min-width: 0; }
         .member-line:last-child { border-bottom: none; }
         .member-name { font-weight: 500; }
         .idx { color: #8f4e00; font-weight: 800; margin-right: 6px; }
@@ -4186,7 +4187,7 @@
         function renderPdfFromHtml(html, filename) {
             return new Promise((resolve, reject) => {
                 const iframe = document.createElement('iframe');
-                iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:860px;height:1200px;border:0;visibility:hidden;';
+                iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:820px;height:1200px;border:0;visibility:hidden;';
                 document.body.appendChild(iframe);
 
                 const cleanup = () => { setTimeout(() => iframe.remove(), 500); };
@@ -4210,12 +4211,28 @@
                         if (doc.fonts && doc.fonts.ready) { try { await doc.fonts.ready; } catch (e) {} }
                         await new Promise(r => setTimeout(r, 150));
 
-                        const canvas = await iframe.contentWindow.html2canvas(doc.body, {
+                        // Pin the document to a fixed width so nothing can overflow
+                        // horizontally and the canvas maps 1:1 onto the A4 page.
+                        const FIXED_W = 820;
+                        doc.documentElement.style.width = FIXED_W + 'px';
+                        doc.documentElement.style.overflow = 'hidden';
+                        doc.body.style.width = FIXED_W + 'px';
+                        doc.body.style.margin = '0';
+                        doc.body.style.overflow = 'hidden';
+                        const target = doc.querySelector('.sheet') || doc.body;
+                        target.style.width = FIXED_W + 'px';
+                        target.style.maxWidth = FIXED_W + 'px';
+                        target.style.margin = '0';
+
+                        const canvas = await iframe.contentWindow.html2canvas(target, {
                             backgroundColor: '#ffffff',
                             scale: 2,
                             useCORS: true,
                             logging: false,
-                            windowWidth: 860
+                            width: FIXED_W,
+                            windowWidth: FIXED_W,
+                            scrollX: 0,
+                            scrollY: 0
                         });
                         if (!canvas || !canvas.width) throw new Error('Canvas render failed');
 

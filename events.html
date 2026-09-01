@@ -489,11 +489,13 @@
                 } else if (userRsvp && userRsvp.status === 'attending' && userRsvp.payment?.paymentStatus === 'PENDING_APPROVAL') {
                     status = 'Waiting for admin approval';
                     statusColor = 'text-amber-700 font-bold';
+                } else if (userRsvp && userRsvp.status === 'attending' && ownTransport) {
+                    // Own transport wins over an approved payment: a paid user who switched
+                    // to own transport should still see their chosen mode here.
+                    status = 'Attending - Own transportation';
+                    statusColor = 'text-green-700';
                 } else if (userRsvp && userRsvp.status === 'attending' && userRsvp.payment?.paymentStatus === 'APPROVED') {
                     status = 'Paid - attending';
-                    statusColor = 'text-green-700';
-                } else if (userRsvp && userRsvp.status === 'attending' && ownTransport) {
-                    status = 'Attending - Own transportation';
                     statusColor = 'text-green-700';
                 } else if (userRsvp && userRsvp.status === 'not-attending') {
                     status = 'ಹಾಜರಾಗುತ್ತಿಲ್ಲ';
@@ -804,16 +806,11 @@
                     renderEvents();
                     return;
                 }
-                // If already own transport or already paid, no need to show modal
-                if (ownTransport || alreadyPaid) {
-                    // Already handled above in the "already in requested state" check
-                } else {
-                    // Show transport option modal (own/bus)
-                    // If bus selected, payment will be required
-                    // If own transport selected, no payment needed
-                    showTransportOptionModal(event);
-                    return;
-                }
+                // Always ask bus vs own when (re-)attending a paid event. A user with an
+                // APPROVED payment who re-attends (e.g. after not-attending) must still be
+                // able to choose the mode; the modal's bus branch skips payment for them.
+                showTransportOptionModal(event);
+                return;
             }
             
             // Check if event has a limit and if it's reached (only for attending status)
@@ -842,16 +839,22 @@
             // that re-selecting attending asks the own/bus question again - but ONLY if the
             // user isn't an already-paid traveller (their booking is preserved). A rejected
             // payment is dropped (a fresh one is required for booking).
+            // NOTE: the writes below use FieldValue.delete() - a plain `delete` on the local
+            // object is not enough, because set-merge deep-merges and keeps old fields.
+            let removePayment = false, removeTransport = false;
             if (status === 'not-attending') {
                 const hasActivePayment = rsvpData.payment && rsvpData.payment.paymentStatus !== 'REJECTED';
                 if (!hasActivePayment) {
                     delete rsvpData.transportMode;
                     delete rsvpData.pickupPoint;
+                    removeTransport = true;
                 }
                 if (rsvpData.payment && rsvpData.payment.paymentStatus === 'REJECTED') {
                     delete rsvpData.payment;
                     delete rsvpData.transportMode;
                     delete rsvpData.pickupPoint;
+                    removePayment = true;
+                    removeTransport = true;
                 }
             }
 
@@ -865,7 +868,9 @@
             renderEvents();
 
             firebaseDb.collection('rsvps').doc(state.user.uid).set({
-                [eventId]: rsvpData
+                [eventId]: Object.assign({ ...rsvpData },
+                    removePayment ? { payment: firebase.firestore.FieldValue.delete() } : {},
+                    removeTransport ? { transportMode: firebase.firestore.FieldValue.delete(), pickupPoint: firebase.firestore.FieldValue.delete() } : {})
             }, { merge: true }).then(() => {
                 // Show toast notification
                 showEventsToast(status === 'attending' ? 'ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ!' : 'ನೀವು ಹಾಜರಾಗುತ್ತಿಲ್ಲ.', false);
@@ -1103,15 +1108,19 @@
                     transportMode: 'own',
                     pickupPoint: null
                 };
-                // Own transport needs no payment - drop any rejected/pending payment record
-                if (!existing.payment || existing.payment.paymentStatus !== 'APPROVED') {
-                    delete rsvpData.payment;
-                }
+                // Own transport needs no payment - drop any rejected/pending payment record.
+                // FieldValue.delete() is required: set-merge deep-merges, so a plain local
+                // delete would leave the old REJECTED payment in Firestore (and the UI would
+                // snap back to "Payment rejected" on the next snapshot).
+                const dropPayment = !existing.payment || existing.payment.paymentStatus !== 'APPROVED';
+                if (dropPayment) delete rsvpData.payment;
                 if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
                 state.rsvps[state.user.uid][event.id] = rsvpData;
                 renderEvents();
+                const writeData = { ...rsvpData };
+                if (dropPayment) writeData.payment = firebase.firestore.FieldValue.delete();
                 firebaseDb.collection('rsvps').doc(state.user.uid).set({
-                    [event.id]: rsvpData
+                    [event.id]: writeData
                 }, { merge: true }).then(() => {
                     showEventsToast('ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ! (Own transportation)', false);
                 });
@@ -1121,14 +1130,23 @@
             document.getElementById('select-bus-transport').onclick = () => {
                 modal.remove();
                 const existing = state.rsvps[state.user.uid]?.[event.id] || {};
+                const wasPaid = existing.payment && existing.payment.paymentStatus === 'APPROVED';
                 const rsvpData = { ...existing, status: 'attending', transportMode: 'bus' };
                 // A rejected payment no longer counts - user must submit a fresh one
-                if (existing.payment && existing.payment.paymentStatus === 'REJECTED') delete rsvpData.payment;
+                const dropRejected = existing.payment && existing.payment.paymentStatus === 'REJECTED';
+                if (dropRejected) delete rsvpData.payment;
                 if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
                 state.rsvps[state.user.uid][event.id] = rsvpData;
                 renderEvents();
-                firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: rsvpData }, { merge: true });
-                showPaymentModal(event);
+                const writeData = { ...rsvpData };
+                if (dropRejected) writeData.payment = firebase.firestore.FieldValue.delete();
+                firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: writeData }, { merge: true });
+                // Already-approved payment carries over - no new payment needed
+                if (wasPaid) {
+                    showEventsToast('ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ (Bus). Payment already approved - no new payment needed.', false);
+                } else {
+                    showPaymentModal(event);
+                }
             };
         }
 
