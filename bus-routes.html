@@ -3,7 +3,7 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ಬಸ್ / ರೈಲು ರೌಟ್ಸ್ - ರುದ್ರ ಪರಾಯಣ</title>
+    <title>ಬಸ್ / ರೈಲು  - ರುದ್ರ ಪರಾಯಣ</title>
     <link rel="icon" type="image/x-icon" href="om.ico">
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#ff5722" />
@@ -131,16 +131,16 @@
 
     <!-- TopAppBar -->
     <header class="bg-surface-container-lowest border-b-2 border-primary-container w-full fixed top-0 z-50">
-        <div class="flex justify-between items-center px-4 h-16">
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container">
+        <div class="flex justify-between items-center px-4 h-16 gap-2">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container shrink-0">
                     <span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
                 </a>
-                <h1 class="text-xl font-bold text-primary kannada-text">ಬಸ್ / ರೈಲು ರೌಟ್ಸ್</h1>
+                <h1 class="text-lg sm:text-xl font-bold text-primary kannada-text truncate min-w-0">ಬಸ್ / ರೈಲು </h1>
             </div>
-            <div class="flex items-center gap-2">
-                <div class="text-right">
-                    <p id="user-name" class="text-sm font-medium text-on-surface kannada-text">ಸ್ವಾಗತ</p>
+            <div class="flex items-center gap-2 shrink-0">
+                <div class="text-right min-w-0">
+                    <p id="user-name" class="text-sm font-medium text-on-surface kannada-text truncate max-w-[110px] sm:max-w-none">ಸ್ವಾಗತ</p>
                     <p id="user-id" class="text-xs text-on-surface-variant hidden"></p>
                 </div>
                 <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
@@ -155,7 +155,7 @@
         <!-- Outstation Events List -->
         <section>
             <div id="outstation-events-list" class="space-y-4">
-                <p class="text-on-surface-variant kannada-text">ಹೊರಊರಿನ ಕಾರ್ಯಕ್ರಮ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
+                <p class="text-on-surface-variant kannada-text">ಹೊರಊರಿನ ಕಾರ್ಯಕ್ರಮಗಳು ಲೋಡ್ ಆಗುತ್ತಿದೆ . . . .</p>
             </div>
         </section>
     </main>
@@ -500,10 +500,10 @@
                             <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
                             <p class="text-on-surface font-body-lg text-body-lg kannada-text">ದಯವಿಟ್ಟು ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
                             <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
-                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
-                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
-                                <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
-                                <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
+                                <li>ಇವೆಂಟ್ </li>
+                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ</li>
+                                <li>ಖಾತೆ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯೆಗಳು</li>
+                                <li>ತಾಂತ್ರಿಕ ಸಹಾಯ</li>
                             </ul>
                         </div>
                         <div id="admins-list" class="space-y-2">

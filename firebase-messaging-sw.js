@@ -22,37 +22,22 @@ try {
 
     messaging.onBackgroundMessage((payload) => {
         console.log('[firebase-messaging-sw] Background message received:', payload);
-        const n = payload.notification || {};
         const data = payload.data || {};
         const type = data.type || 'announcement';
-        const title = n.title || data.title || 'Rudra Balaga';
-        const body = n.body || data.body || '';
-        const icons = {
-            event_new: 'icons/icon-192.png',
-            event_updated: 'icons/icon-192.png',
-            payment_submitted: 'icons/icon-192.png',
-            payment_approved: 'icons/icon-192.png',
-            payment_rejected: 'icons/icon-192.png',
-            donation_submitted: 'icons/icon-192.png',
-            donation_approved: 'icons/icon-192.png',
-            donation_rejected: 'icons/icon-192.png',
-            bus_info: 'icons/icon-192.png',
-            announcement: 'icons/icon-192.png',
-            reminder: 'icons/icon-192.png'
-        };
-        // Only call showNotification when the browser did NOT auto-display a
-        // notification payload — avoids duplicates. Content (title/body) is taken
-        // from either payload.notification or payload.data so it always shows.
-        if (!n.title && !n.body) {
-            self.registration.showNotification(title, {
-                body: body,
-                icon: icons[type] || 'icons/icon-192.png',
-                badge: 'icons/icon-192.png',
-                tag: 'rudra-' + type + '-' + (data.eventId || Date.now()),
-                data: { url: urlForType(type), type: type, eventId: data.eventId || '' },
-                vibrate: [200, 100, 200]
-            });
-        }
+        const title = data.title || 'Rudra Balaga';
+        const body = data.body || '';
+        // Always show the notification ourselves — senders use data-only
+        // payloads so nothing is auto-displayed by the browser and all
+        // tap/deep-link handling stays in our notificationclick handler.
+        self.registration.showNotification(title, {
+            body: body,
+            icon: 'icons/icon-192.png',
+            badge: 'icons/icon-192.png',
+            tag: 'rudra-' + type + '-' + (data.eventId || Date.now()),
+            data: { url: urlForType(type), type: type, eventId: data.eventId || '' },
+            vibrate: [200, 100, 200],
+            requireInteraction: false
+        });
     });
 } catch (e) {
     // Messaging requires a valid setup; PWA caching must keep working regardless

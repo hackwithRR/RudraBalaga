@@ -73,12 +73,11 @@ async function sendToUids(uids, { title, body, type, eventId }) {
             try {
                 await getMessaging().send({
                     token,
-                    notification: { title, body },
+                    // DATA-ONLY payload — see send-pending-pushes.mjs. The
+                    // service worker shows the notification so tap/deep-link
+                    // handling always goes through our notificationclick.
                     data: { type: type || 'announcement', eventId: eventId || '', title: title || '', body: body || '' },
-                    webpush: {
-                        fcmOptions: { link: SITE_URL },
-                        notification: { icon: ICON_URL, badge: ICON_URL, tag: `rudra-${type || 'msg'}-${eventId || Date.now()}` }
-                    }
+                    webpush: { fcmOptions: { link: SITE_URL } }
                 });
                 sent++;
             } catch (err) {

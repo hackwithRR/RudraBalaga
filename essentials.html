@@ -210,7 +210,7 @@
                 </p>
                 <a href="events.html" class="touch-active w-full sm:w-auto min-h-14 mt-5 px-8 py-3 bg-primary-container text-on-primary-container font-bold rounded-xl text-body-lg kannada-text inline-flex items-center justify-center gap-2 transition-transform duration-150 active:scale-[0.98]">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event</span>
-                    ಎಲ್ಲಾ ಕಾರ್ಯಕ್ರಮ ನೋಡಿರಿ
+                    ಎಲ್ಲಾ ಕಾರ್ಯಕ್ರಮಗಳನ್ನು ನೋಡಿ
                 </a>
             </div>
         </section>
@@ -220,7 +220,7 @@
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-5 shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="material-symbols-outlined text-secondary" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
-                    <span class="font-label-lg text-label-lg text-secondary kannada-text">ಸಕ್ರೆಡ್ ಸ್ಕ್ರಿಪ್ಟ್ಸ್</span>
+                    <span class="font-label-lg text-label-lg text-secondary kannada-text">VEDA MANTRAS</span>
                 </div>
                 <button id="scriptures-btn" type="button" aria-label="Open Sacred Scriptures reader" class="scriptures-entry w-full flex items-center gap-4 text-left rounded-2xl p-4 sm:p-5 kannada-text">
                     <span class="scriptures-entry-icon flex items-center justify-center shrink-0 rounded-2xl">
@@ -271,13 +271,13 @@
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="material-symbols-outlined text-secondary" data-icon="info" style="font-variation-settings: 'FILL' 1;">info</span>
-                    <span class="font-label-lg text-label-lg text-secondary kannada-text">ಮಾರ್ಗದರ್ಶಿಕೆಗಳು</span>
+                    <span class="font-label-lg text-label-lg text-secondary kannada-text">ಸೂಚನೆಗಳು</span>
                 </div>
                 <div class="space-y-3">
-                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">• ದೇವಸ್ಥಾನದಲ್ಲಿ ಸ್ವಲ್ಪತೆಯನ್ನು ಕಾಯ್ದೆಯಾಡಿ</p>
-                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">• ಪ್ರವೇಶಿಸುವಿಕೆಗೆ ಮೊದಲು ಪಾದರಸ್ಯವನ್ನು ಹೊತ್ತೆಯಾಡಿ</p>
-                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">• ಪೂಜಕರ ಸೂಚನೆಗಳನ್ನು ಪಾಲಿಸಿ</p>
-                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">• ಮೊಬೈಲ್ ಫೋನ್ಸ್ ಸ್ವಯಂಸ್ಥಿತ ಸ್ಥಿತಿಗೆ ಹೋಲಿಸಿ</p>
+                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">• ಪ್ರತಿಯೊಂದು ಕಾರ್ಯಕ್ರಮದಲ್ಲೂ ಸ್ವಚ್ಛತೆಯನ್ನು ಕಾಪಾಡಿ.</p>
+                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">• ಕಾರ್ಯಕ್ರಮದಲ್ಲಿ ನಿಶಬ್ದತೆಯನ್ನು ಕಾಪಾಡಿ</p>
+                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">• ಕಾರ್ಯಕ್ರಮದ ಸೂಚನೆಗಳನ್ನು ಪಾಲಿಸಿ</p>
+                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">• ಮೊಬೈಲ್ ಫೋನ್ಸ್ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ</p>
                 </div>
             </div>
         </section>
@@ -444,7 +444,7 @@
             }
         }
 
-        // Render and load checklist for the latest upcoming event user is attending
+        // Render and load checklist for the latest ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ user is attending
         function renderEventSelector() {
             const noEventSection = document.getElementById('no-event-section');
             const checklistSection = document.getElementById('checklist-section');
@@ -465,13 +465,13 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             
-            // Find the latest upcoming event user is attending
+            // Find the latest ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ user is attending
             const upcomingAttendingEvents = state.events.filter(e => {
                 const eventDate = new Date(e.date);
                 return rsvpEventIds.includes(e.id) && eventDate >= today;
             });
             
-            // If there are upcoming events, show the latest one
+            // If there are ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮs, show the latest one
             if (upcomingAttendingEvents.length > 0) {
                 noEventSection.classList.add('hidden');
                 checklistSection.classList.add('hidden');
@@ -484,7 +484,7 @@
                 return;
             }
             
-            // If no upcoming events, check for any attending events (past events)
+            // If no ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮs, check for any attending events (past events)
             const allAttendingEvents = state.events.filter(e => rsvpEventIds.includes(e.id));
             
             if (allAttendingEvents.length === 0) {
@@ -714,10 +714,10 @@
                             <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
                             <p class="text-on-surface font-body-lg text-body-lg kannada-text">ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
                             <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
-                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
-                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
-                                <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
-                                <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
+                                <li>ಇವೆಂಟ್ </li>
+                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ</li>
+                                <li>ಖಾತೆ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯೆಗಳು</li>
+                                <li>ತಾಂತ್ರಿಕ ಸಹಾಯ</li>
                             </ul>
                         </div>
                         <div id="admins-list" class="space-y-2">
@@ -811,7 +811,7 @@
                 summaryEl.innerHTML = [['ಒಟ್ಟು ದೇಣಿಗೆ', `₹${totalAll}`], ['ಅನುಮೋದಿತ', `₹${totalApproved}`]].map(([l, v]) => `<div class="p-3 rounded-xl bg-surface-container-high border border-outline-variant"><p class="text-xs uppercase tracking-wide text-on-surface-variant kannada-text">${l}</p><p class="font-bold text-lg text-primary">${v}</p></div>`).join('');
 
                 if (!donations.length) {
-                    listEl.innerHTML = `<div class="p-6 text-center rounded-xl bg-surface-container-low border border-outline-variant"><p class="material-symbols-outlined text-4xl text-on-surface-variant mx-auto mb-2" style="font-variation-settings: 'FILL' 1;">volunteer_activism</p><p class="text-on-surface-variant kannada-text">ನೀವು ಇನ್ನೂ ಯಾವುದೇ ದೇಣಿಗೆಯನ್ನು ನೀಡಿಲ್ಲ.</p><a href="index.html" class="touch-active inline-block mt-4 bg-primary-container text-on-primary-container font-bold py-3 px-6 rounded-xl text-body-lg kannada-text">ದೇಣಿಗೆ ನೀಡಿ</a></div>`;
+                    listEl.innerHTML = `<div class="p-6 text-center rounded-xl bg-surface-container-low border border-outline-variant"><p class="material-symbols-outlined text-4xl text-on-surface-variant mx-auto mb-2" style="font-variation-settings: 'FILL' 1;">volunteer_activism</p><p class="text-on-surface-variant kannada-text">ನೀವು ಇನ್ನೂ ಯಾವುದೇ ದೇಣಿಗೆಯನ್ನು ನೀಡಿಲ್ಲ.</p><a href="index.html#donate" class="touch-active inline-block mt-4 bg-primary-container text-on-primary-container font-bold py-3 px-6 rounded-xl text-body-lg kannada-text">ದೇಣಿಗೆ ನೀಡಿ</a></div>`;
                     return;
                 }
 

@@ -221,7 +221,7 @@
         <!-- Events List -->
         <section>
             <div id="events-list" class="space-y-4">
-                <p class="text-on-surface-variant kannada-text">ಕಾರ್ಯಕ್ರಮ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
+                <p class="text-on-surface-variant kannada-text">ಕಾರ್ಯಕ್ರಮಗಳು ಲೋಡ್ ಆಗುತ್ತಿದೆ . . . .</p>
             </div>
         </section>
     </main>
@@ -480,13 +480,13 @@
                     status = 'Attending - Own transportation';
                     statusColor = 'text-green-700';
                 } else if (userRsvp && userRsvp.status === 'not-attending') {
-                    status = 'ಹಾಜರಾಗಿಲ್ಲ';
+                    status = 'ಹಾಜರಾಗುತ್ತಿಲ್ಲ';
                     statusColor = 'text-error';
                 } else if (userRsvp && userRsvp.status === 'attending' && requiresPayment) {
                     status = 'Waiting for payment or approval';
                     statusColor = 'text-amber-700';
                 } else if (userRsvp) {
-                    status = userRsvp.status === 'attending' ? 'ಹಾಜರಾಗಿದ್ದೀರಿ' : 'ಹಾಜರಾಗಿಲ್ಲ';
+                    status = userRsvp.status === 'attending' ? 'ಹಾಜರಾಗಿದ್ದೀರಿ' : 'ಹಾಜರಾಗುತ್ತಿಲ್ಲ';
                     statusColor = userRsvp.status === 'attending' ? 'text-secondary' : 'text-error';
                 } else if (registrationClosed) {
                     status = 'Last date to register is over';
@@ -549,7 +549,7 @@
                 
                 // Build RSVP buttons or limit reached message
                 const registrationClosedHtml = `<div class="mt-3 p-3 bg-error-container rounded-lg text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold kannada-text">Last date to register is over</p><p class="text-sm text-on-error-container mt-1 kannada-text">Registration closed on ${registrationDeadlineText}.</p></div>`;
-                const notAttendingOnlyHtml = `<div class="mt-2 grid grid-cols-1 gap-2"><button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗಿಲ್ಲ</span></button></div>`;
+                const notAttendingOnlyHtml = `<div class="mt-2 grid grid-cols-1 gap-2"><button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗುತ್ತಿಲ್ಲ</span></button></div>`;
                 let rsvpButtonsHtml = '';
                 if (isRejected) {
                     // Admin rejected the payment - reset the RSVP and ask again whether attending or not
@@ -561,7 +561,7 @@
                             ${canEdit ? (registrationClosed ? `${registrationClosedHtml}${notAttendingOnlyHtml}` : `
                             <div class="mt-2 grid grid-cols-2 gap-2">
                                 <button class="edit-rsvp-btn touch-active w-full bg-primary-container text-on-primary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="attending"><span class="kannada-text">ಹಾಜರಾಗಿದ್ದೀರಿ</span></button>
-                                <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗಿಲ್ಲ</span></button>
+                                <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗುತ್ತಿಲ್ಲ</span></button>
                             </div>`) : ''}
                     `;
                 } else if (userRsvp) {
@@ -576,7 +576,7 @@
                             rsvpButtonsHtml = `
                             <div class="mt-3 grid grid-cols-2 gap-2">
                                 <button class="edit-rsvp-btn touch-active w-full bg-primary-container text-on-primary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="attending"><span class="kannada-text">ಹಾಜರಾಗಿದ್ದೀರಿ</span></button>
-                                <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗಿಲ್ಲ</span></button>
+                                <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗುತ್ತಿಲ್ಲ</span></button>
                             </div>
                         `;
                         } else {
@@ -606,7 +606,7 @@
                     rsvpButtonsHtml = `
                         <div class="mt-3 grid grid-cols-2 gap-2">
                             <button class="edit-rsvp-btn touch-active w-full bg-primary-container text-on-primary-container font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="attending"><span class="kannada-text">ಹಾಜರಾಗಿದ್ದೀರಿ</span></button>
-                            <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗಿಲ್ಲ</span></button>
+                            <button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗುತ್ತಿಲ್ಲ</span></button>
                         </div>
                     `;
                 }
@@ -634,14 +634,11 @@
                             const rangeDates = [e.departureDate, e.returnDate, ...outstationDates].filter(Boolean);
                             const visibleRange = rangeDates.length ? `${formatDate(rangeDates[0])} - ${formatDate(rangeDates[rangeDates.length - 1])}` : '';
                             const eventRange = e.eventEndDate ? `${formatDate(e.date)} - ${formatDate(e.eventEndDate)}` : formatDate(e.date);
-                            const eventEndDate = e.eventEndDate ? formatDate(e.eventEndDate) : 'Not specified';
 
                             return visibleRange ? `
                                 <div class="mt-2 p-3 bg-secondary-fixed rounded-lg border-2 border-secondary-container">
-                                    <p class="font-label-lg text-label-lg text-secondary mb-1 kannada-text">ಹೊರಊರಿನ ಇವೆಂಟ್ ತಾರೆಗಳು</p>
+                                    <p class="font-label-lg text-label-lg text-secondary mb-1 kannada-text">ಹೊರಊರಿನ ಇವೆಂಟ್ ದಿನಾಂಕ</p>
                                     <p class="font-body-lg text-body-lg text-on-surface kannada-text">${eventRange}</p>
-                                    <p class="font-label-md text-label-md text-secondary mt-2 kannada-text">Event end date</p>
-                                    <p class="font-body-lg text-body-lg text-on-surface kannada-text">${eventEndDate}</p>
                                     <p class="font-label-md text-label-md text-secondary mt-2 kannada-text">ನಿರ್ಗಮನದಿಂದ ಬೆಂಗಳೂರು ಆಗಮನದವರೆಗೆ</p>
                                     <p class="font-body-lg text-body-lg text-on-surface kannada-text">${visibleRange}</p>
                                     <p class="font-label-md text-label-md text-secondary mt-2 kannada-text">Last date to register</p>
@@ -650,7 +647,7 @@
                                 </div>
                             ` : '';
                         })() : ''}
-                        ${e.limit ? `<p class="text-on-surface-variant font-label-md text-label-md mt-1 kannada-text">ಮಿತಿ: ${e.limit} | ಹಾಜರಾಗಿದ್ದವರು: ${attendingCount}</p>` : ''}
+                        ${e.limit ? `<p class="text-on-surface-variant font-label-md text-label-md mt-1 kannada-text">ಮಿತಿ: ${e.limit} | ಭಾಗವಹಿಸುವವರು: ${attendingCount}</p>` : ''}
                         <div class="mt-3 pt-3 border-t border-outline-variant">
                             <p class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆ:</p>
                             <p class="font-body-lg text-body-lg ${statusColor} kannada-text">${status}</p>
@@ -769,7 +766,7 @@
                     renderEvents();
                     return;
                 } else if (status === 'not-attending') {
-                    showEventsToast('ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗಿಲ್ಲ ಎಂದು ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ.', true);
+                    showEventsToast('ನೀವು ಈಗಾಗಲೇ ಹಾಜರಾಗುತ್ತಿಲ್ಲ ಎಂದು ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ.', true);
                     delete rsvpEditMode[eventId];
                     renderEvents();
                     return;
@@ -855,7 +852,7 @@
                 [eventId]: rsvpData
             }, { merge: true }).then(() => {
                 // Show toast notification
-                showEventsToast(status === 'attending' ? 'ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ!' : 'ನೀವು ಹಾಜರಾಗಿಲ್ಲ.', false);
+                showEventsToast(status === 'attending' ? 'ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ!' : 'ನೀವು ಹಾಜರಾಗುತ್ತಿಲ್ಲ.', false);
             });
         }
 
@@ -1130,10 +1127,10 @@
                             <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
                             <p class="text-on-surface font-body-lg text-body-lg kannada-text">ದಯವಿಟ್ಟು ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
                             <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
-                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
-                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆನ್</li>
-                                <li>ಖಾತ್ರಾ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯಾಲ್</li>
-                                <li>ತೆಕ್ನಿಕಲ್ ಸಹಾಯ</li>
+                                <li>ಇವೆಂಟ್ </li>
+                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ</li>
+                                <li>ಖಾತೆ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯೆಗಳು</li>
+                                <li>ತಾಂತ್ರಿಕ ಸಹಾಯ</li>
                             </ul>
                         </div>
                         <div id="admins-list" class="space-y-2">

@@ -109,7 +109,7 @@ function renderEvents() {
     const rsvpSection = document.getElementById('rsvp-section');
     const busPickupSection = document.getElementById('bus-pickup-section');
 
-    // Get the next upcoming event
+    // Get the next ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ
     const nextEvent = state.events.length > 0 ? state.events[0] : null;
 
     if (!nextEvent) {

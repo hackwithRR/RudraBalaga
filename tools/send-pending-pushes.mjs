@@ -39,12 +39,12 @@ function buildMessage(notif, token) {
     const eventId = notif.eventId || '';
     return {
         token,
-        notification: { title, body },
+        // DATA-ONLY payload: the service worker (firebase-messaging-sw.js)
+        // builds and shows the notification itself. A `notification` payload
+        // here makes Chrome auto-handle display/tap and bypasses our click
+        // deep-linking (and can show nothing at all in installed PWAs).
         data: { type, eventId, title, body },
-        webpush: {
-            fcmOptions: { link: SITE_URL },
-            notification: { icon: ICON_URL, badge: ICON_URL, tag: `rudra-${type}-${eventId || notif.id || Date.now()}` }
-        }
+        webpush: { fcmOptions: { link: SITE_URL } }
     };
 }
 
