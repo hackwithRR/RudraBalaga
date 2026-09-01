@@ -31,9 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function showLoadingScreen() {
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) loadingScreen.classList.remove('hidden');
-    if (window.unlockAudio) window.unlockAudio();
-    if (window.playNotificationSound) {
-        window.playNotificationSound();
+    if (window.maybePlayLoadingSound) {
+        window.maybePlayLoadingSound();
     }
 }
 

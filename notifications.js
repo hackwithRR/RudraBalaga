@@ -363,9 +363,23 @@
             }
         } catch (e) { /* fail-soft */ }
     }
+    function maybePlayLoadingSound() {
+        try {
+            var loading = document.getElementById('loading-screen');
+            if (!loading || !loading.classList || loading.classList.contains('hidden')) return;
+            unlockAudio();
+            setTimeout(function () {
+                try { playNotificationSound(); } catch (e) {}
+            }, 150);
+        } catch (e) { /* fail-soft */ }
+    }
+
     if (typeof document !== 'undefined') {
-        ['pointerdown', 'touchstart', 'keydown'].forEach(function (evt) {
-            document.addEventListener(evt, unlockAudio, { once: false, passive: true });
+        ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function (evt) {
+            document.addEventListener(evt, function () {
+                unlockAudio();
+                maybePlayLoadingSound();
+            }, { once: true, passive: true });
         });
     }
 
@@ -391,6 +405,7 @@
     // Expose for the app-level actions (loading, RSVP selection, donation)
     window.unlockAudio = unlockAudio;
     window.playNotificationSound = playNotificationSound;
+    window.maybePlayLoadingSound = maybePlayLoadingSound;
 
     // Fallback chime (Web Audio) used if notification.mp3 can't be played.
     function playChimeFallback() {
