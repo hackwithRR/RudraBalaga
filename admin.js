@@ -43,7 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // Show loading screen
 function showLoadingScreen() {
     const loadingScreen = document.getElementById('loading-screen');
-    loadingScreen.classList.remove('hidden');
+    if (loadingScreen) loadingScreen.classList.remove('hidden');
+    if (window.maybePlayLoadingSound) {
+        window.maybePlayLoadingSound();
+    }
 }
 
 // Hide loading screen

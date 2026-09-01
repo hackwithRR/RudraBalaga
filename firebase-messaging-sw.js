@@ -66,7 +66,7 @@ const PRECACHE = [
     'manifest.json',
     'icons/icon-192.png',
     'icons/icon-512.png',
-    'notification.mp3'
+    'shank.mp3'
 ];
 
 self.addEventListener('install', (event) => {

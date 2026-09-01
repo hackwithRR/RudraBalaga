@@ -318,7 +318,7 @@
     // Toast popup for newly arriving notifications
     // ------------------------------------------------------------------
     // ------------------------------------------------------------------
-    // Custom notification sound — plays `notification.mp3` whenever an
+    // Custom notification sound — plays `shank.mp3` whenever an
     // OS-level notification fires while the app is open.
     // NOTE: browsers don't allow custom sounds on background (web push)
     // notifications — those use the system sound. This covers the common
@@ -327,7 +327,7 @@
     // ------------------------------------------------------------------
     // Unlock audio on the user's first interaction. Mobile browsers (Android
     // Chrome, iOS Safari) block audio/AudioContext until a gesture happens on
-    // the page — this ensures notification.mp3 can actually play later when a
+    // the page — this ensures shank.mp3 can actually play later when a
     // notification arrives while the app is alive in the background.
     var notificationAudio = null;
     var audioCtx = null;
@@ -377,7 +377,7 @@
         audioUnlocked = true;
         try {
             if (!notificationAudio) {
-                notificationAudio = new Audio('notification.mp3');
+                notificationAudio = new Audio('shank.mp3');
                 notificationAudio.preload = 'auto';
             }
             // Silent "priming" play marks the element as gesture-activated
@@ -452,7 +452,7 @@
     function playNotificationSound() {
         try {
             if (!notificationAudio) {
-                notificationAudio = new Audio('notification.mp3');
+                notificationAudio = new Audio('shank.mp3');
                 notificationAudio.preload = 'auto';
                 // If the mp3 can't load/play, fall back to the synthesized chime
                 notificationAudio.addEventListener('error', function () {
@@ -526,7 +526,8 @@
                 body: notif.body || '',
                 icon: 'icons/icon-192.png',
                 badge: 'icons/icon-192.png',
-                tag: tag
+                tag: tag,
+                silent: false
             });
             // Tapping the OS banner opens/focuses the app and shows the panel
             osNotif.onclick = function () {
@@ -535,9 +536,12 @@
                     openPanel();
                 } catch (e) { /* fail-soft */ }
             };
-            // Do not play the custom sound for every app notification.
-            // The app-specific success sounds are triggered only from the
-            // explicit user action flows (loading, attending, donation).
+            // Browser Notification API does not support custom mp3 sounds.
+            // While the app is open, we play the app's shank.mp3 explicitly.
+            try {
+                if (window.unlockAudio) window.unlockAudio();
+                if (window.playNotificationSound) window.playNotificationSound();
+            } catch (e) {}
         } catch (e) { /* failed silently — in-app toast still works */ }
     }
     function showToast(notif) {
@@ -554,6 +558,10 @@
             '</div>';
         toast.addEventListener('click', function () { toast.remove(); openPanel(); });
         document.body.appendChild(toast);
+        try {
+            if (window.unlockAudio) window.unlockAudio();
+            if (window.playNotificationSound) window.playNotificationSound();
+        } catch (e) {}
         setTimeout(function () { toast.remove(); }, 5000);
     }
 
