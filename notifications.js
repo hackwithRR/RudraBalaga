@@ -332,7 +332,6 @@
     var notificationAudio = null;
     var audioCtx = null;
     var audioUnlocked = false;
-    var appOpenSoundStarted = false;
     var soundGateEl = null;
 
     function hideSoundGate() {
@@ -364,7 +363,7 @@
                 event.preventDefault();
                 event.stopPropagation();
                 unlockAudio();
-                if (!appOpenSoundStarted) maybePlayLoadingSound();
+                maybePlayLoadingSound();
                 hideSoundGate();
             }, { passive: false });
             document.body.appendChild(gate);
@@ -407,8 +406,6 @@
 
     function maybePlayLoadingSound() {
         try {
-            if (appOpenSoundStarted) return;
-            appOpenSoundStarted = true;
             unlockAudio();
             setTimeout(function () {
                 try { playNotificationSound(); } catch (e) {}
@@ -420,7 +417,7 @@
         ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function (evt) {
             document.addEventListener(evt, function () {
                 unlockAudio();
-                if (!appOpenSoundStarted) maybePlayLoadingSound();
+                maybePlayLoadingSound();
                 hideSoundGate();
             }, { once: false, passive: true });
         });
