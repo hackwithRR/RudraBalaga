@@ -317,6 +317,73 @@
     // ------------------------------------------------------------------
     // Toast popup for newly arriving notifications
     // ------------------------------------------------------------------
+    // ------------------------------------------------------------------
+    // Custom notification sound — plays `notification.mp3` whenever an
+    // OS-level notification fires while the app is open.
+    // NOTE: browsers don't allow custom sounds on background (web push)
+    // notifications — those use the system sound. This covers the common
+    // "app open in background" case on Android/desktop. iOS may block audio
+    // until the user has interacted with the page — fail-soft by design.
+    // ------------------------------------------------------------------
+    var notificationAudio = null;
+    function playNotificationSound() {
+        try {
+            if (!notificationAudio) {
+                notificationAudio = new Audio('notification.mp3');
+                notificationAudio.preload = 'auto';
+                // If the mp3 can't load/play, fall back to the synthesized chime
+                notificationAudio.addEventListener('error', function () {
+                    try { notificationAudio = null; playChimeFallback(); } catch (e) {}
+                });
+            }
+            try { notificationAudio.currentTime = 0; } catch (e) {}
+            var p = notificationAudio.play();
+            if (p && p.catch) p.catch(function () {
+                // Autoplay blocked (e.g. iOS before first interaction) -> chime fallback
+                try { playChimeFallback(); } catch (e) {}
+            });
+        } catch (e) { /* sound is a nice-to-have — never break notifications */ }
+    }
+
+    // Fallback chime (Web Audio) used if notification.mp3 can't be played.
+    var audioCtx = null;
+    function playChimeFallback() {
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            if (!audioCtx) audioCtx = new AC();
+            if (audioCtx.state === 'suspended') audioCtx.resume().catch(function () {});
+            var t0 = audioCtx.currentTime;
+            // Pleasant two-tone chime: E6 -> G6
+            [[1318.51, 0.00], [1567.98, 0.14]].forEach(function (tone) {
+                var osc = audioCtx.createOscillator();
+                var gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = tone[0];
+                gain.gain.setValueAtTime(0, t0 + tone[1]);
+                gain.gain.linearRampToValueAtTime(0.22, t0 + tone[1] + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, t0 + tone[1] + 0.55);
+                osc.connect(gain).connect(audioCtx.destination);
+                osc.start(t0 + tone[1]);
+                osc.stop(t0 + tone[1] + 0.6);
+            });
+        } catch (e) { /* fail-soft */ }
+    }
+
+    // Where should a notification tap land?
+    function urlForType(type) {
+        switch (type) {
+            case 'event_new':
+            case 'event_updated':
+            case 'reminder':
+                return 'events.html';
+            case 'bus_info':
+                return 'bus-routes.html';
+            default:
+                return 'index.html';
+        }
+    }
+
     // Show a real OS-level notification (Android/iOS/desktop banner) while
     // the app is open — in addition to the in-app toast. This makes payment
     // updates, announcements and reminders appear as an Android notification
@@ -328,12 +395,20 @@
             if (typeof notif === 'string') notif = { title: notif };
             notif = notif || {};
             var tag = 'rudra-' + (notif.eventId || 'n') + '-' + (notif.type || 'msg') + '-' + Date.now();
-            new Notification(notif.title || 'Rudra Balaga', {
+            var osNotif = new Notification(notif.title || 'Rudra Balaga', {
                 body: notif.body || '',
                 icon: 'icons/icon-192.png',
                 badge: 'icons/icon-192.png',
                 tag: tag
             });
+            // Tapping the OS banner opens/focuses the app and shows the panel
+            osNotif.onclick = function () {
+                try {
+                    window.focus();
+                    openPanel();
+                } catch (e) { /* fail-soft */ }
+            };
+            playNotificationSound();
         } catch (e) { /* failed silently — in-app toast still works */ }
     }
     function showToast(notif) {
@@ -646,6 +721,23 @@
     }
 
     // ------------------------------------------------------------------
+    // Push notification tapped while a window was open: the SW asks us to
+    // open the panel (same page) or navigate to the target page.
+    if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
+        navigator.serviceWorker.addEventListener('message', function (event) {
+            var msg = event.data || {};
+            if (msg.type !== 'notification-tap') return;
+            try {
+                var current = location.pathname.split('/').pop() || 'index.html';
+                if (msg.navigate && msg.url && msg.url !== current) {
+                    location.href = msg.url;
+                    return;
+                }
+                openPanel();
+            } catch (e) { /* fail-soft */ }
+        });
+    }
+
     // Public API
     // ------------------------------------------------------------------
     function init(opts) {

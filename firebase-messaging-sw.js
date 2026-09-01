@@ -49,7 +49,7 @@ try {
                 icon: icons[type] || 'icons/icon-192.png',
                 badge: 'icons/icon-192.png',
                 tag: 'rudra-' + type + '-' + (data.eventId || Date.now()),
-                data: data,
+                data: { url: urlForType(type), type: type, eventId: data.eventId || '' },
                 vibrate: [200, 100, 200]
             });
         }
@@ -59,14 +59,29 @@ try {
     console.warn('[firebase-messaging-sw] messaging init skipped:', e && e.message);
 }
 
+// Where should a notification tap land? (mirrors notifications.js)
+function urlForType(type) {
+    switch (type) {
+        case 'event_new':
+        case 'event_updated':
+        case 'reminder':
+            return 'events.html';
+        case 'bus_info':
+            return 'bus-routes.html';
+        default:
+            return 'index.html';
+    }
+}
+
 // ---------------- PWA offline shell ----------------
-const CACHE = 'rudra-balaga-v2';
+const CACHE = 'rudra-balaga-v3';
 const PRECACHE = [
     './',
     'index.html',
     'manifest.json',
     'icons/icon-192.png',
-    'icons/icon-512.png'
+    'icons/icon-512.png',
+    'notification.mp3'
 ];
 
 self.addEventListener('install', (event) => {
@@ -102,15 +117,48 @@ self.addEventListener('fetch', (event) => {
     );
 });
 
-// Focus an existing window when a notification is tapped
+// Notification tap: open (or focus) the app and land on the right page.
 self.addEventListener('notificationclick', (event) => {
-    event.notification.close();
+    const notif = event.notification;
+    notif.close();
+    const targetUrl = (notif.data && notif.data.url) || 'index.html';
+    const target = new URL(targetUrl, self.location.origin).href;
+
     event.waitUntil(
         self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            // Prefer a window already showing the target page
             for (const client of clientList) {
-                if ('focus' in client) return client.focus();
+                if (client.url === target && 'focus' in client) {
+                    client.postMessage({ type: 'notification-tap', url: targetUrl, data: notif.data || {} });
+                    return client.focus();
+                }
             }
-            return self.clients.openWindow('index.html');
+            // Otherwise focus any open app window and tell it to navigate
+            for (const client of clientList) {
+                if ('focus' in client) {
+                    client.postMessage({ type: 'notification-tap', url: targetUrl, data: notif.data || {}, navigate: true });
+                    return client.focus();
+                }
+            }
+            // No window open — launch the app at the target page
+            return self.clients.openWindow(target);
         })
     );
+});
+
+// Page asks the SW to navigate the focused window after a notification tap
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'navigate' && event.data.url) {
+        event.waitUntil(
+            self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+                for (const client of clientList) {
+                    if ('focus' in client) {
+                        client.navigate(new URL(event.data.url, self.location.origin).href);
+                        return client.focus();
+                    }
+                }
+                return self.clients.openWindow(event.data.url);
+            })
+        );
+    }
 });
