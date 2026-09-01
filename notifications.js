@@ -330,9 +330,11 @@
     // the page — this ensures shank.mp3 can actually play later when a
     // notification arrives while the app is alive in the background.
     var notificationAudio = null;
+    var appOpenAudio = null;
     var audioCtx = null;
     var audioUnlocked = false;
     var soundGateEl = null;
+    var appOpenSoundPlayed = false;
 
     function hideSoundGate() {
         try {
@@ -363,7 +365,6 @@
                 event.preventDefault();
                 event.stopPropagation();
                 unlockAudio();
-                maybePlayLoadingSound();
                 hideSoundGate();
             }, { passive: false });
             document.body.appendChild(gate);
@@ -404,20 +405,36 @@
         hideSoundGate();
     }
 
-    function maybePlayLoadingSound() {
+    function playAppOpenSound() {
         try {
+            if (appOpenSoundPlayed) return;
+            var pathname = (window.location && window.location.pathname) || '';
+            var isIndexPage = pathname === '/' || pathname.endsWith('/index.html') || pathname.endsWith('index.html');
+            if (!isIndexPage) return;
+            appOpenSoundPlayed = true;
             unlockAudio();
             setTimeout(function () {
-                try { playNotificationSound(); } catch (e) {}
+                try {
+                    if (!appOpenAudio) {
+                        appOpenAudio = new Audio('notification.mp3');
+                        appOpenAudio.preload = 'auto';
+                    }
+                    appOpenAudio.currentTime = 0;
+                    var p = appOpenAudio.play();
+                    if (p && p.catch) p.catch(function () {});
+                } catch (e) {}
             }, 150);
         } catch (e) { /* fail-soft */ }
+    }
+
+    function maybePlayLoadingSound() {
+        playAppOpenSound();
     }
 
     if (typeof document !== 'undefined') {
         ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function (evt) {
             document.addEventListener(evt, function () {
                 unlockAudio();
-                maybePlayLoadingSound();
                 hideSoundGate();
             }, { once: false, passive: true });
         });
@@ -468,6 +485,7 @@
     // Expose for the app-level actions (loading, RSVP selection, donation)
     window.unlockAudio = unlockAudio;
     window.playNotificationSound = playNotificationSound;
+    window.playAppOpenSound = playAppOpenSound;
     window.maybePlayLoadingSound = maybePlayLoadingSound;
 
     // Fallback chime (Web Audio) used if notification.mp3 can't be played.
