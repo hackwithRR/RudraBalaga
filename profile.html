@@ -263,7 +263,7 @@
                 <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
                 <h1 class="text-xl font-bold text-primary">ರುದ್ರ ಬಳಗ</h1>
             </div>
-            <a href="index.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container">
+            <a href="index" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container">
                 <span class="material-symbols-outlined text-on-primary-container" data-icon="close">close</span>
             </a>
         </div>
@@ -396,22 +396,22 @@
     <nav class="app-bottom-nav" aria-label="Main navigation">
         <div class="app-bottom-nav-inner">
             <!-- Home -->
-            <a class="app-nav-item" href="index.html">
+            <a class="app-nav-item" href="index">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="home">home</span>
                 <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
-            <a class="app-nav-item" href="events.html">
+            <a class="app-nav-item" href="events">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
                 <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮ</span>
             </a>
             <!-- Bus Routes -->
-            <a class="app-nav-item" href="bus-routes.html">
+            <a class="app-nav-item" href="bus-routes">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus">directions_bus</span>
                 <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Profile (Active) -->
-            <a class="app-nav-item is-active" href="profile.html" aria-current="page">
+            <a class="app-nav-item is-active" href="profile" aria-current="page">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
                 <span class="app-nav-label kannada-text">ಪ್ರೊಫೈಲ್</span>
             </a>
@@ -528,7 +528,7 @@
                     }
                 } else {
                     // Redirect to login if not authenticated
-                    window.location.href = 'login.html';
+                    window.location.href = 'login';
                 }
             });
         }
@@ -863,12 +863,12 @@
         // Sign out from Firebase
         if (typeof firebaseAuth !== 'undefined' && firebaseAuth) {
             firebaseAuth.signOut().then(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'login';
             }).catch(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'login';
             });
         } else {
-            window.location.href = 'login.html';
+            window.location.href = 'login';
         }
     });
 

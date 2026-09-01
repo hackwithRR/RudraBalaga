@@ -410,7 +410,7 @@
             // Check if Firebase is configured
             if (typeof firebaseDb === 'undefined' || !firebaseDb) {
                 // Demo mode: redirect to index
-                window.location.href = 'index.html';
+                window.location.href = 'index';
                 return;
             }
             
@@ -499,19 +499,19 @@
                 authProvider: user.phoneNumber ? 'phone' : 'google',
                 userId: userId
             }).then(() => {
-                window.location.href = 'index.html';
+                window.location.href = 'index';
             }).catch(error => {
                 // If Firebase fails, still redirect to index for demo
-                window.location.href = 'index.html';
+                window.location.href = 'index';
             });
         }
         
         // Redirect based on role
         function redirectBasedOnRole(role) {
             if (role === 'admin') {
-                window.location.href = 'admin.html';
+                window.location.href = 'admin';
             } else {
-                window.location.href = 'index.html';
+                window.location.href = 'index';
             }
         }
 

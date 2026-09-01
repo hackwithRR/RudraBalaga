@@ -970,7 +970,7 @@
                 <button id="header-announcements-btn" type="button" aria-label="ಎಲ್ಲಾ ಪ್ರಕಟಣೆಗಳು" title="ಎಲ್ಲಾ ಪ್ರಕಟಣೆಗಳು" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
                 </button>
-                <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
+                <a href="profile" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
                     <span class="material-symbols-outlined text-on-primary-container" data-icon="account_circle">account_circle</span>
                 </a>
             </div>
@@ -1055,7 +1055,7 @@
 
          <!-- View All Events Button (Shown when all events are responded to) -->
          <section id="view-all-events-section" class="hidden">
-             <a href="events.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
+             <a href="events" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
                  <span class="material-symbols-outlined" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
                  ಎಲ್ಲಾ ಕಾರ್ಯಕ್ರಮಗಳನ್ನು ನೋಡಿ
              </a>
@@ -1107,7 +1107,7 @@
 
         <!-- Admin Access Button (Hidden by default, shown only for admins) -->
         <section>
-            <a id="admin-link" class="hidden touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text" href="admin.html">
+            <a id="admin-link" class="hidden touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text" href="admin">
                 <span class="material-symbols-outlined" data-icon="admin_panel_settings" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
                 ಅಡ್ಮಿನ್ ಪ್ಯಾನ್ಲ್
             </a>
@@ -1160,22 +1160,22 @@
     <nav class="app-bottom-nav" aria-label="Main navigation">
         <div class="app-bottom-nav-inner">
             <!-- Home (Active) -->
-            <a class="app-nav-item is-active" href="index.html" aria-current="page">
+            <a class="app-nav-item is-active" href="index" aria-current="page">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
                 <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
-            <a class="app-nav-item" href="events.html">
+            <a class="app-nav-item" href="events">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
                 <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮ</span>
             </a>
             <!-- Bus Routes -->
-            <a class="app-nav-item" href="bus-routes.html">
+            <a class="app-nav-item" href="bus-routes">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus">directions_bus</span>
                 <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Essentials -->
-            <a class="app-nav-item" href="essentials.html">
+            <a class="app-nav-item" href="essentials">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="checklist">checklist</span>
                 <span class="app-nav-label kannada-text">ಅಗತ್ಯಗಳು</span>
             </a>
@@ -1205,7 +1205,7 @@
         // Show the intro loader ONLY on the first load of the session, or when
         // arriving from the admin panel (admin -> user side transition).
         // Normal tab-to-tab navigation (events, bus routes, essentials) skips it.
-        const navCameFromAdmin = document.referrer && document.referrer.indexOf('admin.html') !== -1;
+        const navCameFromAdmin = document.referrer && document.referrer.indexOf('admin') !== -1;
         const loaderAlreadyShown = sessionStorage.getItem('appLoaderShown') === 'true';
         const skipIntro = loaderAlreadyShown && !navCameFromAdmin;
 
@@ -1314,7 +1314,7 @@
                     setupEventListeners();
                 } else {
                     // No user - redirect to login
-                    window.location.href = 'login.html';
+                    window.location.href = 'login';
                 }
             });
         }
@@ -1570,7 +1570,7 @@
             document.getElementById('view-scripts-btn').addEventListener('click', showScriptsModal);
             // Donate button
             document.getElementById('donate-btn').addEventListener('click', showDonationModal);
-            // Events nav button now links to events.html directly
+            // Events nav button now links to events directly
             
             // Help button
             document.getElementById('help-btn').addEventListener('click', showHelpModal);
@@ -2487,7 +2487,7 @@
                     } else if (busRoutes.length) {
                         busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><select data-pickup-select data-event-id="${event.id}" class="w-full h-14 px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"><option value="">Select your pickup point</option>${busRoutes.map(route => `<option value="${route.id}" ${userRsvp && userRsvp.pickupPoint === route.id ? 'selected' : ''}>${route.point} - ${route.time} (${route.busName})</option>`).join('')}</select></div>`;
                     } else {
-                        busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><a href="bus-routes.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-xl flex items-center justify-center h-14 text-body-lg">View bus routes</a></div>`;
+                        busHtml = `<div class="mt-4 pt-4 border-t border-outline-variant"><p class="font-label-lg text-label-lg text-secondary mb-2">Bus pickup point</p><a href="bus-routes" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-xl flex items-center justify-center h-14 text-body-lg">View bus routes</a></div>`;
                     }
                 }
             }
@@ -2733,7 +2733,7 @@
             const hasBusRoutes = allRoutes.length > 0;
             
             if (!hasBusRoutes) {
-                busNotice.innerHTML = '<a href="bus-routes.html" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">View Bus Routes</a>';
+                busNotice.innerHTML = '<a href="bus-routes" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">View Bus Routes</a>';
                 busNotice.classList.remove('hidden');
                 busSelect.classList.add('hidden');
             } else {

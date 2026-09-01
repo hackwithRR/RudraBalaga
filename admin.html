@@ -786,7 +786,7 @@
     <header class="bg-surface-container-lowest border-b-2 border-primary-container w-full fixed top-0 z-50">
         <div class="flex justify-between items-center px-4 h-16">
             <div class="flex items-center gap-2">
-                <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-on-primary-container">
+                <a href="index" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-on-primary-container">
                     <span class="material-symbols-outlined text-xl">home</span>
                 </a>
                 <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
@@ -796,7 +796,7 @@
                 <div class="text-right">
                     <p id="user-name" class="text-sm font-medium text-on-surface max-w-[7rem] truncate">Admin</p>
                 </div>
-                <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
+                <a href="profile" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
                     <span class="material-symbols-outlined text-on-primary-container" data-icon="account_circle">account_circle</span>
                 </a>
             </div>
@@ -1698,7 +1698,7 @@
                                 populateEventSelectors();
                             } else {
                                 // Not admin, redirect to member view
-                                window.location.href = 'index.html';
+                                window.location.href = 'index';
                             }
                         })
                          .catch(error => {
@@ -1710,13 +1710,13 @@
                              document.body.appendChild(errorDiv);
                              setTimeout(() => {
                                  firebaseAuth.signOut().then(() => {
-                                     window.location.href = 'login.html';
+                                     window.location.href = 'login';
                                  });
                              }, 2000);
                          });
                 } else {
                     // Not logged in, redirect to login
-                    window.location.href = 'login.html';
+                    window.location.href = 'login';
                 }
             });
         }
@@ -3427,7 +3427,7 @@
         // Logout function
         function logout() {
             firebaseAuth.signOut().then(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'login';
             });
         }
 

@@ -50,11 +50,11 @@ function urlForType(type) {
         case 'event_new':
         case 'event_updated':
         case 'reminder':
-            return 'events.html';
+            return 'events';
         case 'bus_info':
-            return 'bus-routes.html';
+            return 'bus-routes';
         default:
-            return 'index.html';
+            return 'index';
     }
 }
 
@@ -62,7 +62,7 @@ function urlForType(type) {
 const CACHE = 'rudra-balaga-v3';
 const PRECACHE = [
     './',
-    'index.html',
+    'index',
     'manifest.json',
     'icons/icon-192.png',
     'icons/icon-512.png',
@@ -97,7 +97,7 @@ self.addEventListener('fetch', (event) => {
             caches.open(CACHE).then((cache) => cache.put(req, copy)).catch(() => {});
             return res;
         }).catch(() =>
-            caches.match(req).then((hit) => hit || caches.match('./index.html'))
+            caches.match(req).then((hit) => hit || caches.match('./index'))
         )
     );
 });
@@ -106,7 +106,7 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('notificationclick', (event) => {
     const notif = event.notification;
     notif.close();
-    const targetUrl = (notif.data && notif.data.url) || 'index.html';
+    const targetUrl = (notif.data && notif.data.url) || 'index';
     const target = new URL(targetUrl, self.location.origin).href;
 
     event.waitUntil(

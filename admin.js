@@ -26,16 +26,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         populateEventSelectors();
                     } else {
                         // Not admin, redirect to member view
-                        window.location.href = 'index.html';
+                        window.location.href = 'index';
                     }
                 })
                 .catch(error => {
                     console.error('Error checking admin status: ', error);
-                    window.location.href = 'login.html';
+                    window.location.href = 'login';
                 });
         } else {
             // Not logged in, redirect to login
-            window.location.href = 'login.html';
+            window.location.href = 'login';
         }
     });
 });
@@ -119,7 +119,7 @@ function initializeApp() {
 // Logout function
 function logout() {
     firebaseAuth.signOut().then(() => {
-        window.location.href = 'login.html';
+        window.location.href = 'login';
     });
 }
 

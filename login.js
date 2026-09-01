@@ -109,9 +109,9 @@ function checkUserRole(user) {
             if (doc.exists) {
                 const userData = doc.data();
                 if (userData.role === 'admin') {
-                    window.location.href = 'admin.html';
+                    window.location.href = 'admin';
                 } else {
-                    window.location.href = 'index.html';
+                    window.location.href = 'index';
                 }
             } else {
                 // If no user document, create one as regular member
@@ -121,7 +121,7 @@ function checkUserRole(user) {
                     role: 'member',
                     name: user.displayName || 'Member'
                 }).then(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'index';
                 });
             }
         })

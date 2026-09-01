@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderEvents();
         } else {
             // Redirect to login if not authenticated
-            window.location.href = 'login.html';
+            window.location.href = 'login';
         }
     });
 });
@@ -101,7 +101,7 @@ function setupEventListeners() {
 // Logout function
 function logout() {
     firebaseAuth.signOut().then(() => {
-        window.location.href = 'login.html';
+        window.location.href = 'login';
     });
 }
 

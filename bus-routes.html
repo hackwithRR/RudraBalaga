@@ -133,7 +133,7 @@
     <header class="bg-surface-container-lowest border-b-2 border-primary-container w-full fixed top-0 z-50">
         <div class="flex justify-between items-center px-4 h-16 gap-2">
             <div class="flex items-center gap-3 min-w-0 flex-1">
-                <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container shrink-0">
+                <a href="index" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container shrink-0">
                     <span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
                 </a>
                 <h1 class="text-lg sm:text-xl font-bold text-primary kannada-text truncate min-w-0">ಬಸ್ / ರೈಲು </h1>
@@ -143,7 +143,7 @@
                     <p id="user-name" class="text-sm font-medium text-on-surface kannada-text truncate max-w-[110px] sm:max-w-none">ಸ್ವಾಗತ</p>
                     <p id="user-id" class="text-xs text-on-surface-variant hidden"></p>
                 </div>
-                <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
+                <a href="profile" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
                     <span class="material-symbols-outlined text-on-primary-container" data-icon="account_circle">account_circle</span>
                 </a>
             </div>
@@ -206,22 +206,22 @@
     <nav class="app-bottom-nav" aria-label="Main navigation">
         <div class="app-bottom-nav-inner">
             <!-- Home -->
-            <a class="app-nav-item" href="index.html">
+            <a class="app-nav-item" href="index">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="home">home</span>
                 <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
-            <a class="app-nav-item" href="events.html">
+            <a class="app-nav-item" href="events">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
                 <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮ</span>
             </a>
             <!-- Bus Routes (Active) -->
-            <a class="app-nav-item is-active" href="bus-routes.html" aria-current="page">
+            <a class="app-nav-item is-active" href="bus-routes" aria-current="page">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
                 <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Essentials -->
-            <a class="app-nav-item" href="essentials.html">
+            <a class="app-nav-item" href="essentials">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="checklist">checklist</span>
                 <span class="app-nav-label kannada-text">ಅಗತ್ಯಗಳು</span>
             </a>
@@ -259,7 +259,7 @@
                     loadBusRoutes();
                 } else {
                     // No user - redirect to login
-                    window.location.href = 'login.html';
+                    window.location.href = 'login';
                 }
             });
         });

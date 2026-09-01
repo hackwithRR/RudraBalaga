@@ -4,7 +4,7 @@
 // - Slide-in notification panel with mark-as-read
 // - Live toast popups for newly-arriving notifications (onSnapshot)
 // - Client-side "day before" / same-day event reminders (deduped per user+event)
-// Shared by index.html, events.html, essentials.html, bus-routes.html, profile.html and admin.html.
+// Shared by index, events, essentials, bus-routes, profile and admin.
 // Load AFTER firebase-config.js. All Firebase calls fail-soft (never blocks the page).
 
 (function () {
@@ -357,7 +357,7 @@
     function isIndexPage() {
         try {
             var pathname = (window.location && window.location.pathname) || '';
-            return pathname === '/' || pathname.endsWith('/index.html') || pathname.endsWith('index.html');
+            return pathname === '/' || pathname.endsWith('/index') || pathname.endsWith('index');
         } catch (e) {
             return false;
         }
@@ -540,11 +540,11 @@
             case 'event_new':
             case 'event_updated':
             case 'reminder':
-                return 'events.html';
+                return 'events';
             case 'bus_info':
-                return 'bus-routes.html';
+                return 'bus-routes';
             default:
-                return 'index.html';
+                return 'index';
         }
     }
 
@@ -902,7 +902,7 @@
             var msg = event.data || {};
             if (msg.type !== 'notification-tap') return;
             try {
-                var current = location.pathname.split('/').pop() || 'index.html';
+                var current = location.pathname.split('/').pop() || 'index';
                 if (msg.navigate && msg.url && msg.url !== current) {
                     location.href = msg.url;
                     return;

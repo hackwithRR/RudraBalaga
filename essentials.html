@@ -179,7 +179,7 @@
     <header class="bg-surface-container-lowest border-b-2 border-primary-container w-full fixed top-0 z-50">
         <div class="flex justify-between items-center px-4 h-16">
             <div class="flex items-center gap-3">
-                <a href="index.html" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container">
+                <a href="index" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container">
                     <span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
                 </a>
                 <h1 class="text-xl font-bold text-primary kannada-text">ಅಗತ್ಯಗಳು</h1>
@@ -189,7 +189,7 @@
                     <p id="user-name" class="text-sm font-medium text-on-surface kannada-text">ಸ್ವಾಗತ</p>
                     <p id="user-id" class="text-xs text-on-surface-variant hidden"></p>
                 </div>
-                <a href="profile.html" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
+                <a href="profile" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container overflow-hidden" id="profile-link">
                     <span class="material-symbols-outlined text-on-primary-container" data-icon="account_circle">account_circle</span>
                 </a>
             </div>
@@ -208,7 +208,7 @@
                 <p class="font-body-lg text-body-lg text-on-surface-variant mt-2 kannada-text">
                     ನೀವು ಇನ್ನೂ ಯಾವುದೇ ಇವೆಂಟ್‌ನಲ್ಲಿ ಹಾಜರಾಗಿಲ್ಲ. ಇವೆಂಟ್‌ಗೆ ಹಾಜರಾದರೆ ನಿಮ್ಮ ಪರಿಶೀಲನಾ ಪಟ್ಟಿ (ಚೆಕ್ಕೆಟ್) ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.
                 </p>
-                <a href="events.html" class="touch-active w-full sm:w-auto min-h-14 mt-5 px-8 py-3 bg-primary-container text-on-primary-container font-bold rounded-xl text-body-lg kannada-text inline-flex items-center justify-center gap-2 transition-transform duration-150 active:scale-[0.98]">
+                <a href="events" class="touch-active w-full sm:w-auto min-h-14 mt-5 px-8 py-3 bg-primary-container text-on-primary-container font-bold rounded-xl text-body-lg kannada-text inline-flex items-center justify-center gap-2 transition-transform duration-150 active:scale-[0.98]">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event</span>
                     ಎಲ್ಲಾ ಕಾರ್ಯಕ್ರಮಗಳನ್ನು ನೋಡಿ
                 </a>
@@ -329,22 +329,22 @@
     <nav class="app-bottom-nav" aria-label="Main navigation">
         <div class="app-bottom-nav-inner">
             <!-- Home -->
-            <a class="app-nav-item" href="index.html">
+            <a class="app-nav-item" href="index">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="home">home</span>
                 <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
-            <a class="app-nav-item" href="events.html">
+            <a class="app-nav-item" href="events">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
                 <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮ</span>
             </a>
             <!-- Bus Routes -->
-            <a class="app-nav-item" href="bus-routes.html">
+            <a class="app-nav-item" href="bus-routes">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus">directions_bus</span>
                 <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Essentials (Active) -->
-            <a class="app-nav-item is-active" href="essentials.html" aria-current="page">
+            <a class="app-nav-item is-active" href="essentials" aria-current="page">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="checklist" style="font-variation-settings: 'FILL' 1;">checklist</span>
                 <span class="app-nav-label kannada-text">ಅಗತ್ಯಗಳು</span>
             </a>
@@ -381,7 +381,7 @@
                     loadRsvps();
                 } else {
                     // No user - redirect to login
-                    window.location.href = 'login.html';
+                    window.location.href = 'login';
                 }
             });
         });
@@ -827,7 +827,7 @@
                 summaryEl.innerHTML = [['ಒಟ್ಟು ದೇಣಿಗೆ', `₹${totalAll}`], ['ಅನುಮೋದಿತ', `₹${totalApproved}`]].map(([l, v]) => `<div class="p-3 rounded-xl bg-surface-container-high border border-outline-variant"><p class="text-xs uppercase tracking-wide text-on-surface-variant kannada-text">${l}</p><p class="font-bold text-lg text-primary">${v}</p></div>`).join('');
 
                 if (!donations.length) {
-                    listEl.innerHTML = `<div class="p-6 text-center rounded-xl bg-surface-container-low border border-outline-variant"><p class="material-symbols-outlined text-4xl text-on-surface-variant mx-auto mb-2" style="font-variation-settings: 'FILL' 1;">volunteer_activism</p><p class="text-on-surface-variant kannada-text">ನೀವು ಇನ್ನೂ ಯಾವುದೇ ದೇಣಿಗೆಯನ್ನು ನೀಡಿಲ್ಲ.</p><a href="index.html#donate" class="touch-active inline-block mt-4 bg-primary-container text-on-primary-container font-bold py-3 px-6 rounded-xl text-body-lg kannada-text">ದೇಣಿಗೆ ನೀಡಿ</a></div>`;
+                    listEl.innerHTML = `<div class="p-6 text-center rounded-xl bg-surface-container-low border border-outline-variant"><p class="material-symbols-outlined text-4xl text-on-surface-variant mx-auto mb-2" style="font-variation-settings: 'FILL' 1;">volunteer_activism</p><p class="text-on-surface-variant kannada-text">ನೀವು ಇನ್ನೂ ಯಾವುದೇ ದೇಣಿಗೆಯನ್ನು ನೀಡಿಲ್ಲ.</p><a href="index#donate" class="touch-active inline-block mt-4 bg-primary-container text-on-primary-container font-bold py-3 px-6 rounded-xl text-body-lg kannada-text">ದೇಣಿಗೆ ನೀಡಿ</a></div>`;
                     return;
                 }
 
