@@ -363,10 +363,11 @@
             }
         } catch (e) { /* fail-soft */ }
     }
+    var appOpenSoundStarted = false;
     function maybePlayLoadingSound() {
         try {
-            var loading = document.getElementById('loading-screen');
-            if (!loading || !loading.classList || loading.classList.contains('hidden')) return;
+            if (appOpenSoundStarted) return;
+            appOpenSoundStarted = true;
             unlockAudio();
             setTimeout(function () {
                 try { playNotificationSound(); } catch (e) {}
@@ -378,9 +379,22 @@
         ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function (evt) {
             document.addEventListener(evt, function () {
                 unlockAudio();
-                maybePlayLoadingSound();
+                if (!appOpenSoundStarted) maybePlayLoadingSound();
             }, { once: true, passive: true });
         });
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(maybePlayLoadingSound, 120);
+        } else {
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(maybePlayLoadingSound, 120);
+            }, { once: true });
+        }
+        window.addEventListener('pageshow', function () {
+            setTimeout(maybePlayLoadingSound, 120);
+        }, { once: true });
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) setTimeout(maybePlayLoadingSound, 120);
+        }, { once: true });
     }
 
     function playNotificationSound() {
@@ -469,7 +483,9 @@
                     openPanel();
                 } catch (e) { /* fail-soft */ }
             };
-            playNotificationSound();
+            // Do not play the custom sound for every app notification.
+            // The app-specific success sounds are triggered only from the
+            // explicit user action flows (loading, attending, donation).
         } catch (e) { /* failed silently — in-app toast still works */ }
     }
     function showToast(notif) {
