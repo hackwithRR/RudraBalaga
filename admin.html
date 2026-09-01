@@ -4144,20 +4144,124 @@
 \u003c/body>\u003c/html>`;
         }
 
+        // ---- Auto-download PDF engine (no print dialog, no popup tab) ----
+        // Renders the report HTML into a hidden same-origin iframe, rasterizes it
+        // with html2canvas (loaded inside the iframe so all <style>/<link> rules and
+        // fonts apply), paginates onto A4 pages with jsPDF, and saves the file directly.
+        // Falls back to the classic print window if the CDN libraries cannot load.
+
+        const _pdfLibCache = { jsPDF: false, html2canvas: false };
+
+        function loadPdfLib(url, key) {
+            if (_pdfLibCache[key]) return Promise.resolve();
+            return new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = url;
+                s.onload = () => { _pdfLibCache[key] = true; resolve(); };
+                s.onerror = () => reject(new Error('Failed to load ' + url));
+                document.head.appendChild(s);
+            });
+        }
+
+        function slugifyFilename(title) {
+            const slug = String(title || 'report').toLowerCase()
+                .replace(/[^a-z0-9\u0C80-\u0CFF]+/g, '-').replace(/^-+|-+$/g, '') || 'report';
+            const d = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            return `rudra-balaga-${slug}-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.pdf`;
+        }
+
         function openPrintDocument(html) {
+            showToast('Generating PDF…', 'downloading');
+            const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/i);
+            const filename = slugifyFilename(titleMatch ? titleMatch[1] : 'report');
+            Promise.all([
+                loadPdfLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'jsPDF'),
+                loadPdfLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas')
+            ]).then(() => renderPdfFromHtml(html, filename)).catch(() => {
+                openLegacyPrintWindow(html); // offline / CDN blocked fallback
+            });
+        }
+
+        function renderPdfFromHtml(html, filename) {
+            return new Promise((resolve, reject) => {
+                const iframe = document.createElement('iframe');
+                iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:860px;height:1200px;border:0;visibility:hidden;';
+                document.body.appendChild(iframe);
+
+                const cleanup = () => { setTimeout(() => iframe.remove(), 500); };
+
+                iframe.onload = async () => {
+                    try {
+                        const doc = iframe.contentDocument;
+                        if (!doc || !doc.body) throw new Error('Iframe document unavailable');
+
+                        // Load html2canvas inside the iframe so the cloned node keeps
+                        // the report's <style> rules and web fonts.
+                        await new Promise((res, rej) => {
+                            const s = doc.createElement('script');
+                            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                            s.onload = res;
+                            s.onerror = rej;
+                            doc.head.appendChild(s);
+                        });
+
+                        // Wait for web fonts (Kannada text) before rasterizing
+                        if (doc.fonts && doc.fonts.ready) { try { await doc.fonts.ready; } catch (e) {} }
+                        await new Promise(r => setTimeout(r, 150));
+
+                        const canvas = await iframe.contentWindow.html2canvas(doc.body, {
+                            backgroundColor: '#ffffff',
+                            scale: 2,
+                            useCORS: true,
+                            logging: false,
+                            windowWidth: 860
+                        });
+                        if (!canvas || !canvas.width) throw new Error('Canvas render failed');
+
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                        const pageW = 210, pageH = 297;
+                        const imgW = pageW;
+                        const imgH = canvas.height * imgW / canvas.width;
+                        const pageHpx = canvas.width * pageH / imgW;
+                        const pages = Math.max(1, Math.ceil(canvas.height / pageHpx));
+
+                        for (let i = 0; i < pages; i++) {
+                            if (i > 0) pdf.addPage();
+                            pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, -i * pageH, imgW, imgH, undefined, 'FAST');
+                        }
+                        pdf.save(filename);
+                        cleanup();
+                        showToast(`Downloaded ${filename}`, 'download_done');
+                        resolve();
+                    } catch (err) {
+                        cleanup();
+                        reject(err);
+                    }
+                };
+
+                iframe.onerror = () => { cleanup(); reject(new Error('Iframe failed')); };
+                iframe.srcdoc = html;
+            });
+        }
+
+        function openLegacyPrintWindow(html) {
+            showToast('Using print dialog (PDF libraries unavailable offline)…', 'info');
             const printWindow = window.open('', '_blank');
             if (!printWindow) {
-                alert('Please allow popups to download the PDF');
+                showToast('Please allow popups to download the PDF', 'error');
                 return;
             }
             printWindow.document.open();
             printWindow.document.write(html);
             printWindow.document.close();
             printWindow.focus();
-            // Give the document/fonts a moment to render before opening the print dialog
+            // Close the tab automatically once the user finishes with the print dialog
+            printWindow.addEventListener('afterprint', () => { try { printWindow.close(); } catch (e) {} });
             setTimeout(() => { printWindow.print(); }, 450);
         }
-        // Download attendance as PDF
+
         function downloadPDF() {
             const eventId = document.getElementById('roster-event-select').value;
             if (!eventId) return;

@@ -336,6 +336,24 @@
     var soundGateEl = null;
     var appOpenSoundPlayed = false;
 
+    function readSessionFlag(name, fallback) {
+        try {
+            var value = sessionStorage.getItem(name);
+            return value === null ? fallback : value === '1';
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    function writeSessionFlag(name, value) {
+        try {
+            sessionStorage.setItem(name, value ? '1' : '0');
+        } catch (e) {}
+    }
+
+    audioUnlocked = readSessionFlag('rudraAudioUnlocked', false);
+    appOpenSoundPlayed = readSessionFlag('rudraAppOpenSoundPlayed', false);
+
     function isIndexPage() {
         try {
             var pathname = (window.location && window.location.pathname) || '';
@@ -356,7 +374,7 @@
         try {
             if (typeof document === 'undefined' || typeof navigator === 'undefined') return;
             if (!isIndexPage()) return;
-            if (appOpenSoundPlayed) return;
+            if (appOpenSoundPlayed || audioUnlocked) return;
             if (document.getElementById('sound-gate')) return;
             var isMobile = /(Android|iPhone|iPad|Mobile)/i.test(navigator.userAgent || '');
             if (!isMobile) return;
@@ -387,6 +405,7 @@
     function unlockAudio() {
         if (audioUnlocked) return;
         audioUnlocked = true;
+        writeSessionFlag('rudraAudioUnlocked', true);
         try {
             if (!notificationAudio) {
                 notificationAudio = new Audio('shank.mp3');
@@ -421,6 +440,7 @@
         try {
             if (appOpenSoundPlayed || !isIndexPage()) return;
             appOpenSoundPlayed = true;
+            writeSessionFlag('rudraAppOpenSoundPlayed', true);
             unlockAudio();
             setTimeout(function () {
                 try {
