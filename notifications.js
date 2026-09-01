@@ -376,6 +376,7 @@
                 event.preventDefault();
                 event.stopPropagation();
                 unlockAudio();
+                playAppOpenSound();
                 hideSoundGate();
             }, { passive: false });
             document.body.appendChild(gate);
@@ -444,32 +445,23 @@
             ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function (evt) {
                 document.addEventListener(evt, function () {
                     unlockAudio();
+                    if (!appOpenSoundPlayed) playAppOpenSound();
                     hideSoundGate();
                 }, { once: false, passive: true });
             });
             if (document.readyState === 'complete' || document.readyState === 'interactive') {
                 setTimeout(function () {
-                    if (!audioUnlocked) ensureSoundGate();
-                    else maybePlayLoadingSound();
+                    if (!audioUnlocked) { ensureSoundGate(); }
+                    else if (!appOpenSoundPlayed) { playAppOpenSound(); }
                 }, 150);
             } else {
                 document.addEventListener('DOMContentLoaded', function () {
                     setTimeout(function () {
-                        if (!audioUnlocked) ensureSoundGate();
-                        else maybePlayLoadingSound();
+                        if (!audioUnlocked) { ensureSoundGate(); }
+                        else if (!appOpenSoundPlayed) { playAppOpenSound(); }
                     }, 150);
                 }, { once: true });
             }
-            window.addEventListener('pageshow', function () {
-                if (!appOpenSoundPlayed && !audioUnlocked) ensureSoundGate();
-                else if (!appOpenSoundPlayed) maybePlayLoadingSound();
-            }, { once: true });
-            document.addEventListener('visibilitychange', function () {
-                if (!document.hidden && !appOpenSoundPlayed) {
-                    if (!audioUnlocked) ensureSoundGate();
-                    else maybePlayLoadingSound();
-                }
-            }, { once: false });
         }
     }
 
