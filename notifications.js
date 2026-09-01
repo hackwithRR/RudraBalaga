@@ -336,6 +336,15 @@
     var soundGateEl = null;
     var appOpenSoundPlayed = false;
 
+    function isIndexPage() {
+        try {
+            var pathname = (window.location && window.location.pathname) || '';
+            return pathname === '/' || pathname.endsWith('/index.html') || pathname.endsWith('index.html');
+        } catch (e) {
+            return false;
+        }
+    }
+
     function hideSoundGate() {
         try {
             if (soundGateEl && soundGateEl.parentNode) soundGateEl.parentNode.removeChild(soundGateEl);
@@ -346,6 +355,8 @@
     function ensureSoundGate() {
         try {
             if (typeof document === 'undefined' || typeof navigator === 'undefined') return;
+            if (!isIndexPage()) return;
+            if (appOpenSoundPlayed) return;
             if (document.getElementById('sound-gate')) return;
             var isMobile = /(Android|iPhone|iPad|Mobile)/i.test(navigator.userAgent || '');
             if (!isMobile) return;
@@ -407,10 +418,7 @@
 
     function playAppOpenSound() {
         try {
-            if (appOpenSoundPlayed) return;
-            var pathname = (window.location && window.location.pathname) || '';
-            var isIndexPage = pathname === '/' || pathname.endsWith('/index.html') || pathname.endsWith('index.html');
-            if (!isIndexPage) return;
+            if (appOpenSoundPlayed || !isIndexPage()) return;
             appOpenSoundPlayed = true;
             unlockAudio();
             setTimeout(function () {
@@ -432,35 +440,37 @@
     }
 
     if (typeof document !== 'undefined') {
-        ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function (evt) {
-            document.addEventListener(evt, function () {
-                unlockAudio();
-                hideSoundGate();
-            }, { once: false, passive: true });
-        });
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            setTimeout(function () {
-                if (!audioUnlocked) ensureSoundGate();
-                else maybePlayLoadingSound();
-            }, 150);
-        } else {
-            document.addEventListener('DOMContentLoaded', function () {
+        if (isIndexPage()) {
+            ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function (evt) {
+                document.addEventListener(evt, function () {
+                    unlockAudio();
+                    hideSoundGate();
+                }, { once: false, passive: true });
+            });
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
                 setTimeout(function () {
                     if (!audioUnlocked) ensureSoundGate();
                     else maybePlayLoadingSound();
                 }, 150);
-            }, { once: true });
-        }
-        window.addEventListener('pageshow', function () {
-            if (!audioUnlocked) ensureSoundGate();
-            else maybePlayLoadingSound();
-        }, { once: true });
-        document.addEventListener('visibilitychange', function () {
-            if (!document.hidden) {
-                if (!audioUnlocked) ensureSoundGate();
-                else maybePlayLoadingSound();
+            } else {
+                document.addEventListener('DOMContentLoaded', function () {
+                    setTimeout(function () {
+                        if (!audioUnlocked) ensureSoundGate();
+                        else maybePlayLoadingSound();
+                    }, 150);
+                }, { once: true });
             }
-        }, { once: false });
+            window.addEventListener('pageshow', function () {
+                if (!appOpenSoundPlayed && !audioUnlocked) ensureSoundGate();
+                else if (!appOpenSoundPlayed) maybePlayLoadingSound();
+            }, { once: true });
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden && !appOpenSoundPlayed) {
+                    if (!audioUnlocked) ensureSoundGate();
+                    else maybePlayLoadingSound();
+                }
+            }, { once: false });
+        }
     }
 
     function playNotificationSound() {
