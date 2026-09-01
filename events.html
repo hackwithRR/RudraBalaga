@@ -853,6 +853,10 @@
             }, { merge: true }).then(() => {
                 // Show toast notification
                 showEventsToast(status === 'attending' ? 'ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ!' : 'ನೀವು ಹಾಜರಾಗುತ್ತಿಲ್ಲ.', false);
+                if (status === 'attending' && window.playNotificationSound) {
+                    window.unlockAudio && window.unlockAudio();
+                    window.playNotificationSound();
+                }
             });
         }
 

@@ -388,6 +388,10 @@
         } catch (e) { /* sound is a nice-to-have — never break notifications */ }
     }
 
+    // Expose for the app-level actions (loading, RSVP selection, donation)
+    window.unlockAudio = unlockAudio;
+    window.playNotificationSound = playNotificationSound;
+
     // Fallback chime (Web Audio) used if notification.mp3 can't be played.
     function playChimeFallback() {
         try {

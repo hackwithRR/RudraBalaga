@@ -30,7 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // Show loading screen
 function showLoadingScreen() {
     const loadingScreen = document.getElementById('loading-screen');
-    loadingScreen.classList.remove('hidden');
+    if (loadingScreen) loadingScreen.classList.remove('hidden');
+    if (window.unlockAudio) window.unlockAudio();
+    if (window.playNotificationSound) window.playNotificationSound();
 }
 
 // Hide loading screen
@@ -200,6 +202,10 @@ function setRSVP(status) {
 
     // Show confirmation
     showConfirmation(status);
+    if (status === 'attending' && window.playNotificationSound) {
+        window.unlockAudio && window.unlockAudio();
+        window.playNotificationSound();
+    }
 
     // If outstation and attending, show bus pickup section
     if (status === 'attending' && nextEvent.type === 'Outstation') {
