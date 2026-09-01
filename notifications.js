@@ -325,7 +325,50 @@
     // "app open in background" case on Android/desktop. iOS may block audio
     // until the user has interacted with the page — fail-soft by design.
     // ------------------------------------------------------------------
+    // Unlock audio on the user's first interaction. Mobile browsers (Android
+    // Chrome, iOS Safari) block audio/AudioContext until a gesture happens on
+    // the page — this ensures notification.mp3 can actually play later when a
+    // notification arrives while the app is alive in the background.
     var notificationAudio = null;
+    var audioCtx = null;
+    var audioUnlocked = false;
+    function unlockAudio() {
+        if (audioUnlocked) return;
+        audioUnlocked = true;
+        try {
+            if (!notificationAudio) {
+                notificationAudio = new Audio('notification.mp3');
+                notificationAudio.preload = 'auto';
+            }
+            // Silent "priming" play marks the element as gesture-activated
+            var origVol = notificationAudio.volume;
+            notificationAudio.muted = true;
+            var p = notificationAudio.play();
+            if (p && p.then) {
+                p.then(function () {
+                    notificationAudio.pause();
+                    notificationAudio.currentTime = 0;
+                    notificationAudio.muted = false;
+                    notificationAudio.volume = origVol;
+                }).catch(function () {
+                    notificationAudio.muted = false;
+                });
+            }
+        } catch (e) { /* fail-soft */ }
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) {
+                if (!audioCtx) audioCtx = new AC();
+                if (audioCtx.state === 'suspended') audioCtx.resume().catch(function () {});
+            }
+        } catch (e) { /* fail-soft */ }
+    }
+    if (typeof document !== 'undefined') {
+        ['pointerdown', 'touchstart', 'keydown'].forEach(function (evt) {
+            document.addEventListener(evt, unlockAudio, { once: false, passive: true });
+        });
+    }
+
     function playNotificationSound() {
         try {
             if (!notificationAudio) {
@@ -346,7 +389,6 @@
     }
 
     // Fallback chime (Web Audio) used if notification.mp3 can't be played.
-    var audioCtx = null;
     function playChimeFallback() {
         try {
             var AC = window.AudioContext || window.webkitAudioContext;
