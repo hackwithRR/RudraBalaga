@@ -332,6 +332,46 @@
     var notificationAudio = null;
     var audioCtx = null;
     var audioUnlocked = false;
+    var appOpenSoundStarted = false;
+    var soundGateEl = null;
+
+    function hideSoundGate() {
+        try {
+            if (soundGateEl && soundGateEl.parentNode) soundGateEl.parentNode.removeChild(soundGateEl);
+            soundGateEl = null;
+        } catch (e) {}
+    }
+
+    function ensureSoundGate() {
+        try {
+            if (typeof document === 'undefined' || typeof navigator === 'undefined') return;
+            if (document.getElementById('sound-gate')) return;
+            var isMobile = /(Android|iPhone|iPad|Mobile)/i.test(navigator.userAgent || '');
+            if (!isMobile) return;
+            var gate = document.createElement('div');
+            gate.id = 'sound-gate';
+            gate.style.position = 'fixed';
+            gate.style.inset = '0';
+            gate.style.zIndex = '999999';
+            gate.style.display = 'flex';
+            gate.style.alignItems = 'flex-end';
+            gate.style.justifyContent = 'center';
+            gate.style.background = 'rgba(12, 12, 12, 0.22)';
+            gate.style.padding = '20px';
+            gate.style.pointerEvents = 'auto';
+            gate.innerHTML = '<div style="background:#fff; color:#1b1c1c; border-radius:16px; padding:14px 18px; box-shadow:0 12px 30px rgba(0,0,0,.22); font:600 15px/1.5 sans-serif; text-align:center; max-width:320px;">Tap anywhere to enable sound</div>';
+            gate.addEventListener('pointerdown', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                unlockAudio();
+                if (!appOpenSoundStarted) maybePlayLoadingSound();
+                hideSoundGate();
+            }, { passive: false });
+            document.body.appendChild(gate);
+            soundGateEl = gate;
+        } catch (e) {}
+    }
+
     function unlockAudio() {
         if (audioUnlocked) return;
         audioUnlocked = true;
@@ -362,8 +402,9 @@
                 if (audioCtx.state === 'suspended') audioCtx.resume().catch(function () {});
             }
         } catch (e) { /* fail-soft */ }
+        hideSoundGate();
     }
-    var appOpenSoundStarted = false;
+
     function maybePlayLoadingSound() {
         try {
             if (appOpenSoundStarted) return;
@@ -380,21 +421,32 @@
             document.addEventListener(evt, function () {
                 unlockAudio();
                 if (!appOpenSoundStarted) maybePlayLoadingSound();
-            }, { once: true, passive: true });
+                hideSoundGate();
+            }, { once: false, passive: true });
         });
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            setTimeout(maybePlayLoadingSound, 120);
+            setTimeout(function () {
+                if (!audioUnlocked) ensureSoundGate();
+                else maybePlayLoadingSound();
+            }, 150);
         } else {
             document.addEventListener('DOMContentLoaded', function () {
-                setTimeout(maybePlayLoadingSound, 120);
+                setTimeout(function () {
+                    if (!audioUnlocked) ensureSoundGate();
+                    else maybePlayLoadingSound();
+                }, 150);
             }, { once: true });
         }
         window.addEventListener('pageshow', function () {
-            setTimeout(maybePlayLoadingSound, 120);
+            if (!audioUnlocked) ensureSoundGate();
+            else maybePlayLoadingSound();
         }, { once: true });
         document.addEventListener('visibilitychange', function () {
-            if (!document.hidden) setTimeout(maybePlayLoadingSound, 120);
-        }, { once: true });
+            if (!document.hidden) {
+                if (!audioUnlocked) ensureSoundGate();
+                else maybePlayLoadingSound();
+            }
+        }, { once: false });
     }
 
     function playNotificationSound() {
