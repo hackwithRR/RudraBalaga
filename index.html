@@ -1686,6 +1686,10 @@
                         submittedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     await firebaseDb.collection('donations').add(donationRecord);
+                    if (window.playNotificationSound) {
+                        window.unlockAudio && window.unlockAudio();
+                        window.playNotificationSound();
+                    }
                     // Real-time: notify admins to review this donation proof (best-effort)
                     if (window.Notifications) { try { Notifications.notifyAdmins({ type: 'donation_submitted', title: 'Donation proof submitted', body: (donorName || 'A member') + ' donated ₹' + amount + '. Please review.', eventId: null }); } catch (e) {} }
                     modal.remove();
@@ -2786,6 +2790,10 @@
         firebaseDb.collection('rsvps').doc(state.user.uid).set({
             [currentEvent.id]: rsvpData
         }, { merge: true }).then(() => {
+            if (status === 'attending' && window.playNotificationSound) {
+                window.unlockAudio && window.unlockAudio();
+                window.playNotificationSound();
+            }
             // Show toast notification
             const toast = document.createElement('div');
             toast.className = 'fixed top-20 left-0 right-0 mx-auto z-50 bg-primary-container text-on-primary-container px-6 py-4 rounded-xl shadow-lg max-w-sm';
@@ -2936,6 +2944,10 @@
         firebaseDb.collection('rsvps').doc(state.user.uid).set({
             [currentEvent.id]: rsvpData
         }, { merge: true }).then(() => {
+            if (status === 'attending' && window.playNotificationSound) {
+                window.unlockAudio && window.unlockAudio();
+                window.playNotificationSound();
+            }
             showRsvpToast(status === 'attending' ? 'You are attending!' : 'You are not attending.', false);
         });
     }
