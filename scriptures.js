@@ -50,7 +50,9 @@
       '.scripture-item-title{font-weight:800;color:#1c130a;font-size:1.2rem;line-height:1.3;}',
       '.scripture-item-sub{font-size:.85rem;font-weight:600;color:#7a6450;letter-spacing:.04em;}',
       '.scripture-item-chevron{margin-left:auto;color:#c9a97f;flex-shrink:0;}',
-      '.scripture-reader-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:.5rem;padding:.75rem .85rem;border-bottom:2px solid #f0e6dc;background:rgba(255,252,248,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}',
+      '.scripture-reader-header{position:sticky;top:0;z-index:2;padding:.75rem .85rem calc(.7rem);border-bottom:2px solid #f0e6dc;background:rgba(255,252,248,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}',
+      '.scripture-reader-controls{display:flex;align-items:center;gap:.5rem;}',
+      '.scripture-title-bar{margin-top:.7rem;text-align:center;padding:.55rem 1rem .65rem;border:1.5px solid #f0d8c2;border-radius:1rem;background:linear-gradient(135deg,#fff3e6,#fffdf7);}',
       '.scripture-reader-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1.3rem 1.35rem calc(2.5rem + env(safe-area-inset-bottom));background:#fffdf9;scrollbar-width:thin;scrollbar-color:#e3cdb9 transparent;}',
       '.scripture-reader-body::-webkit-scrollbar{width:6px;}',
       '.scripture-reader-body::-webkit-scrollbar-thumb{background:#e3cdb9;border-radius:999px;}',
@@ -157,14 +159,17 @@
         readerOverlay.innerHTML =
           '<div class="scripture-sheet" role="dialog" aria-label="' + s.en + '">' +
             '<div class="scripture-reader-header">' +
-              '<button class="scripture-back-btn" data-scripture-back aria-label="Back to scriptures list">' + icon('arrow_back') + '<span class="kannada-text font-bold">ಹಿಂದೆ</span></button>' +
-              '<div style="flex:1;text-align:center;min-width:0;">' +
-                '<h3 class="kannada-text font-bold text-stone-900" style="font-size:1.05rem;line-height:1.25;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + s.kn + '</h3>' +
-                '<p class="scripture-back" style="margin:0;">' + s.en + '</p>' +
+              '<div class="scripture-reader-controls">' +
+                '<button class="scripture-back-btn" data-scripture-back aria-label="Back to scriptures list">' + icon('arrow_back') + '<span class="kannada-text font-bold">ಹಿಂದೆ</span></button>' +
+                '<div style="flex:1;"></div>' +
+                '<button class="scripture-font-btn" data-scripture-font="dec" aria-label="Decrease text size">A<span style="font-size:.7rem;">−</span></button>' +
+                '<button class="scripture-font-btn" data-scripture-font="inc" aria-label="Increase text size">A<span style="font-size:1rem;">+</span></button>' +
+                '<button class="scripture-close-btn" data-scripture-close aria-label="Close">' + icon('close') + '</button>' +
               '</div>' +
-              '<button class="scripture-font-btn" data-scripture-font="dec" aria-label="Decrease text size">A<span style="font-size:.7rem;">−</span></button>' +
-              '<button class="scripture-font-btn" data-scripture-font="inc" aria-label="Increase text size">A<span style="font-size:1rem;">+</span></button>' +
-              '<button class="scripture-close-btn" data-scripture-close aria-label="Close">' + icon('close') + '</button>' +
+              '<div class="scripture-title-bar">' +
+                '<h3 class="kannada-text font-bold" style="margin:0;font-size:1.1rem;line-height:1.3;color:#6d3a00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + s.kn + '</h3>' +
+                '<p class="scripture-back" style="margin:.1rem 0 0;">' + s.en + '</p>' +
+              '</div>' +
             '</div>' +
             '<div class="scripture-reader-body"><div class="scripture-content kannada-text" style="font-size:' + fontSize + 'px;white-space:pre-wrap;" data-scripture-text><p class="scripture-placeholder">ಲೋಡ್ ಆಗುತ್ತಿದೆ…</p></div></div>' +
           '</div>';
