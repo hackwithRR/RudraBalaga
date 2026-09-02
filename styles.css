@@ -713,3 +713,48 @@ label {
     .app-nav-item.is-active .app-nav-icon { font-size: 22px !important; }
     .app-nav-label { font-size: .64rem !important; }
 }
+
+/* Stable top-bar layout: long member names must never push into page titles. */
+header.fixed > div {
+    min-width: 0 !important;
+    gap: .5rem !important;
+}
+header.fixed > div > div:first-child {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    overflow: hidden;
+}
+header.fixed > div > div:last-child {
+    min-width: 0 !important;
+    flex: 0 1 auto !important;
+}
+header.fixed h1 {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+header.fixed #user-name {
+    display: block;
+    width: clamp(4rem, 20vw, 10rem) !important;
+    max-width: clamp(4rem, 20vw, 10rem) !important;
+    min-width: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.25;
+}
+header.fixed #profile-link {
+    flex: 0 0 3rem !important;
+    width: 3rem !important;
+    min-width: 3rem !important;
+    height: 3rem !important;
+}
+@media (max-width: 380px) {
+    header.fixed #user-name {
+        width: 4.5rem !important;
+        max-width: 4.5rem !important;
+    }
+    header.fixed > div { padding-left: .65rem !important; padding-right: .65rem !important; }
+}
