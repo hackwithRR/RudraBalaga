@@ -462,6 +462,13 @@
             return !Number.isNaN(deadlineEnd.getTime()) && new Date() > deadlineEnd;
         }
 
+        function isEventFinished(e) {
+            if (!e || !e.date) return false;
+            const endDate = e.eventEndDate || e.date;
+            const eventEnd = new Date(`${endDate}T23:59:59`);
+            return !Number.isNaN(eventEnd.getTime()) && new Date() > eventEnd;
+        }
+
         // Render events on events page
         function renderEvents() {
             const eventsList = document.getElementById('events-list');
@@ -475,6 +482,7 @@
                 const userRsvp = state.rsvps[state.user.uid] && state.rsvps[state.user.uid][e.id];
                 const canEdit = isEventEditable(e.date);
                 const registrationClosed = isRegistrationClosed(e);
+                const eventFinished = isEventFinished(e);
                 const registrationDeadlineText = getRegistrationDeadline(e) ? formatDate(getRegistrationDeadline(e)) : 'Not specified';
                 
                 // Payment info for events that require payment
@@ -497,7 +505,13 @@
                 const ownTransport = userRsvp?.transportMode === 'own';
                 
                 let status, statusColor;
-                if (isRejected) {
+                if (eventFinished && userRsvp && userRsvp.status === 'attending' && !isRejected) {
+                    status = 'Attended - Event done';
+                    statusColor = 'text-green-700 font-bold';
+                } else if (eventFinished) {
+                    status = 'Event finished';
+                    statusColor = 'text-on-surface-variant font-bold';
+                } else if (isRejected) {
                     status = 'Payment rejected by admin - please respond again';
                     statusColor = 'text-error font-bold';
                 } else if (userRsvp && userRsvp.status === 'attending' && userRsvp.payment?.paymentStatus === 'PENDING_APPROVAL') {
@@ -583,7 +597,9 @@
                 const registrationClosedHtml = `<div class="mt-3 p-3 bg-error-container rounded-lg text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold kannada-text">Last date to register is over</p><p class="text-sm text-on-error-container mt-1 kannada-text">Registration closed on ${registrationDeadlineText}.</p></div>`;
                 const notAttendingOnlyHtml = `<div class="mt-2 grid grid-cols-1 gap-2"><button class="edit-rsvp-btn touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-2 rounded-lg text-sm" data-event-id="${e.id}" data-status="not-attending"><span class="kannada-text">ಹಾಜರಾಗುತ್ತಿಲ್ಲ</span></button></div>`;
                 let rsvpButtonsHtml = '';
-                if (isRejected) {
+                if (eventFinished) {
+                    rsvpButtonsHtml = '';
+                } else if (isRejected) {
                     // Admin rejected the payment - explain and let the user respond again via
                     // the same "Change response" flow as other states (consistent UX).
                     rsvpButtonsHtml = `
