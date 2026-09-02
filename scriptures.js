@@ -24,7 +24,11 @@
     var CSS = [
       '@supports (height:100dvh){.scripture-sheet{max-height:min(92dvh,52rem)!important;}}',
       '.scripture-overlay{position:fixed;inset:0;z-index:9998;display:flex;align-items:flex-end;justify-content:center;background:rgba(36,27,22,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:0;animation:scriptureFade .2s ease;}',
-      '.scripture-sheet{background:#fffcf8;border:1px solid #eadbd0;border-bottom:none;border-radius:1.5rem 1.5rem 0 0;box-shadow:0 -12px 60px rgba(36,27,22,.35);width:100%;max-width:34rem;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;animation:scriptureSheetUp .32s cubic-bezier(.2,.9,.3,1);}',
+      '.scripture-sheet{background:#fffcf8;border:1px solid #eadbd0;border-bottom:none;border-radius:1.5rem 1.5rem 0 0;box-shadow:0 -12px 60px rgba(36,27,22,.35);width:100%;max-width:34rem;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;animation:scriptureSheetUp .32s cubic-bezier(.2,.9,.3,1);-webkit-text-size-adjust:100%;text-size-adjust:100%;max-height:999999px;font-size:16px;}',
+      /* Samsung Internet font-boosting breaker: an explicit huge max-height on the
+         scroll container stops One UI / text autosizing from inflating or
+         compressing the text inside the sheet. */
+      '.scripture-reader-body,.scripture-list-body,.scripture-title-bar,.scripture-reader-controls,.scripture-item{max-height:999999px;}',
       '@keyframes scriptureFade{from{opacity:0}to{opacity:1}}',
       '@keyframes scriptureSheetUp{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:translateY(0)}}',
       /* Desktop: centered floating dialog */
@@ -40,19 +44,20 @@
       '.scripture-list-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:.85rem;display:flex;flex-direction:column;gap:.7rem;scrollbar-width:thin;scrollbar-color:#e3cdb9 transparent;}',
       '.scripture-list-body::-webkit-scrollbar{width:6px;}',
       '.scripture-list-body::-webkit-scrollbar-thumb{background:#e3cdb9;border-radius:999px;}',
-      '.scripture-item{display:flex;align-items:center;gap:.85rem;min-height:5rem;padding:.85rem .95rem;border-radius:1.15rem;background:#fff;border:2px solid #e0cbb8;text-align:left;cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .2s ease;-webkit-tap-highlight-color:transparent;width:100%;box-sizing:border-box;}',
+      '.scripture-item{display:flex;align-items:center;gap:.85rem;min-height:5rem;padding:.85rem .95rem;border-radius:1.15rem;background:#fff;border:2px solid #e0cbb8;text-align:left;cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .2s ease;-webkit-tap-highlight-color:transparent;width:100%;box-sizing:border-box;-webkit-text-size-adjust:100%;text-size-adjust:100%;}',
       '.scripture-item:active{transform:scale(.97);border-color:#ff9933;}',
       '@media(hover:hover){.scripture-item:hover{border-color:#ff9933;box-shadow:0 6px 20px rgba(255,153,51,.2);}}',
       '.scripture-item:focus-visible{outline:3px solid #ff9933;outline-offset:2px;}',
       '.scripture-item-num{display:flex;align-items:center;justify-content:center;width:1.7rem;height:1.7rem;border-radius:999px;background:linear-gradient(135deg,#ff9933,#c45a16);color:#fff;font-size:.78rem;font-weight:800;flex-shrink:0;align-self:center;}',
       '.scripture-item-icon{display:flex;align-items:center;justify-content:center;width:3.4rem;height:3.4rem;border-radius:1rem;background:linear-gradient(135deg,#ffe3c2,#ffd6a6);color:#8a4200;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.6);}',
       '.scripture-item-icon .material-symbols-outlined{font-size:1.75rem;}',
-      '.scripture-item-title{font-weight:800;color:#1c130a;font-size:1.2rem;line-height:1.3;}',
+      '.scripture-item-title{font-weight:800;color:#1c130a;font-size:clamp(1.05rem,3.8vw,1.2rem);line-height:1.3;}',
       '.scripture-item-sub{font-size:.85rem;font-weight:600;color:#7a6450;letter-spacing:.04em;}',
       '.scripture-item-chevron{margin-left:auto;color:#c9a97f;flex-shrink:0;}',
-      '.scripture-reader-header{position:sticky;top:0;z-index:2;padding:.75rem .85rem calc(.7rem);border-bottom:2px solid #f0e6dc;background:rgba(255,252,248,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}',
-      '.scripture-reader-controls{display:flex;align-items:center;gap:.5rem;}',
-      '.scripture-title-bar{margin-top:.7rem;text-align:center;padding:.55rem 1rem .65rem;border:1.5px solid #f0d8c2;border-radius:1rem;background:linear-gradient(135deg,#fff3e6,#fffdf7);}',
+      '.scripture-reader-header{position:sticky;top:0;z-index:2;padding:.75rem .85rem calc(.7rem);border-bottom:2px solid #f0e6dc;background:rgba(255,252,248,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);-webkit-text-size-adjust:100%;text-size-adjust:100%;}',
+      '.scripture-reader-controls{display:flex;align-items:center;gap:.5rem;flex-wrap:nowrap;}',
+      '.scripture-title-bar{margin-top:.7rem;text-align:center;padding:.55rem 1rem .65rem;border:1.5px solid #f0d8c2;border-radius:1rem;background:linear-gradient(135deg,#fff3e6,#fffdf7);-webkit-text-size-adjust:100%;text-size-adjust:100%;}',
+      '.scripture-title-bar h3{font-size:clamp(1rem,3.6vw,1.2rem);}',
       '.scripture-reader-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1.3rem 1.35rem calc(2.5rem + env(safe-area-inset-bottom));background:#fffdf9;scrollbar-width:thin;scrollbar-color:#e3cdb9 transparent;}',
       '.scripture-reader-body::-webkit-scrollbar{width:6px;}',
       '.scripture-reader-body::-webkit-scrollbar-thumb{background:#e3cdb9;border-radius:999px;}',
