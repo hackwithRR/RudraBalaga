@@ -460,11 +460,8 @@
             if (!state.user) return;
             
             try {
-                firebaseDb.collection('rsvps').onSnapshot(snapshot => {
-                    state.rsvps = {};
-                    snapshot.forEach(doc => {
-                        state.rsvps[doc.id] = doc.data();
-                    });
+                firebaseDb.collection('rsvps').doc(state.user.uid).onSnapshot(doc => {
+                    state.rsvps = doc.exists ? { [state.user.uid]: doc.data() } : {};
                     renderEventSelector();
                 });
             } catch (error) {

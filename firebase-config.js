@@ -41,6 +41,13 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
+// Reuse Firestore's local IndexedDB cache so repeat visits render immediately
+// and only changed documents need to be fetched from the network.
+db.enablePersistence({ synchronizeTabs: true }).catch((error) => {
+  if (error.code !== 'failed-precondition' && error.code !== 'unimplemented') {
+    console.warn('Firestore offline cache unavailable:', error.code || error.message);
+  }
+});
 
 // Export for use in other files
 window.firebaseAuth = auth;
