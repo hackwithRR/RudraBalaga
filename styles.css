@@ -59,6 +59,7 @@ html[lang="kn"], html {
 .profile-legal-links{display:flex;align-items:center;gap:.25rem;flex-shrink:0;}
 .profile-legal-links a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.35rem .55rem;border-radius:8px;color:#8f4e00;font-size:.72rem;font-weight:700;text-decoration:none;white-space:nowrap;}
 .profile-legal-links a:hover,.profile-legal-links a:focus-visible{background:#f3dfca;color:#693800;outline:none;}
+.profile-help-button{display:flex;width:min(100% - 2rem,34rem);margin:1rem auto 2rem;}
 @media (max-width:640px){
     .sf-bar{gap:.35rem .45rem;padding:.85rem .75rem calc(.85rem + 5.25rem + env(safe-area-inset-bottom));}
     .sf-name{font-size:.78rem;letter-spacing:.04em;}
