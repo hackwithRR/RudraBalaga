@@ -758,3 +758,97 @@ header.fixed #profile-link {
     }
     header.fixed > div { padding-left: .65rem !important; padding-right: .65rem !important; }
 }
+
+/* Compact header mode: keep all actions reachable when Home has announcement,
+   notification, and profile controls at the same time. */
+@media (max-width: 480px) {
+    header.fixed > div { padding-left: .75rem !important; padding-right: .75rem !important; }
+    header.fixed > div > div:first-child { gap: .4rem !important; }
+    header.fixed > div > div:first-child img { width: 2rem !important; height: 2rem !important; }
+    header.fixed > div > div:first-child h1 { font-size: 1rem !important; line-height: 1.25 !important; }
+    header.fixed > div > div:last-child { gap: .2rem !important; }
+    header.fixed > div > div:last-child > .text-right { display: none !important; }
+    header.fixed #header-announcements-btn,
+    header.fixed #notifications-bell,
+    header.fixed #profile-link {
+        flex: 0 0 2.5rem !important;
+        width: 2.5rem !important;
+        min-width: 2.5rem !important;
+        height: 2.5rem !important;
+    }
+    header.fixed #header-announcements-btn .material-symbols-outlined,
+    header.fixed #notifications-bell .material-symbols-outlined,
+    header.fixed #profile-link .material-symbols-outlined { font-size: 1.35rem !important; }
+}
+
+/* Stable navigation grid: every destination keeps the same width on every
+   device, including when Kannada labels wrap to a second line. */
+.app-bottom-nav {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    padding: 0 .75rem calc(.65rem + env(safe-area-inset-bottom)) !important;
+}
+.app-bottom-nav-inner {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: .3rem !important;
+    width: 100% !important;
+    max-width: 42rem !important;
+    padding: .4rem !important;
+    border-radius: 1.15rem !important;
+    background: rgba(255,253,250,.97) !important;
+    border: 1px solid #e4d2c2 !important;
+    box-shadow: 0 -8px 28px rgba(74,42,20,.14) !important;
+}
+.app-nav-item,
+.app-nav-item.is-active {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    width: auto !important;
+    min-height: 64px !important;
+    padding: .3rem .2rem !important;
+    gap: .2rem !important;
+    border-radius: .85rem !important;
+    background: transparent !important;
+    color: #6b5648 !important;
+    box-shadow: none !important;
+    overflow: hidden;
+}
+.app-nav-item.is-active {
+    background: #fff0df !important;
+    color: #8f4e00 !important;
+    box-shadow: inset 0 3px 0 #c45a16 !important;
+}
+.app-nav-icon,
+.app-nav-item.is-active .app-nav-icon {
+    flex: 0 0 auto !important;
+    font-size: 26px !important;
+    line-height: 1 !important;
+}
+.app-nav-label {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    font-size: .74rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+    overflow-wrap: anywhere;
+    text-overflow: clip !important;
+}
+@media (max-width: 380px) {
+    .app-bottom-nav { padding-left: .35rem !important; padding-right: .35rem !important; }
+    .app-bottom-nav-inner { gap: .15rem !important; padding: .25rem !important; }
+    .app-nav-item, .app-nav-item.is-active { min-height: 58px !important; padding-left: .1rem !important; padding-right: .1rem !important; }
+    .app-nav-icon, .app-nav-item.is-active .app-nav-icon { font-size: 23px !important; }
+    .app-nav-label { font-size: .66rem !important; }
+}
