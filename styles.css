@@ -660,3 +660,56 @@ label {
     text-size-adjust: 100%;
     max-height: 999999px;
 }
+
+/* Narrow-device layout guardrails. Samsung One UI can combine text inflation
+   with the global 48px touch target, leaving too little room for nav labels. */
+@media (max-width: 640px) {
+    html { font-size: 16px !important; }
+    body { font-size: 16px !important; line-height: 1.55; overflow-x: hidden; }
+
+    .app-bottom-nav { padding-left: .35rem !important; padding-right: .35rem !important; }
+    .app-bottom-nav-inner {
+        width: 100% !important;
+        max-width: none !important;
+        gap: .15rem !important;
+        padding: .3rem !important;
+    }
+    .app-nav-item,
+    .app-nav-item.is-active {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        width: auto !important;
+        min-height: 56px !important;
+        padding: .2rem .12rem !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+        overflow: hidden;
+    }
+    .app-nav-icon,
+    .app-nav-item.is-active .app-nav-icon { font-size: 24px !important; }
+    .app-nav-label {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        font-size: .7rem !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+        text-align: center !important;
+        overflow-wrap: anywhere;
+        overflow: hidden;
+    }
+
+    .scriptures-entry { min-width: 0 !important; overflow: hidden; }
+    .scriptures-entry > * { min-width: 0 !important; }
+    .scriptures-entry > span:nth-child(2) { overflow: hidden; overflow-wrap: anywhere; }
+    .scriptures-entry > span:nth-child(2) span { max-width: 100%; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 360px) {
+    .app-nav-item,
+    .app-nav-item.is-active { min-height: 52px !important; }
+    .app-nav-icon,
+    .app-nav-item.is-active .app-nav-icon { font-size: 22px !important; }
+    .app-nav-label { font-size: .64rem !important; }
+}
