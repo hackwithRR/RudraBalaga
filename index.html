@@ -2495,10 +2495,9 @@
 
             let busHtml = '';
             if (event.type === 'Outstation') {
-                // Only show bus selection for users who selected bus transport or haven't chosen yet
-                const showBusSelection = userRsvp?.status !== 'attending' || 
-                    !ownTransport || 
-                    (userRsvp?.status === 'attending' && !userRsvp?.transportMode);
+                // Only show bus selection for users who are ATTENDING. Not-attending users
+                // must never see bus/pickup points.
+                const showBusSelection = userRsvp?.status === 'attending' && !ownTransport;
                 
                 if (showBusSelection) {
                     const rsvpActiveForBusInfo = userRsvp && userRsvp.status === 'attending' && 
