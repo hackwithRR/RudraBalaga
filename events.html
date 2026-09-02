@@ -1163,23 +1163,20 @@
                 });
             };
             
-            // Bus selected - record the choice, then show payment modal
+            // Bus selected - do NOT save the RSVP yet. The RSVP (attending + bus +
+            // payment proof) is only written by the payment modal's submit handler,
+            // so closing the modal without paying leaves the user's response unchanged.
             document.getElementById('select-bus-transport').onclick = () => {
                 modal.remove();
                 const existing = state.rsvps[state.user.uid]?.[event.id] || {};
                 const wasPaid = existing.payment && existing.payment.paymentStatus === 'APPROVED';
-                const rsvpData = { ...existing, status: 'attending', transportMode: 'bus' };
-                // A rejected payment no longer counts - user must submit a fresh one
-                const dropRejected = existing.payment && existing.payment.paymentStatus === 'REJECTED';
-                if (dropRejected) delete rsvpData.payment;
-                if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
-                state.rsvps[state.user.uid][event.id] = rsvpData;
-                renderEvents();
-                const writeData = { ...rsvpData };
-                if (dropRejected) writeData.payment = firebase.firestore.FieldValue.delete();
-                firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: writeData }, { merge: true });
-                // Already-approved payment carries over - no new payment needed
                 if (wasPaid) {
+                    // Already-approved payment carries over - no new payment needed
+                    const rsvpData = { ...existing, status: 'attending', transportMode: 'bus' };
+                    if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
+                    state.rsvps[state.user.uid][event.id] = rsvpData;
+                    renderEvents();
+                    firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: rsvpData }, { merge: true });
                     showEventsToast('ನೀವು ಹಾಜರಾಗಿದ್ದೀರಿ (Bus). Payment already approved - no new payment needed.', false);
                 } else {
                     showPaymentModal(event);

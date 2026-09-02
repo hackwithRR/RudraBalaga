@@ -1554,6 +1554,11 @@
                 if (!actionButton) return;
 
                 const eventId = actionButton.dataset.eventId;
+                if (actionButton.dataset.payNow !== undefined && actionButton.dataset.payNow !== null) {
+                    const payEvent = state.events.find(e => e.id === eventId);
+                    if (payEvent) showPaymentModal(payEvent);
+                    return;
+                }
                 if (actionButton.dataset.cancelEdit !== undefined && actionButton.dataset.cancelEdit !== null) {
                     // Cancel edit: restore the status panel and hide the response buttons.
                     // Note: [data-cancel-edit] has no data-event-id, so resolve the card first.
@@ -2466,6 +2471,9 @@
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-amber-50 rounded-xl text-center"><p class="font-body-lg text-body-lg text-amber-900 font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">hourglass_top</span>Waiting for admin approval</p><p class="text-sm text-amber-800 mt-1">Your payment is under review. You will be marked attending once the admin approves it.</p></div>${canEdit ? `<button data-edit-rsvp="true" data-event-id="${event.id}" class="touch-active w-full bg-secondary-container text-on-secondary-container font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg mt-3"><span class="material-symbols-outlined">edit</span>Change response</button>` : ''}</div>${canEdit ? changeResponseSectionHtml(!registrationClosed) : ''}`;
             } else if (userRsvp?.payment?.paymentStatus === 'REJECTED' && userRsvp.status === 'attending') {
                 responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-error-container rounded-xl border border-error/30 text-center"><p class="font-body-lg text-body-lg text-on-error-container font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">cancel</span>Payment rejected by admin</p><p class="text-sm text-on-error-container mt-1">Your RSVP has been reset — please respond again. If you attend, you'll need to submit a fresh payment.</p></div>${canEdit ? (registrationClosed ? `${registrationClosedHtml}${rsvpButtonsHtml(false)}` : rsvpButtonsHtml(true)) : ''}</div>`;
+            } else if (userRsvp && userRsvp.status === 'attending' && event.type === 'Outstation' && event.requiresPayment === true && (!userRsvp.payment || !['PENDING_APPROVAL', 'APPROVED'].includes(userRsvp.payment?.paymentStatus))) {
+                // Attending by bus but no payment submitted yet (proof never uploaded)
+                responseHtml = `<div data-rsvp-status-section class="space-y-3 pt-4 border-t border-outline-variant"><div class="p-4 bg-amber-50 rounded-xl text-center border border-amber-200"><p class="font-body-lg text-body-lg text-amber-900 font-bold flex items-center justify-center gap-2"><span class="material-symbols-outlined">hourglass_top</span>Waiting for payment</p><p class="text-sm text-amber-800 mt-1">You chose to travel by bus. Submit your payment proof to confirm your seat.</p></div>${canEdit ? `<button data-pay-now="true" data-event-id="${event.id}" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-2 h-14 text-body-lg mt-3"><span class="material-symbols-outlined">currency_rupee</span>Pay now — ₹${Number(event.amount || 0)}</button>` : ''}</div>`;
             } else if (isAttendingNoPaymentNeeded || isAttendingWithApprovedPayment) {
                 // Show appropriate message based on how they're attending
                 let attendingMessage = 'You are attending this event';
@@ -3236,23 +3244,20 @@
             });
         };
         
-        // Bus selected - record the choice, then show payment modal
+        // Bus selected - do NOT save the RSVP yet. The RSVP (attending + bus +
+        // payment proof) is only written by the payment modal's submit handler,
+        // so closing the modal without paying leaves the user's response unchanged.
         document.getElementById('select-bus-transport').onclick = () => {
             modal.remove();
             const existing = state.rsvps[state.user.uid]?.[event.id] || {};
             const wasPaid = existing.payment && existing.payment.paymentStatus === 'APPROVED';
-            const rsvpData = { ...existing, status: 'attending', transportMode: 'bus' };
-            // A rejected payment no longer counts - user must submit a fresh one
-            const dropRejected = existing.payment && existing.payment.paymentStatus === 'REJECTED';
-            if (dropRejected) delete rsvpData.payment;
-            if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
-            state.rsvps[state.user.uid][event.id] = rsvpData;
-            renderEvents();
-            const writeData2 = { ...rsvpData };
-            if (dropRejected) writeData2.payment = firebase.firestore.FieldValue.delete();
-            firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: writeData2 }, { merge: true });
-            // Already-approved payment carries over - no new payment needed
             if (wasPaid) {
+                // Already-approved payment carries over - no new payment needed
+                const rsvpData = { ...existing, status: 'attending', transportMode: 'bus' };
+                if (!state.rsvps[state.user.uid]) state.rsvps[state.user.uid] = {};
+                state.rsvps[state.user.uid][event.id] = rsvpData;
+                renderEvents();
+                firebaseDb.collection('rsvps').doc(state.user.uid).set({ [event.id]: rsvpData }, { merge: true });
                 showRsvpToast('You are attending by bus. Payment already approved - no new payment needed.', false);
             } else {
                 showPaymentModal(event);
