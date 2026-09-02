@@ -622,3 +622,33 @@ button, select, input {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ---------------------------------------------------------------------------
+   Samsung Internet / One UI text-autosizing ("font boosting") fix.
+   On many Samsung phones the browser silently inflates text blocks by its own
+   heuristic — headings get boosted more than body text, producing randomly
+   huge headings and crushed/congested layouts. These rules opt the whole app
+   out of autosizing and break the boosting heuristic (an explicit max-height
+   on a text container disables boosting for that element). Safe: max-height
+   larger than content never clips (default overflow is visible).
+--------------------------------------------------------------------------- */
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+body,
+main,
+article,
+section,
+header,
+footer,
+nav,
+p,
+span,
+li,
+a,
+button,
+h1, h2, h3, h4, h5, h6,
+label {
+    max-height: 999999px;
+}
