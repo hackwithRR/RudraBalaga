@@ -51,8 +51,9 @@
       '.scripture-item-num{display:flex;align-items:center;justify-content:center;width:1.7rem;height:1.7rem;border-radius:999px;background:linear-gradient(135deg,#ff9933,#c45a16);color:#fff;font-size:.78rem;font-weight:800;flex-shrink:0;align-self:center;}',
       '.scripture-item-icon{display:flex;align-items:center;justify-content:center;width:3.4rem;height:3.4rem;border-radius:1rem;background:linear-gradient(135deg,#ffe3c2,#ffd6a6);color:#8a4200;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.6);}',
       '.scripture-item-icon .material-symbols-outlined{font-size:1.75rem;}',
-      '.scripture-item-title{font-weight:800;color:#1c130a;font-size:clamp(1.05rem,3.8vw,1.2rem);line-height:1.3;}',
-      '.scripture-item-sub{font-size:.85rem;font-weight:600;color:#7a6450;letter-spacing:.04em;}',
+      '.scripture-item-title{font-weight:800;color:#1c130a;font-size:clamp(1rem,3.8vw,1.2rem);line-height:1.3;overflow-wrap:anywhere;}',
+      '.scripture-item-sub{font-size:.85rem;font-weight:600;color:#7a6450;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:100%;}',
+      '.scripture-item > span:nth-child(3){flex:1 1 auto;min-width:0;overflow:hidden;}',
       '.scripture-item-chevron{margin-left:auto;color:#c9a97f;flex-shrink:0;}',
       '.scripture-reader-header{position:sticky;top:0;z-index:2;padding:.75rem .85rem calc(.7rem);border-bottom:2px solid #f0e6dc;background:rgba(255,252,248,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);-webkit-text-size-adjust:100%;text-size-adjust:100%;}',
       '.scripture-reader-controls{display:flex;align-items:center;gap:.5rem;flex-wrap:nowrap;}',
@@ -131,8 +132,8 @@
             '<div class="scripture-list-header">' +
               '<div style="display:flex;align-items:center;gap:.6rem;min-width:0;">' +
                 '<span class="scripture-item-icon" style="width:3rem;height:3rem;background:linear-gradient(135deg,#ffd6a6,#ff9933);color:#fff;">' + icon('auto_stories', true) + '</span>' +
-                '<div style="min-width:0;">' +
-                  '<h3 class="kannada-text font-bold text-stone-900" style="font-size:1.15rem;margin:0;">ಪವಿತ್ರ ಗ್ರಂಥಗಳು</h3>' +
+                  '<div style="min-width:0;">' +
+                  '<h3 class="kannada-text font-bold text-stone-900" style="font-size:1.15rem;margin:0;overflow-wrap:anywhere;">ಪವಿತ್ರ ಗ್ರಂಥಗಳು</h3>' +
                   '<p class="scripture-back" style="margin:0;">SACRED SCRIPTURES</p>' +
                 '</div>' +
                 '<span class="scripture-count-chip">' + SCRIPTURES.length + '</span>' +
@@ -172,7 +173,7 @@
                 '<button class="scripture-close-btn" data-scripture-close aria-label="Close">' + icon('close') + '</button>' +
               '</div>' +
               '<div class="scripture-title-bar">' +
-                '<h3 class="kannada-text font-bold" style="margin:0;font-size:1.1rem;line-height:1.3;color:#6d3a00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + s.kn + '</h3>' +
+                '<h3 class="kannada-text font-bold" style="margin:0;font-size:1.1rem;line-height:1.3;color:#6d3a00;overflow-wrap:anywhere;">' + s.kn + '</h3>' +
                 '<p class="scripture-back" style="margin:.1rem 0 0;">' + s.en + '</p>' +
               '</div>' +
             '</div>' +
