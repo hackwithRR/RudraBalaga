@@ -277,6 +277,17 @@
             <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary kannada-text">ನನ್ನ ಪ್ರೊಫೈಲ್</h2>
         </section>
 
+        <section class="profile-id-card" aria-label="Member ID">
+            <div class="profile-id-icon" aria-hidden="true">
+                <span class="material-symbols-outlined">badge</span>
+            </div>
+            <div class="profile-id-content">
+                <p class="profile-id-label kannada-text">ಸದಸ್ಯರ ಐಡಿ</p>
+                <p id="profile-user-id" class="profile-id-value" aria-live="polite">Loading...</p>
+            </div>
+            <span class="material-symbols-outlined profile-id-check" aria-hidden="true">verified</span>
+        </section>
+
         <!-- Profile Card -->
         <section>
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
@@ -571,6 +582,10 @@
             if (state.user) {
                 document.getElementById('profile-name').value = state.userData?.name || state.user.displayName || '';
                 document.getElementById('profile-email').value = state.user.email || '';
+                const profileUserId = document.getElementById('profile-user-id');
+                if (profileUserId) {
+                    profileUserId.textContent = state.userData?.userId || state.user.uid || 'Not available';
+                }
             }
             // Load additional data from Firestore
             if (state.userData) {
