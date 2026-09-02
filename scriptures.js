@@ -9,6 +9,7 @@
       { id: 'guru-vandhana', kn: 'ಗುರು ವಂದನಾ', en: 'Guru Vandhana', icon: 'self_improvement' },
       { id: 'ganesha-atharvashirsha', kn: 'ಗಣೇಶ ಆಥರ್ವಶೀರ್ಷ', en: 'Ganesha Atharvashirsha', icon: 'temple_hindu' },
       { id: 'mahanyasa', kn: 'ಮಹಾನ್ಯಾಸ', en: 'Mahanyasa', icon: 'auto_awesome' },
+      { id: 'rudra-lagunyasa', kn: 'ರುದ್ರ ಲಘುನ್ಯಾಸ', en: 'Rudra Laghunyasa', icon: 'auto_fix_high' },
       { id: 'rudra-namakam', kn: 'ರುದ್ರ ನಮಕಮ್', en: 'Rudra Namaka', icon: 'menu_book' },
       { id: 'rudra-chamaka', kn: 'ರುದ್ರ ಚಮಕಮ್', en: 'Rudra Chamaka', icon: 'menu_book' },
       { id: 'purusha-suktha', kn: 'ಪುರುಷ ಸೂಕ್ತ', en: 'Purusha Suktha', icon: 'wb_sunny' },
