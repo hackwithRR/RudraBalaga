@@ -289,15 +289,44 @@
             <span class="material-symbols-outlined profile-id-check" aria-hidden="true">verified</span>
         </section>
 
+        <!-- First-time profile completion banner -->
+        <section id="first-time-banner" class="hidden">
+            <div class="p-4 rounded-xl border-2 border-amber-400 bg-amber-50 flex items-start gap-3">
+                <span class="material-symbols-outlined text-amber-600 shrink-0" style="font-variation-settings: 'FILL' 1;">waving_hand</span>
+                <div>
+                    <p id="ft-banner-title" data-i18n="profile.ftBannerTitle" class="font-bold text-amber-900 kannada-text">ರುದ್ರ ಬಳಗಕ್ಕೆ ಸ್ವಾಗತ! 🙏</p>
+                    <p id="ft-banner-text" data-i18n="profile.ftBannerText" class="text-sm text-amber-800 mt-0.5 kannada-text">ದಯವಿಟ್ಟು ಕೆಳಗೆ ನಿಮ್ಮ ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಉಳಿಸಿ.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile completion tracker -->
+        <section id="profile-tracker" class="hidden">
+            <div class="p-4 rounded-xl border border-outline-variant bg-surface-container-high">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <span id="tracker-label" data-i18n="profile.trackerLabel" class="text-sm font-bold text-on-surface flex items-center gap-1.5"><span class="material-symbols-outlined text-primary" style="font-size:18px;">data_usage</span><span>ಪ್ರೊಫೈಲ್ ಪೂರ್ಣತೆ</span></span>
+                    <span id="tracker-percent" class="text-sm font-bold text-primary">0%</span>
+                </div>
+                <div class="h-2.5 w-full rounded-full bg-surface-container-highest overflow-hidden">
+                    <div id="tracker-bar" class="h-full rounded-full transition-all duration-500" style="width:0%; background:linear-gradient(90deg,#8f1d1d,#c45a16);"></div>
+                </div>
+                <p id="tracker-hint" data-i18n="profile.trackerHint" class="text-xs text-on-surface-variant mt-2 kannada-text">ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ 100% ತಲುಪಿ.</p>
+            </div>
+        </section>
+
         <!-- Profile Card -->
         <section>
             <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
                 <!-- Profile Form -->
                 <form id="profile-form" class="space-y-4">
                     <div class="flex flex-col items-center mb-4">
-                        <div class="w-24 h-24 rounded-full bg-primary-container flex items-center justify-center mb-3 overflow-hidden" id="profile-preview">
+                        <div class="w-24 h-24 rounded-full bg-primary-container flex items-center justify-center mb-3 overflow-hidden relative" id="profile-preview">
                             <span class="material-symbols-outlined text-primary text-4xl" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+                            <span id="verified-chip" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-green-600 border-4 border-surface-container-lowest items-center justify-center" style="display:none;" title="Verified profile">
+                                <span class="material-symbols-outlined text-white" style="font-size:16px; font-variation-settings: 'FILL' 1;">check</span>
+                            </span>
                         </div>
+                        <p id="verified-label" class="-mt-1 mb-2 text-sm font-bold text-green-700 items-center gap-1" style="display:none;"><span class="material-symbols-outlined" style="font-size:16px; font-variation-settings: 'FILL' 1;">verified</span><span data-i18n="profile.verified">ಪರಿಶೀಲಿಸಲಾಗಿದೆ</span></p>
                         <input type="file" id="profile-pic-input" accept="image/*" class="hidden">
                         <button type="button" id="change-pic-btn" class="touch-active text-primary font-label-lg text-label-lg kannada-text">ಫೋಟೋ ಬದಲಿಸಿ</button>
                     </div>
@@ -311,7 +340,30 @@
                     </div>
                     <div>
                         <label for="profile-phone" class="block font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಫೋನ್ ನಂಬರ್</label>
-                        <input type="tel" id="profile-phone" class="w-full h-[60px] px-4 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg kannada-text" placeholder="+91XXXXXXXXXX">
+                        <div class="relative">
+                            <input type="tel" id="profile-phone" class="w-full h-[60px] px-4 pr-12 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg kannada-text" placeholder="+91XXXXXXXXXX">
+                            <span id="phone-verified-tick" class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-green-600 items-center justify-center shadow" style="display:none;" title="Phone verified">
+                                <span class="material-symbols-outlined text-white" style="font-size:18px; font-variation-settings: 'FILL' 1;">check</span>
+                            </span>
+                        </div>
+                        <!-- Truecaller 1-tap verification -->
+                        <div id="truecaller-verify-area" class="hidden mt-2.5">
+                            <button type="button" id="tc-verify-btn" class="w-full min-h-12 py-2.5 px-4 rounded-xl bg-[#0087ff] text-white font-bold text-body-md shadow flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                                <span id="tc-verify-label">Verify with Truecaller</span>
+                            </button>
+                            <p id="tc-fallback-note" class="hidden text-xs text-on-surface-variant mt-2 leading-snug"></p>
+                        </div>
+                        <!-- Fallback OTP verification (when Truecaller unavailable) -->
+                        <div id="otp-fallback-area" class="hidden mt-2.5 p-3 rounded-xl bg-surface-container-high border border-outline-variant">
+                            <p class="text-xs text-on-surface-variant mb-2" data-i18n="profile.otpIntro">ನಿಮ್ಮ ಸಂಖ್ಯೆಗೆ ಕಳುಹಿಸಿದ 6-ಅಂಕಿಯ OTP ನಮೂದಿಸಿ (ಪ್ರತಿ ದಿನ 3 ಪ್ರಯತ್ನಗಳು).</p>
+                            <div class="flex gap-2">
+                                <input type="text" id="otp-input" inputmode="numeric" maxlength="6" placeholder="••••••" class="flex-1 h-11 px-3 rounded-lg border-2 border-stone-300 bg-white text-on-surface text-lg tracking-[0.35em] font-bold">
+                                <button type="button" id="otp-verify-btn" class="min-h-11 px-4 rounded-lg bg-primary text-on-primary font-bold text-sm touch-active">OK</button>
+                                <button type="button" id="otp-resend-btn" class="min-h-11 px-3 rounded-lg bg-surface-container-highest text-on-surface-variant text-sm" title="Resend OTP">↻</button>
+                            </div>
+                            <p id="otp-status" class="hidden text-xs mt-2"></p>
+                        </div>
                     </div>
                     <div>
                         <label for="profile-dob" class="block font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಜನ್ಮ ತಾರೆ</label>
@@ -472,6 +524,7 @@
     <script src="brand-video.js"></script>
     <script>
         // State
+        function rbT(en, kn) { return (window.RBLang && typeof RBLang.language === 'function' && RBLang.language() === 'en') ? en : kn; }
         const state = {
             user: null,
             userData: null
@@ -560,10 +613,14 @@
                         firebaseDb.collection('users').doc(user.uid).onSnapshot(doc => {
                             if (doc.exists) {
                                 state.userData = doc.data();
+                                state.profileIncomplete = doc.data().profileComplete === false;
                                 loadProfileData();
+                                updateFirstTimeBanner();
                             } else {
                                 // User document doesn't exist yet
+                                state.profileIncomplete = true;
                                 loadProfileData();
+                                updateFirstTimeBanner();
                             }
                         });
                     } catch (error) {
@@ -575,6 +632,102 @@
                     window.location.href = 'login';
                 }
             });
+        }
+
+        // First-time profile completion banner
+        // NOTE: window.RBLang may not exist yet (language-switch.js loads later),
+        // so pre-create the hook array; language-switch preserves it and fires
+        // it during init and on every toggle.
+        window.RBLang = window.RBLang || {};
+        window.RBLang._onChange = window.RBLang._onChange || [];
+        window.RBLang._onChange.push(function () { updateFirstTimeBanner(); });
+        function updateFirstTimeBanner() {
+            const banner = document.getElementById('first-time-banner');
+            if (!banner) return;
+            if (state.profileIncomplete) {
+                state.wasFirstTime = true;
+                // Text lives in the static HTML with data-i18n keys; just make
+                // sure it's translated in the current language, then reveal.
+                if (window.RBLang && window.RBLang._applyActiveLang) window.RBLang._applyActiveLang();
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        // Profile completion tracker + verified badge
+        var TRACKER_FIELDS = ['name', 'phone', 'dob', 'address', 'emergencyContactName', 'emergencyContact', 'emergencyContactRelation'];
+        function completionPercent() {
+            // Phone verified via Truecaller/OTP ⇒ profile fully verified.
+            if (state.userData && state.userData.phoneVerified) return 100;
+            var filled = TRACKER_FIELDS.filter(function (f) {
+                var el = document.getElementById('profile-' + ({ name: 'name', phone: 'phone', dob: 'dob', address: 'address', emergencyContactName: 'emergency-name', emergencyContact: 'emergency-contact', emergencyContactRelation: 'emergency-relation' }[f]));
+                return el && String(el.value || '').trim() !== '';
+            }).length;
+            var hasPhoto = state.userData && state.userData.photoURL;
+            return Math.round(((filled + (hasPhoto ? 1 : 0)) / (TRACKER_FIELDS.length + 1)) * 100);
+        }
+        function updateProfileTracker() {
+            var section = document.getElementById('profile-tracker');
+            if (!section) return;
+            var pct = completionPercent();
+            var complete = pct >= 100;
+            section.classList.toggle('hidden', complete);
+            if (!complete) {
+                var bar = document.getElementById('tracker-bar');
+                var lbl = document.getElementById('tracker-percent');
+                if (bar) bar.style.width = pct + '%';
+                if (lbl) lbl.textContent = pct + '%';
+            }
+            var chip = document.getElementById('verified-chip');
+            var vlbl = document.getElementById('verified-label');
+            if (chip) chip.style.display = complete ? 'flex' : 'none';
+            if (vlbl) vlbl.style.display = complete ? 'flex' : 'none';
+        }
+        var trackerForm = document.getElementById('profile-form');
+        if (trackerForm) trackerForm.addEventListener('input', updateProfileTracker);
+
+        // ---- Phone verification (Truecaller 1-tap + OTP fallback) ----
+        function rbTV(en, kn) { return (window.RBLang && window.RBLang.language && window.RBLang.language() === 'en') ? en : kn; }
+        function phoneVerifiedUI(on) {
+            var tick = document.getElementById('phone-verified-tick');
+            var area = document.getElementById('truecaller-verify-area');
+            var otp = document.getElementById('otp-fallback-area');
+            if (tick) tick.style.display = on ? 'flex' : 'none';
+            if (area) area.classList.toggle('hidden', on);
+            if (otp && on) otp.classList.add('hidden');
+        }
+        function isTcSdkUsable() {
+            try {
+                return typeof window.TruecallerSDK !== 'undefined' &&
+                    typeof window.TruecallerSDK.isUsable === 'function' &&
+                    window.TruecallerSDK.isUsable();
+            } catch (e) { return false; }
+        }
+        function markPhoneVerified(phone) {
+            if (!state.user) return;
+            state.userData.phoneVerified = true;
+            if (phone) state.userData.phone = phone;
+            phoneVerifiedUI(true);
+            updateProfileTracker(); // verified ⇒ 100% + badge
+        }
+        async function initPhoneVerification() {
+            var btn = document.getElementById('tc-verify-btn');
+            if (!btn) return;
+            var verified = !!(state.userData && state.userData.phoneVerified);
+            phoneVerifiedUI(verified);
+            if (verified) return;
+            var label = document.getElementById('tc-verify-label');
+            var note = document.getElementById('tc-fallback-note');
+            if (isTcSdkUsable()) {
+                if (label) label.textContent = rbTV('Verify with Truecaller', 'ಟ್ರೂಕಾಲರ್‌ನೊಂದಿಗೆ ಪರಿಶೀಲಿಸಿ');
+            } else if (label) {
+                label.textContent = rbTV('Verify my phone number', 'ನನ್ನ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ');
+                if (note) {
+                    note.textContent = rbTV('Tap to receive a 6-digit OTP to verify your number.', 'ನಿಮ್ಮ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಲು 6-ಅಂಕಿಯ OTP ಪಡೆಯಲು ಟ್ಯಾಪ್ ಮಾಡಿ.');
+                    note.classList.remove('hidden');
+                }
+            }
         }
 
         // Load profile data
@@ -601,9 +754,36 @@
                     document.getElementById('profile-preview').innerHTML = `<img src="${state.userData.photoURL}" class="w-full h-full object-cover" alt="Profile">`;
                 }
             }
+            updateProfileTracker();
         }
 
         // Setup form submit
+        // Normalize a phone number for uniqueness checks: digits only.
+        function normalizePhone(p) { return String(p || '').replace(/\D/g, ''); }
+
+        // Atomically claim a phone number for this user via a phoneIndex
+        // collection (doc id = normalized number -> uid). Returns a promise;
+        // rejects with an Error if another user already holds the number.
+        function claimPhone(normalized, previousNormalized) {
+            const db = firebaseDb;
+            return db.runTransaction(async (tx) => {
+                const ref = db.collection('phoneIndex').doc(normalized);
+                const snap = await tx.get(ref);
+                if (snap.exists && snap.data().uid !== state.user.uid) {
+                    throw new Error('PHONE_TAKEN');
+                }
+                tx.set(ref, { uid: state.user.uid, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                // Release the old number if the user changed it
+                if (previousNormalized && previousNormalized !== normalized) {
+                    const oldRef = db.collection('phoneIndex').doc(previousNormalized);
+                    const oldSnap = await tx.get(oldRef);
+                    if (oldSnap.exists && oldSnap.data().uid === state.user.uid) {
+                        tx.delete(oldRef);
+                    }
+                }
+            });
+        }
+
         document.getElementById('profile-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -617,12 +797,52 @@
                 emergencyContactRelation: document.getElementById('profile-emergency-relation').value
             };
             
-            if (state.user) {
-                firebaseDb.collection('users').doc(state.user.uid).set({
-                    ...state.userData,
-                    ...profileData
-                }, { merge: true }).then(() => {
-                    alert('Profile saved successfully!');
+            if (!state.user) return;
+            const saveBtn = document.querySelector('#profile-form button[type="submit"]') || document.getElementById('save-profile-btn');
+            if (saveBtn) saveBtn.disabled = true;
+
+            const newNorm = normalizePhone(profileData.phone);
+            const oldNorm = normalizePhone(state.userData && state.userData.phone);
+
+            const doSave = () => firebaseDb.collection('users').doc(state.user.uid).set({
+                ...state.userData,
+                ...profileData,
+                profileComplete: true
+            }, { merge: true }).then(() => {
+                // Keep local photoURL state in sync so the tracker counts it
+                if (!state.userData) state.userData = {};
+                state.userData.photoURL = state.userData.photoURL || document.querySelector('#profile-preview img')?.src || '';
+                state.userData.phone = profileData.phone;
+                state.profileIncomplete = false;
+                updateFirstTimeBanner();
+                updateProfileTracker();
+                if (state.wasFirstTime) {
+                    state.wasFirstTime = false;
+                    alert(window.rbT ? rbT('Profile completed! Taking you to the home page…', 'ಪ್ರೊಫೈಲ್ ಪೂರ್ಣಗೊಂಡಿದೆ! ಮುಖಪುಟಕ್ಕೆ ಕರ್ತಲಾಗುತ್ತಿದೆ…') : 'ಪ್ರೊಫೈಲ್ ಪೂರ್ಣಗೊಂಡಿದೆ!');
+                    window.location.href = 'index';
+                } else {
+                    alert(window.rbT ? rbT('Profile saved successfully!', 'ಪ್ರೊಫೈಲ್ ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ!') : 'Profile saved successfully!');
+                }
+            });
+
+            const finish = () => { if (saveBtn) saveBtn.disabled = false; };
+
+            // Enforce one-user-per-mobile-number (skip check when empty/unchanged)
+            if (!newNorm || newNorm === oldNorm) {
+                doSave().then(finish).catch((err) => {
+                    finish();
+                    console.error('Profile save failed:', err);
+                    alert(window.rbT ? rbT('Could not save profile. Please try again.', 'ಪ್ರೊಫೈಲ್ ಉಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.') : 'Could not save profile. Please try again.');
+                });
+            } else {
+                claimPhone(newNorm, oldNorm).then(() => doSave()).then(finish).catch((err) => {
+                    finish();
+                    if (err && (err.message === 'PHONE_TAKEN' || String(err.message || err).includes('PHONE_TAKEN'))) {
+                        alert(window.rbT ? rbT('This mobile number is already used by another member. Please enter a different number.', 'ಈ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಬ್ಬ ಸದಸ್ಯರು ಬಳಸುತ್ತಿದ್ದಾರೆ. ದಯವಿಟ್ಟು ಬೇರೆ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ.') : 'This mobile number is already used by another member. Please enter a different number.');
+                    } else {
+                        console.error('Profile save failed:', err);
+                        alert(window.rbT ? rbT('Could not save profile. Please try again.', 'ಪ್ರೊಫೈಲ್ ಉಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.') : 'Could not save profile. Please try again.');
+                    }
                 });
             }
         });

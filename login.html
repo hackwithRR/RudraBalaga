@@ -501,12 +501,14 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                 role: 'member',
                 name: user.displayName || 'ಭಕ್ತ',
                 authProvider: user.phoneNumber ? 'phone' : 'google',
-                userId: userId
+                userId: userId,
+                profileComplete: false
             }).then(() => {
-                window.location.href = 'index';
+                // First-time user: send to profile to fill all details
+                window.location.href = 'profile';
             }).catch(error => {
-                // If Firebase fails, still redirect to index for demo
-                window.location.href = 'index';
+                // If Firebase fails, still redirect to profile for demo
+                window.location.href = 'profile';
             });
         }
         

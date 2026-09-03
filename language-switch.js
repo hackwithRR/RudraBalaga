@@ -451,6 +451,12 @@
         // Profile (profile.html)
         'profile.heading': { kn: 'ನನ್ನ ಪ್ರೊಫೈಲ್', en: 'My Profile' },
         'profile.memberId': { kn: 'ಸದಸ್ಯರ ಐಡಿ', en: 'Member ID' },
+        'profile.ftBannerTitle': { kn: 'ರುದ್ರ ಬಳಗಕ್ಕೆ ಸ್ವಾಗತ! 🙏', en: 'Welcome to Rudra Balaga! 🙏' },
+        'profile.ftBannerText': { kn: 'ದಯವಿಟ್ಟು ಕೆಳಗೆ ನಿಮ್ಮ ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಉಳಿಸಿ.', en: 'Please fill in all your details below and save your profile.' },
+        'profile.ftDone': { kn: 'ಪ್ರೊಫೈಲ್ ಪೂರ್ಣಗೊಂಡಿದೆ! ಮುಖಪುಟಕ್ಕೆ ಕರ್ತಲಾಗುತ್ತಿದೆ…', en: 'Profile completed! Taking you to the home page…' },
+        'profile.trackerLabel': { kn: 'ಪ್ರೊಫೈಲ್ ಪೂರ್ಣತೆ', en: 'Profile completion' },
+        'profile.trackerHint': { kn: 'ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ 100% ತಲುಪಿ.', en: 'Fill in all your details to reach 100%.' },
+        'profile.verified': { kn: 'ಪರಿಶೀಲಿಸಲಾಗಿದೆ', en: 'Verified' },
         'profile.name': { kn: 'ಹೆಸರು', en: 'Name' },
         'profile.contact': { kn: 'ಸಂಪರ್ಕ ಮಾಹಿತಿ', en: 'Contact Details' }
     };

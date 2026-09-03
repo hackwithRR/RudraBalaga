@@ -22,8 +22,47 @@
         donation_rejected:  { icon: 'cancel',             label: 'Donation rejected' },
         bus_info:           { icon: 'directions_bus',     label: 'Bus update' },
         announcement:       { icon: 'campaign',           label: 'Announcement' },
-        reminder:           { icon: 'alarm',              label: 'Reminder' }
+        reminder:           { icon: 'alarm',              label: 'Reminder' },
+        profile:            { icon: 'account_circle',     label: 'Profile reminder' }
     };
+
+    // Fields counted toward profile completion (kept in sync with profile.html)
+    var PROFILE_FIELDS = ['name', 'phone', 'dob', 'address', 'emergencyContactName', 'emergencyContact', 'emergencyContactRelation', 'photoURL'];
+
+    function profileCompletionPercent(data) {
+        if (!data) return 0;
+        var filled = 0;
+        PROFILE_FIELDS.forEach(function (f) {
+            var v = data[f];
+            if (v !== undefined && v !== null && String(v).trim() !== '') filled++;
+        });
+        return Math.round((filled / PROFILE_FIELDS.length) * 100);
+    }
+
+    // Daily-deduped in-app + push reminder to finish the profile.
+    // Doc ID pins one reminder per user per day, so page loads never spam.
+    function checkProfileReminder(uid) {
+        var database = db();
+        if (!database || !uid || state.isAdmin) return;
+        try {
+            database.collection('users').doc(uid).get().then(function (snap) {
+                var data = snap.exists ? snap.data() : {};
+                var pct = profileCompletionPercent(data);
+                if (pct >= 100) return; // complete — nothing to remind
+                var day = new Date().toISOString().slice(0, 10);
+                var docId = 'profile-reminder-' + uid + '-' + day;
+                writeForUid(uid, {
+                    type: 'profile',
+                    title: 'Complete your profile / ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಪೂರ್ಣಗೊಳಿಸಿ',
+                    body: 'Your profile is ' + pct + '% complete. Fill in all details so admins can reach you. / ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ' + pct + '% ಪೂರ್ಣವಾಗಿದೆ. ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ.'
+                }, docId).catch(function (err) {
+                    console.warn('[Notifications] profile reminder failed:', err && err.message);
+                });
+            }).catch(function (err) {
+                console.warn('[Notifications] profile reminder read failed:', err && err.message);
+            });
+        } catch (e) { /* fail-soft */ }
+    }
 
     var BATCH_LIMIT = 450; // Firestore batch write limit is 500; keep headroom
 
@@ -922,6 +961,7 @@
         state.firstSnapshotSeen = false;
         try { mountBell(); } catch (e) { /* header layout differences */ }
         attachListener();
+        checkProfileReminder(opts.uid);
         // If the browser permission was already granted, register the token
         // automatically so push works without tapping the panel button again.
         autoRegisterPush();
@@ -935,6 +975,8 @@
         notifyAdmins: notifyAdmins,
         checkEventReminders: checkEventReminders,
         enablePush: enablePush,
+        profileCompletionPercent: profileCompletionPercent,
+        checkProfileReminder: checkProfileReminder,
         // exposed for tests
         _internal: {
             reminderDocId: reminderDocId,
