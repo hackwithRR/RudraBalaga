@@ -744,6 +744,34 @@
             flex-shrink: 0;
         }
 
+        /* --- Modern screenshot upload widget --- */
+        .pay-upload-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            border: 2px dashed #d4b8a5;
+            border-radius: 1rem;
+            background: #fffaf5;
+            padding: 1.4rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.1s;
+        }
+        .pay-upload-zone:hover, .pay-upload-zone.dragover { background: #fff3e6; border-color: #c45a16; }
+        .pay-upload-zone:active { transform: scale(0.985); }
+        .pay-upload-zone .pay-upload-icon { font-size: 2.2rem !important; color: #c45a16; }
+        .pay-upload-title { font-weight: 700; color: #57534e; }
+        .pay-upload-sub { font-size: 0.75rem; color: #a8a29e; max-width: 34ch; }
+        .pay-upload-preview { display: flex; align-items: center; gap: 0.75rem; border: 1px solid #bbe3c0; background: #f2faf3; border-radius: 1rem; padding: 0.6rem 0.75rem; }
+        .pay-upload-preview.hidden { display: none; }
+        .pay-upload-preview img { width: 3.25rem; height: 3.25rem; object-fit: cover; border-radius: 0.6rem; border: 1px solid #d6e8d8; flex-shrink: 0; }
+        .pay-upload-filename { font-size: 0.85rem; font-weight: 600; color: #1f2937; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pay-upload-size { font-size: 0.72rem; color: #6b7280; }
+        .pay-upload-remove { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 999px; background: #fee2e2; color: #b91c1c; flex-shrink: 0; }
+        .pay-upload-error { font-size: 0.8rem; color: #b91c1c; margin-top: 0.4rem; }
+        .pay-upload-error.hidden { display: none; }
+
         body > div.fixed.inset-0:not(#loader-panel) {
             background: rgba(36, 27, 22, 0.56) !important;
             backdrop-filter: blur(6px);
@@ -854,6 +882,7 @@
         .payment-step-label { display: inline-flex; align-items: center; gap: 0.5rem; }
         .payment-step-num { display: inline-flex; align-items: center; justify-content: center; width: 1.35rem; height: 1.35rem; border-radius: 999px; background: #8f4e00; color: #ffffff; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
     </style>
+<script src="help-modal.js"></script>
 </head>
 <body class="font-body-md text-body-md pb-32">
 
@@ -966,7 +995,7 @@
         <div class="flex justify-between items-center px-4 h-16">
             <div class="flex items-center gap-3">
                 <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
-                <h1 class="text-xl font-bold text-primary kannada-text">ರುದ್ರ ಬಳಗ</h1>
+                <h1 class="text-xl font-bold text-primary kannada-text" data-i18n="brand.title">ರುದ್ರ ಬಳಗ</h1>
             </div>
             <div class="flex items-center gap-2">
                 <div class="text-right">
@@ -995,7 +1024,7 @@
                     <div class="home-hero-text">
                         <p id="home-greeting-label" class="home-hero-greeting">ಶುಭ ದಿನ</p>
                         <h1 id="home-title" class="home-hero-title kannada-text">ಸ್ವಾಗತ, ಭಕ್ತರೇ</h1>
-                        <p class="home-hero-sub kannada-text">ರುದ್ರ ಬಳಗ ಸಮುದಾಯದಲ್ಲಿ ನಿಮಗೆ ಹೃತ್ಪೂರ್ವಕ ಸ್ವಾಗತ</p>
+                        <p class="home-hero-sub kannada-text" data-i18n="home.subtitle">ರುದ್ರ ಬಳಗ ಸಮುದಾಯದಲ್ಲಿ ನಿಮಗೆ ಹೃತ್ಪೂರ್ವಕ ಸ್ವಾಗತ</p>
                     </div>
                 </div>
             </div>
@@ -1004,7 +1033,7 @@
         <div id="mobile-events-scroll-hint" class="hidden" aria-label="Scroll down to see ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮs">
             <span class="material-symbols-outlined scroll-hint-arrow" aria-hidden="true">south</span>
             <span class="scroll-hint-text">Scroll down to see upcoming events</span>
-            <span class="scroll-hint-sub kannada-text">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮಗಳಿಗಾಗಿ ಕೆಳಗೆ ಸ್ಕ್ರಾಲ್ ಮಾಡಿ</span>
+            <span class="scroll-hint-sub kannada-text" data-i18n="home.scrollHint">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮಗಳಿಗಾಗಿ ಕೆಳಗೆ ಸ್ಕ್ರಾಲ್ ಮಾಡಿ</span>
         </div>
 
         <!-- Announcements Section -->
@@ -1015,8 +1044,8 @@
                         <span class="announcement-icon material-symbols-outlined text-secondary-container" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
                         <div>
                             <p class="text-xs font-bold uppercase tracking-[0.16em] text-secondary-container">Latest update</p>
-                            <h2 class="font-headline-sm text-headline-sm text-on-surface mt-1 kannada-text">ಘೋಷಣೆಗಳು</h2>
-                            <p class="text-sm text-on-surface-variant mt-1 kannada-text">ನಿಮಗಾಗಿ ಇತ್ತೀಚಿನ ಮಾಹಿತಿ</p>
+                            <h2 class="font-headline-sm text-headline-sm text-on-surface mt-1 kannada-text" data-i18n="home.ann.title">ಘೋಷಣೆಗಳು</h2>
+                            <p class="text-sm text-on-surface-variant mt-1 kannada-text" data-i18n="home.ann.subtitle">ನಿಮಗಾಗಿ ಇತ್ತೀಚಿನ ಮಾಹಿತಿ</p>
                         </div>
                     </div>
                     <button id="view-all-announcements" aria-label="View ಎಲ್ಲಾ ಪ್ರಕಟಣೆಗಳು" class="touch-active announcement-view-all flex items-center justify-center w-11 h-11 rounded-full bg-white text-secondary-container shadow-sm">
@@ -1024,7 +1053,7 @@
                     </button>
                 </div>
                 <div id="announcements-list" class="space-y-3">
-                    <p class="text-on-surface-variant kannada-text">ಘೋಷಣೆಗಳು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
+                    <p class="text-on-surface-variant kannada-text" data-i18n="home.ann.loading">ಘೋಷಣೆಗಳು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
                 </div>
             </div>
             <button id="announcements-collapsed-bar" type="button" aria-label="Open announcements">
@@ -1039,7 +1068,7 @@
                 <span class="home-section-head-icon material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_upcoming</span>
                 <div class="min-w-0">
                     <p class="home-section-eyebrow">Coming up</p>
-                    <h2 class="home-section-title font-headline-sm text-headline-sm kannada-text">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ</h2>
+                    <h2 class="home-section-title font-headline-sm text-headline-sm kannada-text" data-i18n="home.upcoming.title">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ</h2>
                 </div>
             </div>
             <div id="events-list" class="grid grid-cols-1 gap-6">
@@ -1181,22 +1210,22 @@
             <!-- Home (Active) -->
             <a class="app-nav-item is-active" href="index" aria-current="page">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
-                <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.home">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
             <a class="app-nav-item" href="events">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
-                <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮ</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.events">ಕಾರ್ಯಕ್ರಮ</span>
             </a>
             <!-- Bus Routes -->
             <a class="app-nav-item" href="bus-routes">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus">directions_bus</span>
-                <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.bus">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Essentials -->
             <a class="app-nav-item" href="essentials">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="checklist">checklist</span>
-                <span class="app-nav-label kannada-text">ಅಗತ್ಯಗಳು</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.essentials">ಅಗತ್ಯಗಳು</span>
             </a>
         </div>
     </nav>
@@ -1256,9 +1285,9 @@
                   document.getElementById("bar-meter").style.width = progress + "%";
                   
                   if(progress > 20 && progress < 65) {
-                      document.getElementById("load-state").textContent = "ದಿವ್ಯ ಮ್ಯಾಟ್ರಿಕ್ಸ್ ರಚನೆ";
+                      document.getElementById("load-state").textContent = rbT('Divya Matrix Structure', 'ದಿವ್ಯ ಮ್ಯಾಟ್ರಿಕ್ಸ್ ರಚನೆ');
                   } else if(progress >= 65) {
-                      document.getElementById("load-state").textContent = "ಅಕ್ಷಗಳನ್ನು ಸ್ಥಿರಪಡಿಸುತ್ತಿದೆ";
+                      document.getElementById("load-state").textContent = rbT('Stabilizing the syllables', 'ಅಕ್ಷಗಳನ್ನು ಸ್ಥಿರಪಡಿಸುತ್ತಿದೆ');
                   }
               }
           }, "-=0.8");
@@ -1269,7 +1298,7 @@
             duration: 0.5,
             ease: "power2.out",
             onStart: () => {
-                document.getElementById("load-state").textContent = "ತ್ರಿಶುಲ್ ಸ್ಥಾಪಿತ";
+                document.getElementById("load-state").textContent = rbT('Trishul established', 'ತ್ರಿಶುಲ್ ಸ್ಥಾಪಿತ');
             }
         }, "-=0.4")
         .to("#bindu", {
@@ -1352,20 +1381,32 @@
             }
         }
 
-        // Apply time-of-day greeting to the welcome hero
+        // Apply time-of-day greeting to the welcome hero.
+        // Locale-aware: shows the user's NAME in both languages; only the
+        // surrounding words switch between Kannada and English.
         function applyGreeting(name) {
-            const displayName = name || 'ಭಕ್ತರೇ';
+            const isEn = window.RBLang && typeof RBLang.language === 'function' && RBLang.language() === 'en';
+            const displayName = name || (isEn ? 'Devotee' : 'ಭಕ್ತರೇ');
+            // Remember the last greeting so the language-switch hook can
+            // re-render it in the new language (name preserved).
+            window.__rblGreeting = { fn: applyGreeting, name: name };
             const hour = new Date().getHours();
             let label, icon;
-            if (hour < 12) { label = 'ಶುಭೋದಯ'; icon = 'wb_sunny'; }
-            else if (hour < 17) { label = 'ಶುಭ ಮಧ್ಯಾಹ್ನ'; icon = 'light_mode'; }
-            else { label = 'ಶುಭ ಸಂಜೆ'; icon = 'dark_mode'; }
+            if (hour < 12) { label = isEn ? 'Good morning' : 'ಶುಭೋದಯ'; icon = 'wb_sunny'; }
+            else if (hour < 17) { label = isEn ? 'Good afternoon' : 'ಶುಭ ಮಧ್ಯಾಹ್ನ'; icon = 'light_mode'; }
+            else { label = isEn ? 'Good evening' : 'ಶುಭ ಸಂಜೆ'; icon = 'dark_mode'; }
 
             const labelEl = document.getElementById('home-greeting-label');
             const titleEl = document.getElementById('home-title');
             const iconEl = document.getElementById('home-hero-icon-span');
+            // Mark personalized so language-switch stops auto-touching these
+            // elements (the user's name must never be translated/mangled).
+            if (name) {
+                if (labelEl) labelEl.setAttribute('data-pers', '1');
+                if (titleEl) titleEl.setAttribute('data-pers', '1');
+            }
             if (labelEl) labelEl.textContent = label;
-            if (titleEl) titleEl.textContent = `ಸ್ವಾಗತ, ${displayName}`;
+            if (titleEl) titleEl.textContent = isEn ? `Welcome, ${displayName}` : `ಸ್ವಾಗತ, ${displayName}`;
             if (iconEl) iconEl.textContent = icon;
         }
 
@@ -1597,7 +1638,7 @@
             // Events nav button now links to events directly
             
             // Help button
-            document.getElementById('help-btn').addEventListener('click', showHelpModal);
+            document.getElementById('help-btn').addEventListener('click', function(){ if (window.showHelpModal) window.showHelpModal(); });
         }
         
 // Show donation payment modal
@@ -1617,10 +1658,10 @@
                                 <span id="bank-details-chevron" class="material-symbols-outlined text-on-surface-variant transition-transform">expand_more</span>
                             </button>
                             <div id="bank-details-body" class="hidden px-4 pb-4 space-y-1 text-sm text-on-surface-variant">
-                                <p>Bank: <strong class="text-on-surface">${bankTransfer.bankName || 'Not specified'}</strong></p>
-                                <p>Account holder: <strong class="text-on-surface">${bankTransfer.accountName || 'Not specified'}</strong></p>
+                                <p>Bank: <strong class="text-on-surface">${bankTransfer.bankName || rbT('Not specified','ವಿವರವಿಲ್ಲ')}</strong></p>
+                                <p>Account holder: <strong class="text-on-surface">${bankTransfer.accountName || rbT('Not specified','ವಿವರವಿಲ್ಲ')}</strong></p>
                                 <p class="break-all">Account number: <strong class="text-on-surface select-all">${bankTransfer.accountNumber}</strong></p>
-                                <p>IFSC: <strong class="text-on-surface select-all">${bankTransfer.ifscCode || 'Not specified'}</strong></p>
+                                <p>IFSC: <strong class="text-on-surface select-all">${bankTransfer.ifscCode || rbT('Not specified','ವಿವರವಿಲ್ಲ')}</strong></p>
                             </div>
                         </div>` : '';
             const modal = document.createElement('div');
@@ -1660,10 +1701,11 @@
                             </div>
                         </div>
                         <form id="payment-proof-form" class="space-y-3 pt-4 border-t border-outline-variant">
-                            <p class="payment-step-label font-label-lg text-label-lg text-on-surface"><span class="payment-step-num">2</span>Submit your payment proof</p>
-                            <div>
-                                <label for="payment-screenshot" class="block font-label-md text-label-md text-on-surface mb-1.5">Transaction screenshot <span class="text-error">*</span></label>
-                                <input id="payment-screenshot" type="file" accept="image/*" required class="w-full px-3 py-2.5 rounded-xl border border-outline-variant text-on-surface bg-white">
+                            <p class="payment-step-label font-label-lg text-label-lg text-on-surface"><span class="payment-step-num">2</span>${rbT('Submit your payment proof','ನಿಮ್ಮ ಪಾವತಿ ಪುರಾವೆ ಸಲ್ಲಿಸಿ')}</p>
+                            <p class="text-sm text-on-surface-variant -mt-1">${rbT('Pay first using a method above, then upload the payment success screenshot here. Admins will verify it.','ಮೊದಲು ಮೇಲಿನ ಯಾವುದೇ ವಿಧಾನವನ್ನು ಬಳಸಿ ಪಾವತಿಸಿ, ನಂತರ ಪಾವತಿ ಯಶಸ್ಸಿನ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಅನ್ನು ಇಲ್ಲಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ಅಡ್ಮಿನ್‌ಗಳು ಪರಿಶೀಲಿಸುತ್ತಾರೆ.')}</p>
+                            <div data-upload-widget>
+                                <label for="payment-screenshot" class="block font-label-md text-label-md text-on-surface mb-1.5">${rbT('Transaction screenshot','ವಹಿವಾಟಿನ ಸ್ಕ್ರೀನ್‌ಶಾಟ್')} <span class="text-error">*</span></label>
+                                <input id="payment-screenshot" type="file" accept="image/*" required class="sr-only">
                             </div>
                             <div>
                                 <label for="payment-utr" class="block font-label-md text-label-md text-on-surface mb-1.5">UTR / Transaction reference</label>
@@ -1684,6 +1726,7 @@
                 upiLink.href = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(appName)}&am=${encodeURIComponent(amt)}&cu=INR&tn=${encodeURIComponent(`DONATION_${state.user?.uid || 'anon'}_${Date.now()}`)}`;
             }
             amountInput.addEventListener('input', updateUpiUrl);
+            wireScreenshotPicker('payment-screenshot');
             // Close when tapping the backdrop
             modal.addEventListener('click', (clickEvent) => {
                 if (clickEvent.target === modal) modal.remove();
@@ -1751,66 +1794,6 @@
         }
 
         // Show help modal
-        function showHelpModal() {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-xl p-6 w-full max-w-lg">
-                    <div class="flex justify-between items-center mb-4">
-<h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ</h3>
-                        <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="p-4 bg-surface-container-high rounded-lg">
-<h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
-<p class="text-on-surface font-body-lg text-body-lg kannada-text">ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
-                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
-                                <li>ಇವೆಂಟ್ </li>
-                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ</li>
-                                <li>ಖಾತೆ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯೆಗಳು</li>
-                                <li>ತಾಂತ್ರಿಕ ಸಹಾಯ</li>
-                            </ul>
-                        </div>
-                        <div id="admins-list" class="space-y-2">
-                            <p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            document.getElementById('close-help-modal').addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-            
-            // Fetch admin users from Firestore
-            if (typeof firebaseDb !== 'undefined' && firebaseDb) {
-                try {
-                    firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
-                        const adminsList = document.getElementById('admins-list');
-                        if (snapshot.empty) {
-                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಯಾವ ಅಡ್ಮಿನ್ ಲಭ್ಯವಿಲ್ಲ</p>';
-                            return;
-                        }
-                        
-                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕಿಸಿ:</p>';
-                        snapshot.forEach(doc => {
-                            const admin = doc.data();
-                            const phone = admin.phone || admin.email || 'N/A';
-                            const name = admin.name || 'ಅಡ್ಮಿನ್';
-                            html += `
-                                <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
-                                    <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
-                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg kannada-text">${phone}</a>
-                                </div>
-                            `;
-                        });
-                        adminsList.innerHTML = html;
-                    });
-                } catch (error) {
-                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</p>';
-                }
-            }
-        }
         
         // Show scripts modal — unified sacred scriptures e-reader
         function showScriptsModal() {
@@ -2434,10 +2417,10 @@
             const travelDates = [event.departureDate, event.returnDate].filter(Boolean);
             const travelRange = travelDates.length === 2
                 ? `${formatDate(travelDates[0])} - ${formatDate(travelDates[1])}`
-                : travelDates.length === 1 ? formatDate(travelDates[0]) : 'Not specified';
+                : travelDates.length === 1 ? formatDate(travelDates[0]) : rbT('Not specified','ವಿವರವಿಲ್ಲ');
             const busRoutes = getEventBusRoutes(event.id);
             const registrationClosed = isRegistrationClosed(event);
-            const registrationDeadlineText = getRegistrationDeadline(event) ? formatDate(getRegistrationDeadline(event)) : 'Not specified';
+            const registrationDeadlineText = getRegistrationDeadline(event) ? formatDate(getRegistrationDeadline(event)) : rbT('Not specified','ವಿವರವಿಲ್ಲ');
 
             // RSVP buttons (attending is hidden when registration has closed)
             const rsvpButtonsHtml = (allowAttending) => `<div class="grid grid-cols-1 md:grid-cols-2 gap-3">${allowAttending ? `<button data-rsvp-status="attending" data-event-id="${event.id}" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-2 h-14 text-body-lg"><span class="material-symbols-outlined">check_circle</span>Attending</button>` : ''}<button data-rsvp-status="not-attending" data-event-id="${event.id}" class="touch-active w-full bg-surface-container-highest text-on-surface-variant font-bold py-4 rounded-xl flex items-center justify-center gap-2 h-14 text-body-lg">Not attending</button></div>`;
@@ -2519,10 +2502,21 @@
                 }
             }
             const mapHtml = (event.type === 'Bangalore' || event.type === 'Outstation') && event.location ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2">Open in Google Maps</p></a></div>` : '';
-            const outstationHtml = event.type === 'Outstation' ? `<div class="mt-4 p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container"><p class="font-label-lg text-label-lg text-secondary mb-2">Outstation dates</p><p class="font-label-md text-label-md text-secondary">Event dates</p><p class="font-body-lg text-body-lg text-on-surface">${eventDateRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Departure to Bangalore arrival</p><p class="font-body-lg text-body-lg text-on-surface">${travelRange}</p><p class="font-label-md text-label-md text-secondary mt-2">Last date to register</p><p class="font-body-lg text-body-lg ${registrationClosed ? 'text-error font-bold' : 'text-on-surface'}">${registrationDeadlineText}</p>${registrationClosed ? '<p class="font-label-md text-label-md text-error mt-1">Registration is over</p>' : ''}</div>` : '';
+            const outstationHtml = event.type === 'Outstation' ? `<div class="mt-4 p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container"><p class="font-label-lg text-label-lg text-secondary mb-2">${rbT('Outstation dates','ಹೊರಊರಿನ ದಿನಾಂಕಗಳು')}</p><p class="font-label-md text-label-md text-secondary">${rbT('Event dates','ಕಾರ್ಯಕ್ರಮ ದಿನಾಂಕಗಳು')}</p><p class="font-body-lg text-body-lg text-on-surface">${eventDateRange}</p><p class="font-label-md text-label-md text-secondary mt-2">${rbT('Departure to Bangalore arrival','ಬೆಂಗಳೂರಿಗೆ ಹೊರಟು ಆಗಮನ')}</p><p class="font-body-lg text-body-lg text-on-surface">${travelRange}</p><p class="font-label-md text-label-md text-secondary mt-2">${rbT('Last date to register','ನೋಂದಣಿಯ ಕೊನೆಯ ದಿನಾಂಕ')}</p><p class="font-body-lg text-body-lg ${registrationClosed ? 'text-error font-bold' : 'text-on-surface'}">${registrationDeadlineText}</p>${registrationClosed ? '<p class="font-label-md text-label-md text-error mt-1"'>rbT('Registration is over','ನೋಂದಣಿ ಮುಗಿದಿದೆ')+'</p>' : ''}</div>` : '';
 
-            return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><div class="shrink-0 flex flex-col items-end gap-1.5"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span>${eventPaymentChip}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Event dates</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Time</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">Location</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p></div></div>${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
+            return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><div class="shrink-0 flex flex-col items-end gap-1.5"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span>${eventPaymentChip}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Event dates','ಕಾರ್ಯಕ್ರಮ ದಿನಾಂಕಗಳು')}</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Time','ಸಮಯ')}</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Location','ಸ್ಥಳ')}</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p></div></div>${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
         }
+
+        // Re-render locale-aware dynamic content whenever the language is
+        // switched (fires from language-switch.js on toggle AND on page load).
+        window.RBLang = window.RBLang || {};
+        window.RBLang._onChange = window.RBLang._onChange || [];
+        window.RBLang._onChange.push(function () {
+            try { renderEvents(); } catch (e) { /* data may not be loaded yet */ }
+            if (window.__rblGreeting && window.__rblGreeting.fn) {
+                try { window.__rblGreeting.fn(window.__rblGreeting.name); } catch (e) {}
+            }
+        });
 
         // Render events on member dashboard
         function renderEvents() {
@@ -2531,7 +2525,7 @@
             const viewAllEventsSection = document.getElementById('view-all-events-section');
 
             if (!displayedEvents.length) {
-                eventsList.innerHTML = '<div class="bg-surface-container-lowest border-2 border-outline-variant rounded-xl p-6 shadow-sm"><h3 class="font-headline-sm text-headline-sm text-primary">No upcoming events</h3><p class="text-on-surface-variant font-body-lg text-body-lg mt-2">There are no upcoming events scheduled.</p></div>';
+                eventsList.innerHTML = '<div class="bg-surface-container-lowest border-2 border-outline-variant rounded-xl p-6 shadow-sm"><h3 class="font-headline-sm text-headline-sm text-primary">' + rbT('No upcoming events','ಯಾವುದೇ ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮಗಳಿಲ್ಲ') + '</h3><p class="text-on-surface-variant font-body-lg text-body-lg mt-2">' + rbT('There are no upcoming events scheduled.','ಯಾವುದೇ ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮಗಳು ನಿಗದಿಪಡಿಸಲಾಗಿಲ್ಲ.') + '</p></div>';
                 viewAllEventsSection.classList.add('hidden');
                 document.getElementById('bus-pickup-section').classList.add('hidden');
                 return;
@@ -2594,7 +2588,7 @@
          }
 
             if (!nextEvent) {
-                document.getElementById('event-title').textContent = 'No upcoming events';
+                document.getElementById('event-title').textContent = rbT('No upcoming events','ಯಾವುದೇ ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮಗಳಿಲ್ಲ');
                 document.getElementById('event-date').textContent = 'No events scheduled';
                 document.getElementById('event-time').textContent = '-';
                 document.getElementById('event-location').textContent = '-';
@@ -2623,8 +2617,8 @@
                 outstationDatesSection.classList.remove('hidden');
                 const outstationDatesText = document.getElementById('outstation-dates-text');
                 const eventRangeText = nextEvent.eventEndDate ? `${formatDate(nextEvent.date)} - ${formatDate(nextEvent.eventEndDate)}` : formatDate(nextEvent.date);
-                const eventEndDateText = nextEvent.eventEndDate ? formatDate(nextEvent.eventEndDate) : 'Not specified';
-                outstationDatesText.innerHTML = `<p class="font-label-md text-label-md text-secondary">Event dates</p><p class="font-body-lg text-body-lg text-on-surface">${eventRangeText}</p><p class="font-label-md text-label-md text-secondary mt-2">Event end date</p><p class="font-body-lg text-body-lg text-on-surface">${eventEndDateText}</p><p class="font-label-md text-label-md text-secondary mt-2">Departure to Bangalore arrival</p><p class="font-body-lg text-body-lg text-on-surface">${visibleRange}</p>`;
+                const eventEndDateText = nextEvent.eventEndDate ? formatDate(nextEvent.eventEndDate) : rbT('Not specified','ವಿವರವಿಲ್ಲ');
+                outstationDatesText.innerHTML = `<p class="font-label-md text-label-md text-secondary">${rbT('Event dates','ಕಾರ್ಯಕ್ರಮ ದಿನಾಂಕಗಳು')}</p><p class="font-body-lg text-body-lg text-on-surface">${eventRangeText}</p><p class="font-label-md text-label-md text-secondary mt-2">Event end date</p><p class="font-body-lg text-body-lg text-on-surface">${eventEndDateText}</p><p class="font-label-md text-label-md text-secondary mt-2">${rbT('Departure to Bangalore arrival','ಬೆಂಗಳೂರಿಗೆ ಹೊರಟು ಆಗಮನ')}</p><p class="font-body-lg text-body-lg text-on-surface">${visibleRange}</p>`;
             } else {
                 outstationDatesSection.classList.add('hidden');
             }
@@ -2931,7 +2925,7 @@
 
         // Do not accept registrations after the last date to register
         if (status === 'attending' && isRegistrationClosed(currentEvent)) {
-            alert(`Last date to register for this event was ${formatDate(currentEvent.registrationDeadline)}. Registration is now over.`);
+            alert(rbT(`Last date to register for this event was ${formatDate(currentEvent.registrationDeadline)}. Registration is now over.`, `ಈ ಕಾರ್ಯಕ್ರಮಕ್ಕೆ ನೋಂದಣಿಯ ಕೊನೆಯ ದಿನಾಂಕ ${formatDate(currentEvent.registrationDeadline)}. ನೋಂದಣಿ ಈಗ ಮುಗಿದಿದೆ.`));
             return;
         }
 
@@ -3043,6 +3037,74 @@
         return output;
     }
 
+    // Modern screenshot upload widget: tap-or-drag zone with live preview.
+    function wireScreenshotPicker(inputId) {
+        const input = document.getElementById(inputId);
+        const container = input ? input.closest('[data-upload-widget]') : null;
+        if (!input || !container || container.dataset.wired) return;
+        container.dataset.wired = '1';
+        const lang = () => (window.RBLang && window.RBLang.get && window.RBLang.get() === 'kn') ? 'kn' : 'en';
+        const t = (en, kn) => lang() === 'kn' ? kn : en;
+        container.insertAdjacentHTML('beforeend', `
+            <div class="pay-upload-zone" id="${inputId}-zone" role="button" tabindex="0" aria-label="${t('Upload screenshot','ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ')}">
+                <span class="pay-upload-icon material-symbols-outlined">add_photo_alternate</span>
+                <span class="pay-upload-title">${t('Tap to upload screenshot','ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ')}</span>
+                <span class="pay-upload-sub">${t('Screenshot of your payment success screen · JPG or PNG','ಪಾವತಿ ಯಶಸ್ಸಿನ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ · JPG ಅಥವಾ PNG')}</span>
+            </div>
+            <div class="pay-upload-preview hidden" id="${inputId}-preview">
+                <img id="${inputId}-thumb" alt="${t('Screenshot preview','ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಮುನ್ನೋಟ')}">
+                <div class="min-w-0 flex-1">
+                    <p class="pay-upload-filename" id="${inputId}-name"></p>
+                    <p class="pay-upload-size" id="${inputId}-size"></p>
+                </div>
+                <button type="button" class="pay-upload-remove" id="${inputId}-remove" aria-label="${t('Remove screenshot','ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆದುಹಾಕಿ')}">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <p class="pay-upload-error hidden" id="${inputId}-error"></p>`);
+        const zone = document.getElementById(inputId + '-zone');
+        const preview = document.getElementById(inputId + '-preview');
+        const thumb = document.getElementById(inputId + '-thumb');
+        const nameEl = document.getElementById(inputId + '-name');
+        const sizeEl = document.getElementById(inputId + '-size');
+        const errorEl = document.getElementById(inputId + '-error');
+        const fmtSize = (bytes) => bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+        const reset = () => {
+            input.value = '';
+            preview.classList.add('hidden');
+            zone.classList.remove('hidden');
+            if (thumb.src) { URL.revokeObjectURL(thumb.src); thumb.removeAttribute('src'); }
+        };
+        const showError = (msg) => { errorEl.textContent = msg; errorEl.classList.remove('hidden'); };
+        zone.addEventListener('click', () => input.click());
+        zone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+        ['dragenter', 'dragover'].forEach((evt) => zone.addEventListener(evt, (e) => { e.preventDefault(); zone.classList.add('dragover'); }));
+        ['dragleave', 'drop'].forEach((evt) => zone.addEventListener(evt, (e) => { e.preventDefault(); zone.classList.remove('dragover'); }));
+        zone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer && e.dataTransfer.files;
+            if (files && files.length) {
+                try { input.files = files; } catch (err) {}
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+        input.addEventListener('change', () => {
+            errorEl.classList.add('hidden');
+            const file = input.files && input.files[0];
+            if (!file) { reset(); return; }
+            if (!file.type || !file.type.startsWith('image/')) {
+                showError(t('Please choose a JPG or PNG image.', 'ದಯವಿಟ್ಟು JPG ಅಥವಾ PNG ಚಿತ್ರವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ.'));
+                reset();
+                return;
+            }
+            thumb.src = URL.createObjectURL(file);
+            nameEl.textContent = file.name;
+            sizeEl.textContent = fmtSize(file.size);
+            zone.classList.add('hidden');
+            preview.classList.remove('hidden');
+        });
+        document.getElementById(inputId + '-remove').addEventListener('click', (e) => { e.stopPropagation(); reset(); });
+    }
+
     function showPaymentModal(event) {
         const amount = Number(event.amount || 0).toFixed(2);
         const upiId = event.upiId || window.paymentConfig?.upiId || 'YOUR_UPI_ID@bank';
@@ -3057,10 +3119,10 @@
                             <span id="bank-details-chevron" class="material-symbols-outlined text-on-surface-variant transition-transform">expand_more</span>
                         </button>
                         <div id="bank-details-body" class="hidden px-4 pb-4 space-y-1 text-sm text-on-surface-variant">
-                            <p>Bank: <strong class="text-on-surface">${bankTransfer.bankName || 'Not specified'}</strong></p>
-                            <p>Account holder: <strong class="text-on-surface">${bankTransfer.accountName || 'Not specified'}</strong></p>
+                            <p>Bank: <strong class="text-on-surface">${bankTransfer.bankName || rbT('Not specified','ವಿವರವಿಲ್ಲ')}</strong></p>
+                            <p>Account holder: <strong class="text-on-surface">${bankTransfer.accountName || rbT('Not specified','ವಿವರವಿಲ್ಲ')}</strong></p>
                             <p class="break-all">Account number: <strong class="text-on-surface select-all">${bankTransfer.accountNumber}</strong></p>
-                            <p>IFSC: <strong class="text-on-surface select-all">${bankTransfer.ifscCode || 'Not specified'}</strong></p>
+                            <p>IFSC: <strong class="text-on-surface select-all">${bankTransfer.ifscCode || rbT('Not specified','ವಿವರವಿಲ್ಲ')}</strong></p>
                         </div>
                     </div>` : '';
         const modal = document.createElement('div');
@@ -3101,10 +3163,11 @@
                         <p class="text-xs text-on-surface-variant mt-2 text-center sm:text-left break-all">Paying to: <strong class="text-on-surface">${upiLabel} &middot; ${upiId}</strong></p>
                     </div>
                     <form id="payment-proof-form" class="space-y-3 pt-4 border-t border-outline-variant">
-                        <p class="payment-step-label font-label-lg text-label-lg text-on-surface"><span class="payment-step-num">2</span>Submit your payment proof</p>
-                        <div>
-                            <label for="payment-screenshot" class="block font-label-md text-label-md text-on-surface mb-1.5">Transaction screenshot <span class="text-error">*</span></label>
-                            <input id="payment-screenshot" type="file" accept="image/*" required class="w-full px-3 py-2.5 rounded-xl border border-outline-variant text-on-surface bg-white">
+                        <p class="payment-step-label font-label-lg text-label-lg text-on-surface"><span class="payment-step-num">2</span>${rbT('Submit your payment proof','ನಿಮ್ಮ ಪಾವತಿ ಪುರಾವೆ ಸಲ್ಲಿಸಿ')}</p>
+                        <p class="text-sm text-on-surface-variant -mt-1">${rbT('Pay first using a method above, then upload the payment success screenshot here. Admins will verify it.','ಮೊದಲು ಮೇಲಿನ ಯಾವುದೇ ವಿಧಾನವನ್ನು ಬಳಸಿ ಪಾವತಿಸಿ, ನಂತರ ಪಾವತಿ ಯಶಸ್ಸಿನ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಅನ್ನು ಇಲ್ಲಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ಅಡ್ಮಿನ್‌ಗಳು ಪರಿಶೀಲಿಸುತ್ತಾರೆ.')}</p>
+                        <div data-upload-widget>
+                            <label for="payment-screenshot" class="block font-label-md text-label-md text-on-surface mb-1.5">${rbT('Transaction screenshot','ವಹಿವಾಟಿನ ಸ್ಕ್ರೀನ್‌ಶಾಟ್')} <span class="text-error">*</span></label>
+                            <input id="payment-screenshot" type="file" accept="image/*" required class="sr-only">
                         </div>
                         <div>
                             <label for="payment-utr" class="block font-label-md text-label-md text-on-surface mb-1.5">UTR / Transaction reference</label>
@@ -3118,6 +3181,7 @@
                 </div>
             </div>`;
         document.body.appendChild(modal);
+        wireScreenshotPicker('payment-screenshot');
         // Close when tapping the backdrop
         modal.addEventListener('click', (clickEvent) => {
             if (clickEvent.target === modal) modal.remove();
@@ -3278,11 +3342,18 @@
         }, { merge: true });
     }
 
-    // Format date for display
+    // Locale-aware string helper for dynamic templates: rbT('English','ಕನ್ನಡ')
+    function rbT(en, kn) {
+        return (window.RBLang && typeof RBLang.language === 'function' && RBLang.language() === 'en') ? en : kn;
+    }
+
+    // Format date for display (locale-aware: Kannada in kn, English in en)
     function formatDate(dateString) {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('en-US', options);
+        const locale = (window.RBLang && typeof RBLang.locale === 'function') ? RBLang.locale() : 'kn-IN';
+        return new Date(dateString).toLocaleDateString(locale, options);
     }
     </script>
+<script src="language-switch.js"></script>
 </body>
 </html>

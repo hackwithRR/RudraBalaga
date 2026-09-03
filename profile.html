@@ -150,6 +150,7 @@
         .payment-step-label { display: inline-flex; align-items: center; gap: 0.5rem; }
         .payment-step-num { display: inline-flex; align-items: center; justify-content: center; width: 1.35rem; height: 1.35rem; border-radius: 999px; background: #8f4e00; color: #ffffff; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
     </style>
+<script src="help-modal.js"></script>
 </head>
 <body class="font-body-md text-body-md pb-32">
 
@@ -262,7 +263,7 @@
         <div class="flex justify-between items-center px-4 h-16">
             <div class="flex items-center gap-3">
                 <img alt="Rudra Balaga Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlnKErrgX-hzStznZ9vHCbMO-wVdNUUB3BTexOf5cFdjznQoHJY__pyT9Z7YSc9QEjbDynAwZQ7ehGJrgyYzkzcVi3uuprj1veErdmPgZj0OW8Uq1XlwPAYXul0e1T7ykM7CUsM7Ohmmhys1X_0lQqpNC4U5i5qbmXCrFzECcx0b4RZ_60tpfYZTuKIVDVUXZ0zW6Wg0uQ6B_w4g2shyIkDuOdJe0QxIxARUjpBlGqypF6ggy6KDPXh_PmzeXmBTgOAB01hg8jNDV"/>
-                <h1 class="text-xl font-bold text-primary">ರುದ್ರ ಬಳಗ</h1>
+                <h1 class="text-xl font-bold text-primary" data-i18n="brand.title">ರುದ್ರ ಬಳಗ</h1>
             </div>
             <a href="index" class="touch-active flex items-center justify-center w-12 h-12 rounded-full bg-primary-container">
                 <span class="material-symbols-outlined text-on-primary-container" data-icon="close">close</span>
@@ -274,7 +275,7 @@
     <main id="app-content" class="pt-20 px-margin-mobile space-y-stack-lg max-w-2xl mx-auto opacity-0">
         <!-- Profile Header -->
         <section class="mt-stack-md text-center">
-            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary kannada-text">ನನ್ನ ಪ್ರೊಫೈಲ್</h2>
+            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary kannada-text" data-i18n="profile.heading">ನನ್ನ ಪ್ರೊಫೈಲ್</h2>
         </section>
 
         <section class="profile-id-card" aria-label="Member ID">
@@ -282,7 +283,7 @@
                 <span class="material-symbols-outlined">badge</span>
             </div>
             <div class="profile-id-content">
-                <p class="profile-id-label kannada-text">ಸದಸ್ಯರ ಐಡಿ</p>
+                <p class="profile-id-label kannada-text" data-i18n="profile.memberId">ಸದಸ್ಯರ ಐಡಿ</p>
                 <p id="profile-user-id" class="profile-id-value" aria-live="polite">Loading...</p>
             </div>
             <span class="material-symbols-outlined profile-id-check" aria-hidden="true">verified</span>
@@ -440,22 +441,22 @@
             <!-- Home -->
             <a class="app-nav-item" href="index">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="home">home</span>
-                <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.home">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
             <a class="app-nav-item" href="events">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
-                <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮ</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.events">ಕಾರ್ಯಕ್ರಮ</span>
             </a>
             <!-- Bus Routes -->
             <a class="app-nav-item" href="bus-routes">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus">directions_bus</span>
-                <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.bus">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Profile (Active) -->
             <a class="app-nav-item is-active" href="profile" aria-current="page">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
-                <span class="app-nav-label kannada-text">ಪ್ರೊಫೈಲ್</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.profile">ಪ್ರೊಫೈಲ್</span>
             </a>
         </div>
     </nav>
@@ -659,66 +660,6 @@
         });
 
         // Show help modal
-        function showHelpModal() {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-xl p-6 w-full max-w-lg">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ</h3>
-                        <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="p-4 bg-surface-container-high rounded-lg">
-                            <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
-                            <p class="text-on-surface font-body-lg text-body-lg kannada-text">ದಯವಿಟ್ಟು ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
-                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
-                                <li>ಪ್ರೊಫೈಲ್ ಅಪ್ಡೇಟ್ ಸಮಸ್ಯೆಗಳು</li>
-                                <li>ಇವೆಂಟ್ ನೇಮಣಿಸುವಿಕೆಗಳು</li>
-                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ</li>
-                                <li>ತಾಂತ್ರಿಕ ಸಹಾಯ</li>
-                            </ul>
-                        </div>
-                        <div id="admins-list" class="space-y-2">
-                            <p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            document.getElementById('close-help-modal').addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-            
-            // Fetch admin users from Firestore
-            if (typeof firebaseDb !== 'undefined' && firebaseDb) {
-                try {
-                    firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
-                        const adminsList = document.getElementById('admins-list');
-                        if (snapshot.empty) {
-                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಯಾವ ಅಡ್ಮಿನ್ ಲಭ್ಯವಿಲ್ಲ</p>';
-                            return;
-                        }
-                        
-                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕಿಸಿ:</p>';
-                        snapshot.forEach(doc => {
-                            const admin = doc.data();
-                            const phone = admin.phone || admin.email || 'N/A';
-                            const name = admin.name || 'Admin';
-                            html += `
-                                <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
-                                    <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
-                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg kannada-text">${phone}</a>
-                                </div>
-                            `;
-                        });
-                        adminsList.innerHTML = html;
-                    });
-                } catch (error) {
-                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</p>';
-                }
-            }
-        }
 
         // Compress a payment screenshot in the browser, then convert it to base64 for upload.
         async function compressImageToBase64(file) {
@@ -920,10 +861,11 @@
     });
 
     // Setup help button
-    document.getElementById('help-btn').addEventListener('click', showHelpModal);
+    document.getElementById('help-btn').addEventListener('click', function(){ if (window.showHelpModal) window.showHelpModal(); });
 
     // Setup donate button
     document.getElementById('donate-btn').addEventListener('click', showDonationModal);
     </script>
+<script src="language-switch.js"></script>
 </body>
 </html>

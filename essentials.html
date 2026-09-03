@@ -173,6 +173,7 @@
         .payment-modal-body { padding: 1rem 1.25rem 1.25rem; overflow-y: auto; }
         @media (min-width: 480px) { .payment-modal-body { padding: 1.25rem 1.5rem 1.5rem; } }
     </style>
+<script src="help-modal.js"></script>
 </head>
 <body class="font-body-md text-body-md pb-32">
 
@@ -183,7 +184,7 @@
                 <a href="index" class="touch-active flex items-center justify-center w-10 h-10 rounded-full bg-surface-container">
                     <span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
                 </a>
-                <h1 class="text-xl font-bold text-primary kannada-text">ಅಗತ್ಯಗಳು</h1>
+                <h1 class="text-xl font-bold text-primary kannada-text" data-i18n="page.title.essentials">ಅಗತ್ಯಗಳು</h1>
             </div>
             <div class="flex items-center gap-2">
                 <div class="text-right">
@@ -287,7 +288,7 @@
     <!-- Help Button (Floating) -->
     <button id="help-btn" class="fixed bottom-32 right-4 z-40 flex items-center justify-center gap-2 w-auto h-14 px-4 rounded-full bg-secondary-container text-on-secondary-container shadow-lg touch-active">
         <span class="material-symbols-outlined" data-icon="help" style="font-variation-settings: 'FILL' 1;">help</span>
-        <span class="font-label-lg text-label-lg kannada-text">ಸಹಾಯ</span>
+        <span class="font-label-lg text-label-lg kannada-text" data-i18n="help.label">ಸಹಾಯ</span>
     </button>
 
     <!-- BottomNavBar - Floating pill bar, large elderly-friendly touch targets -->
@@ -345,22 +346,22 @@
             <!-- Home -->
             <a class="app-nav-item" href="index">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="home">home</span>
-                <span class="app-nav-label kannada-text">ಮುಖಪುಟ</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.home">ಮುಖಪುಟ</span>
             </a>
             <!-- Events -->
             <a class="app-nav-item" href="events">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="event">event</span>
-                <span class="app-nav-label kannada-text">ಕಾರ್ಯಕ್ರಮ</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.events">ಕಾರ್ಯಕ್ರಮ</span>
             </a>
             <!-- Bus Routes -->
             <a class="app-nav-item" href="bus-routes">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="directions_bus">directions_bus</span>
-                <span class="app-nav-label kannada-text">ಬಸ್ / ರೈಲು</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.bus">ಬಸ್ / ರೈಲು</span>
             </a>
             <!-- Essentials (Active) -->
             <a class="app-nav-item is-active" href="essentials" aria-current="page">
                 <span class="material-symbols-outlined app-nav-icon" data-icon="checklist" style="font-variation-settings: 'FILL' 1;">checklist</span>
-                <span class="app-nav-label kannada-text">ಅಗತ್ಯಗಳು</span>
+                <span class="app-nav-label kannada-text" data-i18n="nav.essentials">ಅಗತ್ಯಗಳು</span>
             </a>
         </div>
     </nav>
@@ -475,6 +476,13 @@
         }
 
         // Render and load checklist for the latest ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ user is attending
+        // Re-render locale-aware dynamic content on language switch
+        window.RBLang = window.RBLang || {};
+        window.RBLang._onChange = window.RBLang._onChange || [];
+        window.RBLang._onChange.push(function () {
+            try { renderEventSelector(); } catch (e) { /* data may not be loaded yet */ }
+        });
+
         function renderEventSelector() {
             const noEventSection = document.getElementById('no-event-section');
             const checklistSection = document.getElementById('checklist-section');
@@ -541,7 +549,7 @@
             
             // Show event info
             document.getElementById('selected-event-title').textContent = event.title;
-            document.getElementById('selected-event-date').textContent = `${formatDate(event.date)} ರಂದು ${event.time} ಗಂಟೆಗೆ`;
+            document.getElementById('selected-event-date').textContent = `${formatDate(event.date)}${rbT(' at ', ' ರಂದು ')}${event.time}${rbT('', ' ಗಂಟೆಗೆ')}`;
             
             // Get checklist items based on event type
             const checklistItems = getChecklistItems(event.type);
@@ -651,8 +659,10 @@
         // Format date for display
         function formatDate(dateString) {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('kn-IN', options);
+            const locale = (window.RBLang && typeof RBLang.locale === 'function') ? RBLang.locale() : 'kn-IN';
+            return new Date(dateString).toLocaleDateString(locale, options);
         }
+        function rbT(en, kn) { return (window.RBLang && typeof RBLang.language === 'function' && RBLang.language() === 'en') ? en : kn; }
 
         // Show Rudra Chamakam
         function showChamakam() {
@@ -730,66 +740,6 @@
         }
         
         // Show help modal
-        function showHelpModal() {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-xl p-6 w-full max-w-lg">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary kannada-text">ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ</h3>
-                        <button id="close-help-modal" class="text-2xl text-on-surface-variant">&times;</button>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="p-4 bg-surface-container-high rounded-lg">
-                            <h4 class="font-bold text-primary mb-2 kannada-text">ಸಹಾಯ ಬೇಕೇ?</h4>
-                            <p class="text-on-surface font-body-lg text-body-lg kannada-text">ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದರೆ ಅಡ್ಮಿನ್ ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ:</p>
-                            <ul class="list-disc list-inside text-on-surface font-body-lg text-body-lg mt-2 space-y-1 kannada-text">
-                                <li>ಇವೆಂಟ್ </li>
-                                <li>ಬಸ್ / ರೈಲು ಪಿಕಪ್ ಪಾಯಿಂಟ್ ಆಯ್ಕೆ</li>
-                                <li>ಖಾತೆ ಅಥವಾ ಪ್ರೊಫೈಲ್ ಸಮಸ್ಯೆಗಳು</li>
-                                <li>ತಾಂತ್ರಿಕ ಸಹಾಯ</li>
-                            </ul>
-                        </div>
-                        <div id="admins-list" class="space-y-2">
-                            <p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ಸ್ ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            document.getElementById('close-help-modal').addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-            
-            // Fetch admin users from Firestore
-            if (typeof firebaseDb !== 'undefined' && firebaseDb) {
-                try {
-                    firebaseDb.collection('users').where('role', '==', 'admin').onSnapshot(snapshot => {
-                        const adminsList = document.getElementById('admins-list');
-                        if (snapshot.empty) {
-                            adminsList.innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಯಾವ ಅಡ್ಮಿನ್ ಲಭ್ಯವಿಲ್ಲ</p>';
-                            return;
-                        }
-                        
-                        let html = '<p class="font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕಿಸಿ:</p>';
-                        snapshot.forEach(doc => {
-                            const admin = doc.data();
-                            const phone = admin.phone || admin.email || 'N/A';
-                            const name = admin.name || 'ಅಡ್ಮಿನ್';
-                            html += `
-                                <div class="p-3 bg-primary-fixed rounded-lg flex justify-between items-center">
-                                    <span class="font-body-lg text-body-lg text-on-primary-fixed kannada-text">${name}</span>
-                                    <a href="tel:${phone}" class="text-primary font-bold text-body-lg kannada-text">${phone}</a>
-                                </div>
-                            `;
-                        });
-                        adminsList.innerHTML = html;
-                    });
-                } catch (error) {
-                    document.getElementById('admins-list').innerHTML = '<p class="text-center text-on-surface-variant kannada-text">ಅಡ್ಮಿನ್ ಸಂಪರ್ಕವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</p>';
-                }
-            }
-        }
 
         // Show donation history modal for the logged-in user
         function showMyDonationsModal() {
@@ -801,8 +751,8 @@
                         <div class="flex items-center gap-3 min-w-0">
                             <span class="material-symbols-outlined text-primary shrink-0" style="font-size:28px; font-variation-settings: 'FILL' 1;">volunteer_activism</span>
                             <div class="min-w-0">
-                                <h3 class="font-headline-sm text-headline-sm text-primary leading-tight kannada-text">ನನ್ನ ದೇಣಿಗೆಗಳು</h3>
-                                <p class="text-sm text-on-surface-variant truncate">My Donations</p>
+                                <h3 class="font-headline-sm text-headline-sm text-primary leading-tight kannada-text">${rbT('My Donations','ನನ್ನ ದೇಣಿಗೆಗಳು')}</h3>
+                                <p class="text-sm text-on-surface-variant truncate">${rbT('Your donation history and status','ನಿಮ್ಮ ದೇಣಿಗೆ ಇತಿಹಾಸ ಮತ್ತು ಸ್ಥಿತಿ')}</p>
                             </div>
                         </div>
                         <button id="close-donations-modal" aria-label="Close" class="shrink-0 w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xl leading-none">&times;</button>
@@ -810,7 +760,7 @@
                     <div class="payment-modal-body">
                         <div id="my-donations-summary" class="grid grid-cols-2 gap-3 mb-4"></div>
                         <div id="my-donations-list" class="space-y-3">
-                            <p class="text-on-surface-variant kannada-text">ದೇಣಿಗೆಗಳನ್ನು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...</p>
+                            <p class="text-on-surface-variant kannada-text">${rbT('Loading donations...','ದೇಣಿಗೆಗಳನ್ನು ಲೋಡ್ ಆಗುತ್ತಿದ್ದಾರೆ...')}</p>
                         </div>
                     </div>
                 </div>`;
@@ -820,7 +770,7 @@
 
             const summaryEl = document.getElementById('my-donations-summary');
             const listEl = document.getElementById('my-donations-list');
-            if (!state.user) { listEl.innerHTML = `<p class="text-on-surface-variant kannada-text">ಲಾಗಿನ್ ಅಗತ್ಯವಿದೆ.</p>`; return; }
+            if (!state.user) { listEl.innerHTML = `<p class="text-on-surface-variant kannada-text">${rbT('Login required.','ಲಾಗಿನ್ ಅಗತ್ಯವಿದೆ.')}</p>`; return; }
 
             // Note: server-side orderBy('submittedAt', 'desc') is intentionally omitted to avoid
             // requiring a Firestore composite index (where uid == + orderBy submittedAt). Results
@@ -838,20 +788,20 @@
                 const totalApproved = approved.reduce((s, d) => s + (Number(d.amount) || 0), 0);
                 const totalAll = donations.reduce((s, d) => s + (Number(d.amount) || 0), 0);
 
-                summaryEl.innerHTML = [['ಒಟ್ಟು ದೇಣಿಗೆ', `₹${totalAll}`], ['ಅನುಮೋದಿತ', `₹${totalApproved}`]].map(([l, v]) => `<div class="p-3 rounded-xl bg-surface-container-high border border-outline-variant"><p class="text-xs uppercase tracking-wide text-on-surface-variant kannada-text">${l}</p><p class="font-bold text-lg text-primary">${v}</p></div>`).join('');
+                summaryEl.innerHTML = [[rbT('Total donated','ಒಟ್ಟು ದೇಣಿಗೆ'), `₹${totalAll}`], [rbT('Approved','ಅನುಮೋದಿತ'), `₹${totalApproved}`]].map(([l, v]) => `<div class="p-3 rounded-xl bg-surface-container-high border border-outline-variant"><p class="text-xs uppercase tracking-wide text-on-surface-variant kannada-text">${l}</p><p class="font-bold text-lg text-primary">${v}</p></div>`).join('');
 
                 if (!donations.length) {
-                    listEl.innerHTML = `<div class="p-6 text-center rounded-xl bg-surface-container-low border border-outline-variant"><p class="material-symbols-outlined text-4xl text-on-surface-variant mx-auto mb-2" style="font-variation-settings: 'FILL' 1;">volunteer_activism</p><p class="text-on-surface-variant kannada-text">ನೀವು ಇನ್ನೂ ಯಾವುದೇ ದೇಣಿಗೆಯನ್ನು ನೀಡಿಲ್ಲ.</p><a href="index#donate" class="touch-active inline-block mt-4 bg-primary-container text-on-primary-container font-bold py-3 px-6 rounded-xl text-body-lg kannada-text">ದೇಣಿಗೆ ನೀಡಿ</a></div>`;
+                    listEl.innerHTML = `<div class="p-6 text-center rounded-xl bg-surface-container-low border border-outline-variant"><p class="material-symbols-outlined text-4xl text-on-surface-variant mx-auto mb-2" style="font-variation-settings: 'FILL' 1;">volunteer_activism</p><p class="text-on-surface-variant kannada-text">${rbT('You haven\'t made any donations yet.','ನೀವು ಇನ್ನೂ ಯಾವುದೇ ದೇಣಿಗೆಯನ್ನು ನೀಡಿಲ್ಲ.')}</p><a href="index#donate" class="touch-active inline-block mt-4 bg-primary-container text-on-primary-container font-bold py-3 px-6 rounded-xl text-body-lg kannada-text">${rbT('Donate now','ದೇಣಿಗೆ ನೀಡಿ')}</a></div>`;
                     return;
                 }
 
                 listEl.innerHTML = donations.map(d => {
-                    const statusLabel = d.paymentStatus === 'APPROVED' ? 'ಅನುಮೋದಿತ' : d.paymentStatus === 'PENDING_APPROVAL' ? 'ನಿರೀಕ್ಷೆ' : d.paymentStatus === 'REJECTED' ? 'ತಿರಸ್ಕರಿಸಲಾಗಿದೆ' : d.paymentStatus || 'NONE';
+                    const statusLabel = d.paymentStatus === 'APPROVED' ? rbT('Approved','ಅನುಮೋದಿತ') : d.paymentStatus === 'PENDING_APPROVAL' ? rbT('Pending','ನಿರೀಕ್ಷೆ') : d.paymentStatus === 'REJECTED' ? rbT('Rejected','ತಿರಸ್ಕರಿಸಲಾಗಿದೆ') : d.paymentStatus || 'NONE';
                     const statusClass = d.paymentStatus === 'APPROVED' ? 'bg-green-100 text-green-800' : d.paymentStatus === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-800' : d.paymentStatus === 'REJECTED' ? 'bg-red-100 text-red-700' : 'bg-surface-container-high text-on-surface-variant';
                     return `<div class="rounded-xl border border-outline-variant bg-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div>
                             <p class="font-bold text-on-surface text-lg">₹${Number(d.amount) || 0}</p>
-                            <p class="text-sm text-on-surface-variant">${d.submittedAt?.toDate ? d.submittedAt.toDate().toLocaleString() : 'ದಿನಾಂಕ ಲಭ್ಯವಿಲ್ಲ'}</p>
+                            <p class="text-sm text-on-surface-variant">${d.submittedAt?.toDate ? d.submittedAt.toDate().toLocaleString((window.RBLang && RBLang.locale) ? RBLang.locale() : 'kn-IN') : rbT('Date unavailable','ದಿನಾಂಕ ಲಭ್ಯವಿಲ್ಲ')}</p>
                             ${d.utrNumber ? `<p class="text-sm text-on-surface-variant mt-1">UTR: <span class="select-all">${d.utrNumber}</span></p>` : ''}
                         </div>
                         <span class="inline-flex self-start sm:self-auto px-3 py-1 rounded-full text-xs font-bold ${statusClass}">${statusLabel}</span>
@@ -859,17 +809,18 @@
                 }).join('');
             }).catch(error => {
                 console.error('Error loading my donations:', error);
-                listEl.innerHTML = '<p class="text-on-surface-variant kannada-text">ದೇಣಿಗೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.</p>';
+                listEl.innerHTML = `<p class="text-on-surface-variant kannada-text">${rbT('Could not load donations.','ದೇಣಿಗೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.')}</p>`;
             });
         }
         
         // Add event listeners
-        document.getElementById('help-btn').addEventListener('click', showHelpModal);
+        document.getElementById('help-btn').addEventListener('click', function(){ if (window.showHelpModal) window.showHelpModal(); });
         document.getElementById('scriptures-btn').addEventListener('click', () => {
             if (typeof window.openScriptures === 'function') window.openScriptures();
         });
         document.getElementById('reset-checklist-btn').addEventListener('click', resetChecklist);
         document.getElementById('view-donations-btn').addEventListener('click', showMyDonationsModal);
     </script>
+<script src="language-switch.js"></script>
 </body>
 </html>
