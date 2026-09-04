@@ -729,6 +729,79 @@
                 }
             }
         }
+        // OTP attempt limiting (3/day client-side; server enforces too)
+        function otpAttemptsKey() { return 'rbOtpAttempts-' + new Date().toISOString().slice(0, 10); }
+        function otpAttemptsLeft() { return Math.max(0, 3 - parseInt(localStorage.getItem(otpAttemptsKey()) || '0', 10)); }
+        function consumeOtpAttempt() { localStorage.setItem(otpAttemptsKey(), String(3 - otpAttemptsLeft() + 1)); }
+        function showOtpStatus(msg, ok) {
+            var el = document.getElementById('otp-status');
+            if (!el) return;
+            el.textContent = msg;
+            el.className = 'text-xs mt-2 ' + (ok ? 'text-green-700' : 'text-red-600');
+            el.classList.remove('hidden');
+        }
+        async function authHeaders(extra) {
+            var h = Object.assign({ 'Content-Type': 'application/json' }, extra || {});
+            if (state.user) { try { h['x-firebase-idtoken'] = await state.user.getIdToken(); } catch (e) {} }
+            return h;
+        }
+        async function sendOtp() {
+            var phone = document.getElementById('profile-phone').value.trim();
+            if (otpAttemptsLeft() <= 0) { showOtpStatus(rbTV('Daily OTP limit reached. Try again tomorrow.', 'ದೈನಂದಿನ OTP ಮಿತಿ ಮೀರಿದೆ. ನಾಳೆ ಪ್ರಯತ್ನಿಸಿ.'), false); return; }
+            try {
+                var res = await fetch('/api/otp', { method: 'POST', headers: await authHeaders(), body: JSON.stringify({ action: 'send', phone: phone, uid: state.user.uid }) });
+                var data = await res.json();
+                if (res.ok && data.ok) showOtpStatus(rbTV('OTP sent to ' + phone, phone + ' ಗೆ OTP ಕಳುಹಿಸಲಾಗಿದೆ'), true);
+                else if (res.status === 503) showOtpStatus(rbTV('SMS service is not configured yet. Please contact an admin.', 'SMS ಸೇವೆ ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಅಡ್ಮಿನ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ.'), false);
+                else showOtpStatus(rbTV('Could not send OTP.', 'OTP ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.'), false);
+            } catch (e) { showOtpStatus(rbTV('Network error. Please try again.', 'ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false); }
+        }
+        async function verifyOtp() {
+            var phone = document.getElementById('profile-phone').value.trim();
+            var code = document.getElementById('otp-input').value.trim();
+            if (!/^\d{6}$/.test(code)) { showOtpStatus(rbTV('Enter the 6-digit OTP.', '6-ಅಂಕಿಯ OTP ನಮೂದಿಸಿ.'), false); return; }
+            try {
+                var res = await fetch('/api/otp', { method: 'POST', headers: await authHeaders(), body: JSON.stringify({ action: 'verify', phone: phone, code: code, uid: state.user.uid }) });
+                var data = await res.json();
+                if (res.ok && data.ok) {
+                    firebaseDb.collection('users').doc(state.user.uid).set({ phoneVerified: true }, { merge: true })
+                        .then(function () { markPhoneVerified(phone); showOtpStatus(rbTV('Phone verified!', 'ಫೋನ್ ಪರಿಶೀಲಿಸಲಾಗಿದೆ!'), true); });
+                } else {
+                    showOtpStatus(data.error === 'wrong_otp' ? rbTV('Wrong OTP. Please try again.', 'ತಪ್ಪು OTP. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.') : rbTV('Verification failed.', 'ಪರಿಶೀಲನೆ ವಿಫಲವಾಗಿದೆ.'), false);
+                }
+            } catch (e) { showOtpStatus(rbTV('Network error. Please try again.', 'ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false); }
+        }
+        function otpFallback() { document.getElementById('otp-fallback-area').classList.remove('hidden'); sendOtp(); }
+        (function wirePhoneVerification() {
+            var tcBtn = document.getElementById('tc-verify-btn');
+            var otpVerify = document.getElementById('otp-verify-btn');
+            var otpResend = document.getElementById('otp-resend-btn');
+            if (!tcBtn) return;
+            tcBtn.addEventListener('click', function () {
+                if (isTcSdkUsable()) {
+                    try {
+                        window.TruecallerSDK.verify({
+                            onSuccess: async function (payload) {
+                                try {
+                                    var res = await fetch('/api/truecaller', { method: 'POST', headers: await authHeaders(), body: JSON.stringify({ accessToken: payload.accessToken || payload.authorizationCode, phoneNumber: document.getElementById('profile-phone').value.trim(), uid: state.user.uid }) });
+                                    var data = await res.json();
+                                    if (res.ok && data.ok) markPhoneVerified(document.getElementById('profile-phone').value.trim());
+                                    else otpFallback();
+                                } catch (e) { otpFallback(); }
+                            },
+                            onError: otpFallback,
+                            onFailure: otpFallback
+                        });
+                    } catch (e) { otpFallback(); }
+                } else {
+                    var otpArea = document.getElementById('otp-fallback-area');
+                    otpArea.classList.toggle('hidden');
+                    if (!otpArea.classList.contains('hidden')) sendOtp();
+                }
+            });
+            if (otpVerify) otpVerify.addEventListener('click', verifyOtp);
+            if (otpResend) otpResend.addEventListener('click', function () { consumeOtpAttempt(); sendOtp(); });
+        })();
 
         // Load profile data
         function loadProfileData() {
@@ -755,6 +828,7 @@
                 }
             }
             updateProfileTracker();
+            initPhoneVerification();
         }
 
         // Setup form submit
