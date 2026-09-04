@@ -1,0 +1,10 @@
+{
+  "name": "rudra-balaga",
+  "version": "1.0.0",
+  "description": "Rudra Parayana - Mobile Web Application for Vedic chanting group management",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  }
+}
