@@ -488,6 +488,50 @@
             50% { transform: translateY(5px); }
         }
 
+        /* Distance chip — countdown entry animation */
+        @keyframes rblDistanceIn {
+            0% { opacity: 0; transform: translateY(6px) scale(0.9); }
+            60% { opacity: 1; transform: translateY(-2px) scale(1.04); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes rblDistanceShimmer {
+            0% { transform: translateX(-120%) skewX(-18deg); }
+            100% { transform: translateX(260%) skewX(-18deg); }
+        }
+        @keyframes rblRoutePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 0.7; }
+        }
+        .rbl-distance-chip {
+            animation: rblDistanceIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .rbl-distance-chip::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            width: 40%;
+            background: linear-gradient(90deg, transparent, rgba(143, 78, 0, 0.14), transparent);
+            animation: rblDistanceShimmer 2.4s ease-in-out 0.8s infinite;
+            pointer-events: none;
+        }
+        .rbl-distance-chip .rbl-icon {
+            transition: transform 0.3s ease;
+            animation: rblRoutePulse 1.8s ease-in-out 0.6s 3;
+        }
+        .rbl-distance-chip:hover .rbl-icon {
+            transform: translateX(3px) scale(1.1);
+        }
+        .rbl-distance-value {
+            display: inline-block;
+            min-width: 3.2em;
+            text-align: left;
+            font-variant-numeric: tabular-nums;
+        }
+
         #events-list > article {
             position: relative;
             overflow: hidden;
@@ -1430,12 +1474,114 @@
             return null;
         }
 
-        // Load user data
+        // ---- Coordinate backfill for events (distance stays pure Haversine, no runtime API) ----
+        // Extract lat/lng from a Google Maps link when one is stored on an event.
+        function extractCoordsFromLink(link) {
+            if (!link) return null;
+            const url = link.trim();
+            // Pattern 1: @lat,lng (e.g. https://maps.google.com/@12.9716,77.5946)
+            const atMatch = url.match(/(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
+            if (atMatch) {
+                const lat = parseFloat(atMatch[1]);
+                const lng = parseFloat(atMatch[2]);
+                if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return { lat, lng };
+            }
+            // Pattern 2: ?q=lat,lng
+            const qMatch = url.match(/[?&]q=(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
+            if (qMatch) {
+                const lat = parseFloat(qMatch[1]);
+                const lng = parseFloat(qMatch[2]);
+                if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return { lat, lng };
+            }
+            return null;
+        }
+        // One-time geocode of an event address (OpenStreetMap Nominatim - free, no API key).
+        // Progressive: try full address, then keep dropping over-specific leading parts
+        // until OSM recognizes a larger area (neighborhood / city).
+        async function geocodeAddress(address) {
+            if (!address || typeof address !== 'string' || address.trim().length < 3) return null;
+            const parts = address.split(',').map(p => p.trim()).filter(Boolean);
+            const trimmed = parts.join(', ');
+            const queries = [trimmed];
+            // Find the city/locality part to keep as the final fallback
+            let cityIndex = parts.findIndex(p => /bengaluru|bangalore|karnataka|bengaluru/i.test(p));
+            if (cityIndex === -1) cityIndex = parts.length >= 2 ? parts.length - 2 : 0;
+            for (let start = 1; start <= cityIndex; start++) {
+                queries.push(parts.slice(start).join(', '));
+            }
+            if (cityIndex >= 0 && cityIndex < parts.length) queries.push(parts[cityIndex]);
+            for (const q of queries) {
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.length) {
+                            return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+                        }
+                    }
+                } catch {}
+                await new Promise(r => setTimeout(r, 700)); // respect rate limit
+            }
+            return null;
+        }
+        // Fill in missing lat/lng for events and persist so later loads work offline.
+        async function ensureEventCoords() {
+            const events = state.events || [];
+            const missing = events.filter(e => !e || !parseFloat(e.lat) || !parseFloat(e.lng));
+            if (!missing.length) return;
+            let changed = false;
+            for (const e of missing) {
+                let coords = extractCoordsFromLink(e && e.mapLink);
+                if (!coords && e && e.location) {
+                    try {
+                        // Respect Nominatim's ~1 req/sec rate limit during bulk backfill
+                        await new Promise(r => setTimeout(r, 1000));
+                        coords = await geocodeAddress(e.location);
+                    } catch {}
+                }
+                if (coords && typeof firebaseDb !== 'undefined' && firebaseDb) {
+                    e.lat = coords.lat;
+                    e.lng = coords.lng;
+                    changed = true;
+                    try { await firebaseDb.collection('events').doc(e.id).update({ lat: coords.lat, lng: coords.lng }); } catch {}
+                }
+            }
+            if (changed) renderEvents();
+        }
+        // Ensure the user has coordinates for distance calc. Re-geocodes when the
+        // stored coords are stale (address was changed after they were derived),
+        // when coords are missing entirely, or when the profile has coords but no
+        // address-derived marker yet. GPS-captured coords (latAddr: null) are kept.
+        async function resolveUserCoords() {
+            const d = state.userData || {};
+            const haveCoords = !!(d.lat && d.lng);
+            // Stale = coords were geocoded from an address that no longer matches
+            const isStale = haveCoords &&
+                typeof d.latAddr === 'string' &&
+                d.address && d.latAddr !== d.address;
+            if (haveCoords && !isStale) return; // coords present and fresh
+            let coords = null;
+            if (d.address) {
+                try { coords = await geocodeAddress(d.address); } catch {}
+            }
+            if (!coords) {
+                if (haveCoords) return; // keep existing coords if geocode fails
+                coords = { lat: 12.9352, lng: 77.6245 }; // Bangalore fallback
+            }
+            state.userData = { ...state.userData, lat: coords.lat, lng: coords.lng, latAddr: d.address || null };
+            // Persist so future loads are offline
+            if (state.user && typeof firebaseDb !== 'undefined' && firebaseDb) {
+                try { await firebaseDb.collection('users').doc(state.user.uid).update({ lat: coords.lat, lng: coords.lng, latAddr: d.address || null }); } catch {}
+            }
+            if (state.events && state.events.length) renderEvents();
+        }
+
         // Load user data
         function loadUserData(user) {
             // Set default user data with coordinates for distance calculation
             // (will be overwritten by Firestore data if available)
-            state.userData = state.userData || { lat: 12.9716, lng: 77.5946, name: user.displayName || 'ಭಕ್ತ' };
+            // Default: Bangalore (Koramangala area) - for distance demo
+            state.userData = state.userData || { lat: 12.9352, lng: 77.6245, name: user.displayName || 'ಭಕ್ತ' };
             // Set Google data as fallback
             document.getElementById('user-name').textContent = user.displayName || user.email || 'ಭಕ್ತ';
             applyGreeting(user.displayName || user.email || 'ಭಕ್ತ');
@@ -1449,7 +1595,8 @@
                     firebaseDb.collection('users').doc(user.uid).onSnapshot(doc => {
                         if (doc.exists) {
                             const userData = doc.data();
-                            state.userData = userData;
+                            state.userData = { ...userData, lat: userData.lat || state.userData?.lat, lng: userData.lng || state.userData?.lng };
+
                             // Update user name in header (Firestore first, then Google)
                             document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'ಭಕ್ತ';
                             // Update greeting with the member's name
@@ -1469,6 +1616,8 @@
                             }
                             // Re-render events now that we have user data (for distance)
                             if (state.events && state.events.length) renderEvents();
+                            // Ensure user coordinates exist for the distance badge
+                            resolveUserCoords();
                         }
                     });
                 } catch (error) {
@@ -1476,6 +1625,9 @@
                     console.log('Firestore not available, using Google data');
                 }
             }
+            // In demo / no-Firestore case, ensure coords exist too
+            if (!(typeof firebaseDb !== 'undefined' && firebaseDb)) resolveUserCoords();
+        }
 
         // Load events from Firestore (with error handling)
         function loadEvents() {
@@ -1486,6 +1638,8 @@
                         state.events.push({ id: doc.id, ...doc.data() });
                     });
                     renderEvents();
+                    // Backfill missing event coordinates (lat/lng) so distance shows for all events
+                    ensureEventCoords();
                     // "Day before" / same-day reminders as soon as events load or change
                     if (window.Notifications && state.user) { try { Notifications.checkEventReminders(state.events); } catch (e) {} }
                 });
@@ -2530,14 +2684,22 @@
             const outstationHtml = event.type === 'Outstation' ? `<div class="mt-4 p-4 bg-secondary-fixed rounded-lg border-2 border-secondary-container"><p class="font-label-lg text-label-lg text-secondary mb-2">${rbT('Outstation dates','ಹೊರಊರಿನ ದಿನಾಂಕಗಳು')}</p><p class="font-label-md text-label-md text-secondary">${rbT('Event dates','ಕಾರ್ಯಕ್ರಮ ದಿನಾಂಕಗಳು')}</p><p class="font-body-lg text-body-lg text-on-surface">${eventDateRange}</p><p class="font-label-md text-label-md text-secondary mt-2">${rbT('Departure to Bangalore arrival','ಬೆಂಗಳೂರಿಗೆ ಹೊರಟು ಆಗಮನ')}</p><p class="font-body-lg text-body-lg text-on-surface">${travelRange}</p><p class="font-label-md text-label-md text-secondary mt-2">${rbT('Last date to register','ನೋಂದಣಿಯ ಕೊನೆಯ ದಿನಾಂಕ')}</p><p class="font-body-lg text-body-lg ${registrationClosed ? 'text-error font-bold' : 'text-on-surface'}">${registrationDeadlineText}</p>${registrationClosed ? '<p class="font-label-md text-label-md text-error mt-1"'>rbT('Registration is over','ನೋಂದಣಿ ಮುಗಿದಿದೆ')+'</p>' : ''}</div>` : '';
 
             // Calculate distance from user's location to event
-            const userCoords = getUserCoords();
-            const eventLat = parseFloat(event.lat);
-            const eventLng = parseFloat(event.lng);
             let distanceHtml = '';
-            if (userCoords && !isNaN(eventLat) && !isNaN(eventLng)) {
-                const km = haversineKm(userCoords.lat, userCoords.lng, eventLat, eventLng);
-                distanceHtml = `<div class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container/60 text-primary font-label-md text-label-md"><span class="material-symbols-outlined" style="font-size:14px;">directions_car</span>${rbT('' + formatDistance(km) + ' away', formatDistance(km) + ' ದೂರದಲ್ಲಿ')}</div>`;
-            }
+            try {
+                const userCoords = getUserCoords();
+                const eventLat = parseFloat(event.lat);
+                const eventLng = parseFloat(event.lng);
+                if (userCoords && !isNaN(eventLat) && !isNaN(eventLng)) {
+                    const km = haversineKm(userCoords.lat, userCoords.lng, eventLat, eventLng);
+                    const distText = formatDistance(km);
+                    distanceHtml = `<span class="rbl-distance-chip mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-primary-container/40 bg-primary-container/10 px-2.5 py-1">
+                            <span class="rbl-icon material-symbols-outlined" style="font-size:15px;color:#8f4e00;">directions_car</span>
+                            <span class="rbl-distance-value text-sm font-bold leading-none" style="color:#8f4e00;" data-final="${distText}">0 km</span>
+                            <span class="text-[10px] font-medium uppercase leading-none tracking-wide text-on-surface-variant">${rbT('approx','ಅಂದಾಜು')}</span>
+                        </span>`;
+                    console.log('Distance calculated:', distText, 'from', userCoords, 'to', { eventLat, eventLng });
+                }
+            } catch(e) { console.warn('Distance calc error:', e); }
 
             return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><div class="shrink-0 flex flex-col items-end gap-1.5"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span>${eventPaymentChip}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Event dates','ಕಾರ್ಯಕ್ರಮ ದಿನಾಂಕಗಳು')}</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Time','ಸಮಯ')}</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Location','ಸ್ಥಳ')}</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p>${distanceHtml}</div></div>${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
         }
@@ -2552,6 +2714,32 @@
                 try { window.__rblGreeting.fn(window.__rblGreeting.name); } catch (e) {}
             }
         });
+
+        // Render events on member dashboard
+        // Countdown-style count-up for distance values (0 → actual km)
+        function animateDistanceChips() {
+            document.querySelectorAll('.rbl-distance-chip .rbl-distance-value').forEach(function (el) {
+                if (el.dataset.animated) return;
+                el.dataset.animated = '1';
+                const finalText = el.dataset.final || el.textContent;
+                const m = finalText.match(/^([\d.,]+)\s*(.*)$/);
+                if (!m) { el.textContent = finalText; return; }
+                const target = parseFloat(m[1].replace(/,/g, ''));
+                const suffix = m[2];
+                if (isNaN(target)) { el.textContent = finalText; return; }
+                const dur = 900;
+                const start = performance.now();
+                el.textContent = '0' + (suffix ? ' ' + suffix : '');
+                (function tick(now) {
+                    const p = Math.min(((now || performance.now()) - start) / dur, 1);
+                    const eased = 1 - Math.pow(1 - p, 3);
+                    const val = target * eased;
+                    el.textContent = (target >= 100 ? Math.round(val).toLocaleString() : val.toFixed(1)) + (suffix ? ' ' + suffix : '');
+                    if (p < 1) requestAnimationFrame(tick);
+                    else el.textContent = finalText;
+                })();
+            });
+        }
 
         // Render events on member dashboard
         function renderEvents() {
@@ -2595,6 +2783,7 @@
                 attendingEventBar.classList.add('hidden');
             }
             eventsList.innerHTML = displayedEvents.map(renderEventCard).join('');
+            animateDistanceChips();
             viewAllEventsSection.classList.toggle('hidden', !allUpcomingResponded);
             document.getElementById('bus-pickup-section').classList.add('hidden');
         }

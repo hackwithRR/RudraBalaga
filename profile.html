@@ -836,9 +836,46 @@
             });
         }
 
-        document.getElementById('profile-form').addEventListener('submit', function(e) {
+        // Forward-geocode an address to approx lat/lng via OpenStreetMap (free, no API key).
+        // Tries the full address, then progressively drops leading parts until OSM matches.
+        async function rblGeocodeAddress(address) {
+            if (!address || typeof address !== 'string' || address.trim().length < 3) return null;
+            const parts = address.split(',').map(p => p.trim()).filter(Boolean);
+            for (let i = 0; i < Math.min(parts.length, 4); i++) {
+                const q = parts.slice(i).join(',');
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`);
+                    const data = await res.json();
+                    if (data && data.length && data[0].lat && data[0].lon) {
+                        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+                    }
+                } catch (err) { /* try next variant */ }
+                await new Promise(r => setTimeout(r, 1100)); // be polite to OSM rate limits
+            }
+            return null;
+        }
+
+        document.getElementById('profile-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
+            // If the user manually edited the address text (not via GPS capture),
+            // derive approx coordinates from the new address so distances update.
+            // Falls back to clearing coords (re-resolved on Home/Events) if geocoding fails.
+            const addrVal = document.getElementById('profile-address').value.trim();
+            const prevAddr = ((state.userData && state.userData.address) || '').trim();
+            let geocodedAddr = null;
+            if (!window.__rblLocationCaptured && addrVal && addrVal !== prevAddr) {
+                const coords = await rblGeocodeAddress(addrVal);
+                if (coords) {
+                    document.getElementById('profile-lat').value = coords.lat;
+                    document.getElementById('profile-lng').value = coords.lng;
+                    geocodedAddr = addrVal; // coords derived from this exact address
+                } else {
+                    document.getElementById('profile-lat').value = '';
+                    document.getElementById('profile-lng').value = '';
+                }
+            }
+
             const profileData = {
                 name: document.getElementById('profile-name').value,
                 phone: document.getElementById('profile-phone').value,
@@ -846,6 +883,9 @@
                 address: document.getElementById('profile-address').value,
                 lat: parseFloat(document.getElementById('profile-lat').value) || null,
                 lng: parseFloat(document.getElementById('profile-lng').value) || null,
+                // Which address the coords were derived from: null = GPS-captured
+                // (authoritative) or cleared; a string = geocoded from that address.
+                latAddr: window.__rblLocationCaptured ? null : geocodedAddr,
                 emergencyContactName: document.getElementById('profile-emergency-name').value,
                 emergencyContact: document.getElementById('profile-emergency-contact').value,
                 emergencyContactRelation: document.getElementById('profile-emergency-relation').value
@@ -926,12 +966,11 @@
                     const lng = pos.coords.longitude.toFixed(6);
                     document.getElementById('profile-lat').value = lat;
                     document.getElementById('profile-lng').value = lng;
+                    window.__rblLocationCaptured = true; // GPS coords are authoritative
                     statusEl.textContent = '✓ Location captured — fetching address...';
                     // Reverse geocode: coordinates → address
                     try {
-                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`, {
-                            headers: { 'User-Agent': 'RudraBalaga/1.0' }
-                        });
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`);
                         const data = await res.json();
                         if (data && data.display_name) {
                             // Use a short, readable part of the address

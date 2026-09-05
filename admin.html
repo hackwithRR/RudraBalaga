@@ -982,25 +982,17 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                         <span class="font-label-lg text-label-lg text-on-surface">Is this an Outstation Event?</span>
                     </label>
                     <div>
+                        <label for="event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link</label>
+                        <input type="url" id="event-map-link" placeholder="https://maps.google.com/... or https://goo.gl/maps/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        <p class="text-xs text-on-surface-variant mt-1">Paste a Google Maps link — coordinates auto-extract.</p>
+                    </div>
+                    <div>
                         <label for="event-location" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Address</label>
                         <textarea id="event-location" rows="3" required class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"></textarea>
                     </div>
-                    <div>
-                        <label for="event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link (Optional)</label>
-                        <input type="url" id="event-map-link" placeholder="https://maps.google.com/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="event-lat" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Latitude</label>
-                            <input type="number" id="event-lat" step="any" placeholder="12.9716" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                        </div>
-                        <div>
-                            <label for="event-lng" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Longitude</label>
-                            <input type="number" id="event-lng" step="any" placeholder="77.5946" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                        </div>
-                    </div>
-                    <p class="text-xs text-on-surface-variant mt-1">Enter coordinates for distance calculation. <a href="https://www.google.com/maps" target="_blank" class="text-primary underline">Find on Google Maps</a> (right-click → "What's here?").</p>
-                    <!-- Outstation Dates (shown only for Outstation events) -->
+                    <!-- Hidden auto-extracted coordinates -->
+                    <input type="hidden" id="event-lat">
+                    <input type="hidden" id="event-lng">
                     <!-- Outstation Dates (shown only for Outstation events) -->
                     <div id="outstation-dates-section" class="hidden">
                         <div class="p-4 bg-surface-container-high rounded-xl border-2 border-secondary-container">
@@ -1245,6 +1237,10 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                                 Download Excel
                             </button>
                         </div>
+                        <button id="copy-attending-names-btn" class="w-full h-[56px] mt-3 bg-surface-container-high text-on-surface rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-xl">content_copy</span>
+                            Copy Attending Names
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1317,23 +1313,17 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                         <span class="font-label-lg text-label-lg text-on-surface">Is this an Outstation Event?</span>
                     </label>
                     <div>
+                        <label for="edit-event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link</label>
+                        <input type="url" id="edit-event-map-link" placeholder="https://maps.google.com/... or https://goo.gl/maps/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        <p class="text-xs text-on-surface-variant mt-1">Paste a link — coordinates auto-extract.</p>
+                    </div>
+                    <div>
                         <label for="edit-event-location" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Address</label>
                         <textarea id="edit-event-location" rows="3" required class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg"></textarea>
                     </div>
-                    <div>
-                        <label for="edit-event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link (Optional)</label>
-                        <input type="url" id="edit-event-map-link" placeholder="https://maps.google.com/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="edit-event-lat" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Latitude</label>
-                            <input type="number" id="edit-event-lat" step="any" placeholder="12.9716" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                        </div>
-                        <div>
-                            <label for="edit-event-lng" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Longitude</label>
-                            <input type="number" id="edit-event-lng" step="any" placeholder="77.5946" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
-                        </div>
-                    </div>
+                    <!-- Hidden auto-extracted coordinates -->
+                    <input type="hidden" id="edit-event-lat">
+                    <input type="hidden" id="edit-event-lng">
                     <!-- Outstation Dates (shown only for Outstation events) -->
                     <!-- Outstation Dates (shown only for Outstation events) -->
                     <div id="edit-outstation-dates-section" class="hidden">
@@ -1632,6 +1622,41 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
             busDetailDrafts: {}
         };
 
+        // --- Helper: Extract lat/lng from Google Maps link ---
+        function extractCoordsFromLink(link) {
+            if (!link) return null;
+            const url = link.trim();
+            const atMatch = url.match(/(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
+            if (atMatch) {
+                const lat = parseFloat(atMatch[1]);
+                const lng = parseFloat(atMatch[2]);
+                if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return { lat, lng };
+            }
+            const qMatch = url.match(/[?&]q=(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
+            if (qMatch) {
+                const lat = parseFloat(qMatch[1]);
+                const lng = parseFloat(qMatch[2]);
+                if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return { lat, lng };
+            }
+            return null;
+        }
+
+        // --- Helper: Geocode address to coordinates (OpenStreetMap, free) ---
+        async function geocodeAddress(address) {
+            if (!address || address.trim().length < 3) return null;
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address.trim())}&limit=1`);
+                if (!res.ok) return null;
+                const data = await res.json();
+                if (!data || !data.length) return null;
+                return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+            } catch {
+                return null;
+            }
+        }
+
+        // Loading animation
+
         // Loading animation
         const tl = gsap.timeline();
 
@@ -1896,6 +1921,11 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
             const downloadExcelBtn = document.getElementById('download-excel-btn');
             if (downloadExcelBtn) {
                 downloadExcelBtn.addEventListener('click', downloadExcel);
+            }
+
+            const copyAttendingNamesBtn = document.getElementById('copy-attending-names-btn');
+            if (copyAttendingNamesBtn) {
+                copyAttendingNamesBtn.addEventListener('click', copyAttendingNames);
             }
             
             // Member limit dropdown
@@ -3134,13 +3164,29 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
         }
         
         // Save edited event
-        function saveEditedEvent(e) {
+        async function saveEditedEvent(e) {
             e.preventDefault();
             
             const eventId = document.getElementById('edit-event-id').value;
             const limitSelect = document.getElementById('edit-event-limit').value;
             const customLimit = document.getElementById('edit-event-custom-limit').value;
             const type = document.getElementById('edit-event-type').value;
+            const location = document.getElementById('edit-event-location').value;
+            const mapLink = document.getElementById('edit-event-map-link').value;
+            
+            // Auto-extract lat/lng from map link or geocode address
+            let lat = null;
+            let lng = null;
+            const coords = extractCoordsFromLink(mapLink);
+            if (coords) {
+                lat = coords.lat;
+                lng = coords.lng;
+            } else if (location) {
+                try {
+                    const geo = await geocodeAddress(location);
+                    if (geo) { lat = geo.lat; lng = geo.lng; }
+                } catch {}
+            }
             
             // Determine the limit value
             let limit = null;
@@ -3150,15 +3196,17 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                 limit = parseInt(limitSelect);
             }
             
+            const existingLat = parseFloat(document.getElementById('edit-event-lat').value) || null;
+            const existingLng = parseFloat(document.getElementById('edit-event-lng').value) || null;
             const updateData = {
                 title: document.getElementById('edit-event-title').value,
                 date: document.getElementById('edit-event-date').value,
                 time: document.getElementById('edit-event-time').value,
                 type: type,
-                location: document.getElementById('edit-event-location').value,
-                mapLink: document.getElementById('edit-event-map-link').value || null,
-                lat: parseFloat(document.getElementById('edit-event-lat').value) || null,
-                lng: parseFloat(document.getElementById('edit-event-lng').value) || null,
+                location: location,
+                mapLink: mapLink || null,
+                lat: lat !== null ? lat : existingLat,
+                lng: lng !== null ? lng : existingLng,
                 limit: limit,
                 isOutstation: type === 'Outstation',
                 registrationDeadline: null,
@@ -4308,6 +4356,61 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
             // Close the tab automatically once the user finishes with the print dialog
             printWindow.addEventListener('afterprint', () => { try { printWindow.close(); } catch (e) {} });
             setTimeout(() => { printWindow.print(); }, 450);
+        }
+
+        // Copy attending member names (with serial numbers) to clipboard
+        function copyAttendingNames() {
+            const eventId = document.getElementById('roster-event-select').value;
+            if (!eventId) {
+                showToast('Please select an event first', 'error');
+                return;
+            }
+
+            firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => {
+                    users[doc.id] = doc.data();
+                });
+
+                const names = [];
+                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                    const rsvp = rsvpData[eventId];
+                    // Match roster/download logic: both 'attending' and 'attended' count as attending
+                    if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended')) {
+                        const user = users[uid] || {};
+                        names.push(user.name || user.email || 'Unknown Member');
+                    }
+                });
+
+                if (names.length === 0) {
+                    showToast('No attending members to copy', 'error');
+                    return;
+                }
+
+                const text = names.map((name, index) => `${index + 1}. ${name}`).join('\n');
+                const done = () => showToast(`Copied ${names.length} attending member name${names.length === 1 ? '' : 's'}`);
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+                } else {
+                    fallbackCopy(text, done);
+                }
+            });
+        }
+
+        function fallbackCopy(text, done) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                done();
+            } catch (e) {
+                showToast('Could not copy to clipboard', 'error');
+            }
+            document.body.removeChild(textarea);
         }
 
         function downloadPDF() {

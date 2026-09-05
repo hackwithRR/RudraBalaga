@@ -4,7 +4,44 @@ const state = {
     rsvps: {},
     busRoutes: {},
     user: null
-};
+}
+
+// Extract lat/lng from a Google Maps link
+// Supports: maps.google.com/?q=lat,lng, goo.gl/maps, maps.app.goo.gl, @lat,lng format
+function extractCoordsFromLink(link) {
+    if (!link) return null;
+    const url = link.trim();
+    // Pattern 1: @lat,lng (e.g. https://maps.google.com/@12.9716,77.5946)
+    const atMatch = url.match(/(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
+    if (atMatch) {
+        const lat = parseFloat(atMatch[1]);
+        const lng = parseFloat(atMatch[2]);
+        if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return { lat, lng };
+    }
+    // Pattern 2: q=lat,lng
+    const qMatch = url.match(/[?&]q=(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
+    if (qMatch) {
+        const lat = parseFloat(qMatch[1]);
+        const lng = parseFloat(qMatch[2]);
+        if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return { lat, lng };
+    }
+    return null;
+}
+
+// Geocode an address to coordinates using OpenStreetMap Nominatim (free, no API key)
+async function geocodeAddress(address) {
+    if (!address || address.trim().length < 3) return null;
+    try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address.trim())}&limit=1`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!data || !data.length) return null;
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    } catch {
+        return null;
+    }
+}
+
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
@@ -124,7 +161,7 @@ function logout() {
 }
 
 // Create new event (Admin)
-function createEvent(e) {
+async function createEvent(e) {
     e.preventDefault();
     
     const title = document.getElementById('event-title-input').value;
@@ -133,8 +170,21 @@ function createEvent(e) {
     const type = document.getElementById('event-type-select').value;
     const location = document.getElementById('event-location').value;
     const mapLink = document.getElementById('event-map-link').value;
-    const lat = parseFloat(document.getElementById('event-lat').value) || null;
-    const lng = parseFloat(document.getElementById('event-lng').value) || null;
+
+    // Auto-extract lat/lng from map link or geocode address
+    let lat = null;
+    let lng = null;
+    const coords = extractCoordsFromLink(mapLink);
+    if (coords) {
+        lat = coords.lat;
+        lng = coords.lng;
+    } else if (location) {
+        // Geocode address to coordinates
+        try {
+            const geo = await geocodeAddress(location);
+            if (geo) { lat = geo.lat; lng = geo.lng; }
+        } catch {}
+    }
 
     firebaseDb.collection('events').add({
         title,
