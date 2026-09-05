@@ -4126,8 +4126,8 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                             Download PNG
                         </button>
                         <button id="qr-print-btn" class="w-full h-[52px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-xl">print</span>
-                            Print
+                            <span class="material-symbols-outlined text-xl">picture_as_pdf</span>
+                            Download A4 Sheet (PDF)
                         </button>
                         <button id="qr-close-btn" class="w-full h-[52px] bg-surface-container-high text-on-surface rounded-xl font-bold text-body-lg btn-active">Close</button>
                     </div>
@@ -4137,8 +4137,8 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
             const qrContainer = modal.querySelector('#qr-code-container');
             new QRCode(qrContainer, {
                 text: qrPayload,
-                width: 256,
-                height: 256,
+                width: 320,
+                height: 320,
                 colorDark: '#1c1b1f',
                 colorLight: '#ffffff',
                 correctLevel: QRCode.CorrectLevel.M
@@ -4149,25 +4149,99 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
             modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
 
             const getQrCanvas = () => qrContainer.querySelector('canvas');
+
+            // Renders the QR onto a larger white canvas with padding so the
+            // downloaded/printed image has a quiet zone around the code
+            // (scanners need it, and it looks better when printed).
+            const buildPaddedQrDataUrl = () => {
+                const qrCanvas = getQrCanvas();
+                if (!qrCanvas) return null;
+                const pad = 64; // px of white padding around the QR
+                const out = document.createElement('canvas');
+                out.width = qrCanvas.width + pad * 2;
+                out.height = qrCanvas.height + pad * 2;
+                const ctx = out.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, out.width, out.height);
+                ctx.drawImage(qrCanvas, pad, pad);
+                return out.toDataURL('image/png');
+            };
+
             modal.querySelector('#qr-download-btn').addEventListener('click', () => {
-                const canvas = getQrCanvas();
-                if (!canvas) { alert('QR code not ready yet, please try again.'); return; }
+                const dataUrl = buildPaddedQrDataUrl();
+                if (!dataUrl) { alert('QR code not ready yet, please try again.'); return; }
                 const link = document.createElement('a');
                 link.download = `attendance-qr-${(event.title || event.id).replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.png`;
-                link.href = canvas.toDataURL('image/png');
+                link.href = dataUrl;
                 link.click();
             });
 
             modal.querySelector('#qr-print-btn').addEventListener('click', () => {
-                const canvas = getQrCanvas();
-                if (!canvas) { alert('QR code not ready yet, please try again.'); return; }
-                const printWindow = window.open('', '_blank', 'width=500,height=650');
-                if (!printWindow) { alert('Please allow pop-ups to print the QR code.'); return; }
-                printWindow.document.write(`<html><head><title>Attendance QR — ${event.title || event.id}</title></head><body style="font-family:sans-serif;text-align:center;padding:40px;"><h2 style="margin:0 0 4px;">${event.title || 'Event'}</h2><p style="color:#555;margin:0 0 24px;">Scan to mark your attendance</p><img src="${canvas.toDataURL('image/png')}" style="width:340px;height:340px;" /><p style="color:#888;font-size:12px;margin-top:24px;">Rudra Balaga · Event ID: ${event.id}</p></body></html>`);
+                const dataUrl = buildPaddedQrDataUrl();
+                if (!dataUrl) { alert('QR code not ready yet, please try again.'); return; }
+                const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+                const printWindow = window.open('', '_blank', 'width=800,height=1000');
+                if (!printWindow) { alert('Please allow pop-ups to generate the A4 sheet.'); return; }
+                printWindow.document.write(A4_SHEET_HTML(event, eventDate, dataUrl));
                 printWindow.document.close();
                 printWindow.focus();
-                printWindow.print();
             });
+        }
+
+        // ===================== A4 attendance QR sheet builder =====================
+        function A4_SHEET_HTML(event, eventDate, dataUrl) {
+            return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Attendance QR — ${event.title || event.id}</title><style>
+                @page { size: A4; margin: 0; }
+                * { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #fff; color: #1c1b1f; }
+                .sheet { width: 210mm; min-height: 297mm; margin: 0 auto; display: flex; flex-direction: column; }
+                .header { background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 55%, #9c27b0 100%); color: #fff; padding: 14mm 18mm 12mm; position: relative; overflow: hidden; }
+                .header::after { content: ''; position: absolute; right: -20mm; top: -20mm; width: 70mm; height: 70mm; border-radius: 50%; background: rgba(255,255,255,.08); }
+                .brand { display: flex; align-items: center; gap: 4mm; }
+                .brand-icon { width: 13mm; height: 13mm; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 8mm; color: #7b1fa2; font-weight: 800; }
+                .brand-name { font-size: 20pt; font-weight: 800; letter-spacing: .5pt; }
+                .brand-sub { font-size: 9.5pt; opacity: .85; }
+                .sheet-tag { margin-top: 7mm; display: inline-block; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); padding: 2mm 6mm; border-radius: 99px; font-size: 10pt; letter-spacing: 2pt; text-transform: uppercase; }
+                .body { flex: 1; padding: 10mm 18mm 8mm; }
+                .event-title { font-size: 21pt; font-weight: 800; color: #4a148c; line-height: 1.2; }
+                .event-meta { margin-top: 2.5mm; font-size: 10.5pt; color: #57504a; }
+                .event-meta b { color: #1c1b1f; }
+                .qr-wrap { display: flex; justify-content: center; margin: 8mm 0 6mm; }
+                .qr-frame { padding: 6mm; border: 1mm solid #4a148c; border-radius: 6mm; background: #fff; box-shadow: 0 2mm 6mm rgba(74,20,140,.18); }
+                .qr-frame img { width: 88mm; height: 88mm; display: block; }
+                .scan-hint { text-align: center; font-size: 10pt; color: #7b1fa2; font-weight: 700; letter-spacing: .4pt; }
+                .steps { margin-top: 8mm; background: #f7f2fa; border: .4mm solid #e1d5ec; border-radius: 5mm; padding: 6mm 8mm; }
+                .steps h3 { font-size: 12pt; color: #4a148c; margin-bottom: 4mm; text-transform: uppercase; letter-spacing: 1.2pt; }
+                .step { display: flex; align-items: flex-start; gap: 4mm; margin-bottom: 3.2mm; font-size: 10.5pt; color: #3a3330; line-height: 1.45; }
+                .step:last-child { margin-bottom: 0; }
+                .step-num { flex: 0 0 7mm; height: 7mm; border-radius: 50%; background: #7b1fa2; color: #fff; font-weight: 800; font-size: 10pt; display: flex; align-items: center; justify-content: center; }
+                .footer { padding: 5mm 18mm 9mm; display: flex; justify-content: space-between; align-items: center; border-top: .4mm solid #eee; font-size: 8.5pt; color: #93887f; }
+                .footer .fid { font-weight: 700; color: #7b1fa2; }
+                @media print { body { width: 210mm; } .sheet { box-shadow: none; } }
+            </style></head><body><div class="sheet">
+                <div class="header">
+                    <div class="brand">
+                        <div class="brand-icon">ॐ</div>
+                        <div><div class="brand-name">Rudra Balaga</div><div class="brand-sub">ರುದ್ರ ಪರಾಯಣ · Attendance System</div></div>
+                    </div>
+                    <div class="sheet-tag">Event Attendance QR</div>
+                </div>
+                <div class="body">
+                    <div class="event-title">${event.title || 'Event'}</div>
+                    <div class="event-meta">${eventDate ? `📅 <b>${eventDate}</b> &nbsp;·&nbsp; ` : ''}Event ID: <b>${event.id}</b></div>
+                    <div class="qr-wrap"><div class="qr-frame"><img src="${dataUrl}" alt="Attendance QR"></div></div>
+                    <p class="scan-hint">Scan this QR to mark your attendance instantly</p>
+                    <div class="steps">
+                        <h3>How to mark attendance</h3>
+                        <div class="step"><div class="step-num">1</div><div>Open the <b>Rudra Balaga</b> app on your phone and log in.</div></div>
+                        <div class="step"><div class="step-num">2</div><div>Tap <b>QR Attendance</b> on the home screen.</div></div>
+                        <div class="step"><div class="step-num">3</div><div>Tap <b>Start Camera Scanner</b> and point the camera at this QR code.</div></div>
+                        <div class="step"><div class="step-num">4</div><div>You'll see <b>"Attendance marked"</b> on screen — you're done! No manual register needed.</div></div>
+                        <div class="step"><div class="step-num">ℹ</div><div>Can't use the app scanner? Scan this QR with your phone's regular camera app — the link opens and marks you attended automatically.</div></div>
+                    </div>
+                </div>
+                <div class="footer"><span>Generated on ${new Date().toLocaleString('en-IN')}</span><span class="fid">ID: ${event.id}</span></div>
+            </div><script>setTimeout(function(){window.print()},400)<\/script></body></html>`;
         }
 
         // ===================== Shared PDF export styling helpers =====================

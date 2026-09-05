@@ -7,10 +7,49 @@
     <link rel="icon" href="om.ico">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <style>
         body { background: #fdf8f3; font-family: system-ui, sans-serif; }
         #qr-reader video { border-radius: 0.75rem; width: 100% !important; }
+
+        /* ---- Animated scan overlay ---- */
+        .scan-wrap { position: relative; }
+        .scan-overlay { position: absolute; inset: 12%; pointer-events: none; display: none; }
+        .scan-overlay.active { display: block; }
+        .scan-corner { position: absolute; width: 28px; height: 28px; border: 4px solid #7b1fa2; opacity: .9; }
+        .scan-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; border-top-left-radius: 12px; }
+        .scan-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; border-top-right-radius: 12px; }
+        .scan-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-bottom-left-radius: 12px; }
+        .scan-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-bottom-right-radius: 12px; }
+        .scan-laser { position: absolute; left: 4%; right: 4%; top: 0; height: 3px; border-radius: 3px;
+            background: linear-gradient(90deg, transparent, #d500f9 30%, #7c4dff 50%, #d500f9 70%, transparent);
+            box-shadow: 0 0 12px 3px rgba(124,77,255,.55);
+            animation: laser 2.2s cubic-bezier(.4,0,.6,1) infinite; }
+        @keyframes laser { 0% { top: 4%; } 50% { top: 92%; } 100% { top: 4%; } }
+        .scan-pulse { position: absolute; inset: 0; border-radius: 14px; animation: pulse 2.2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(124,77,255,0); } 50% { box-shadow: 0 0 0 4px rgba(124,77,255,.25); } }
+
+        /* ---- Success celebration popup ---- */
+        .celebrate-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(20,10,30,.72); backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center; padding: 1.5rem; animation: fadeIn .25s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .celebrate-card { background: #fff; border-radius: 1.5rem; max-width: 22rem; width: 100%; text-align: center; padding: 2rem 1.5rem 1.75rem;
+            box-shadow: 0 24px 60px rgba(0,0,0,.35); animation: popIn .45s cubic-bezier(.2,1.4,.4,1); position: relative; overflow: hidden; }
+        @keyframes popIn { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .celebrate-card h2 { color: #4a148c; font-size: 1.4rem; font-weight: 800; }
+        .celebrate-card .evt { color: #7b1fa2; font-weight: 800; }
+        .celebrate-card p { color: #57504a; font-size: .95rem; margin-top: .5rem; }
+        .check-wrap { width: 96px; height: 96px; margin: 0 auto 1rem; border-radius: 50%; background: linear-gradient(135deg,#7b1fa2,#d500f9);
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(123,31,162,.45); animation: checkPop .5s cubic-bezier(.2,1.6,.4,1); }
+        @keyframes checkPop { from { transform: scale(0); } 60% { transform: scale(1.15); } to { transform: scale(1); } }
+        .check-svg { width: 52px; height: 52px; }
+        .check-path { fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round;
+            stroke-dasharray: 60; stroke-dashoffset: 60; animation: draw .5s .25s ease forwards; }
+        @keyframes draw { to { stroke-dashoffset: 0; } }
+        .confetti { position: absolute; top: -12px; width: 9px; height: 14px; opacity: 0; animation: confetti 1.8s ease-in forwards; border-radius: 2px; }
+        @keyframes confetti { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(340px) rotate(540deg); opacity: 0; } }
+        .celebrate-btn { margin-top: 1.25rem; width: 100%; height: 52px; border-radius: .8rem; font-weight: 800; color: #fff;
+            background: linear-gradient(135deg,#7b1fa2,#d500f9); box-shadow: 0 6px 18px rgba(123,31,162,.4); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -33,9 +72,26 @@
                 <span class="material-symbols-outlined">qr_code_scanner</span>Scan Event QR
             </h2>
             <p class="text-on-surface-variant text-sm mb-3">Point your camera at the attendance QR code displayed by the admin.</p>
-            <div id="qr-reader" class="rounded-xl overflow-hidden mb-3"></div>
+            <div class="scan-wrap">
+                <div id="qr-reader" class="rounded-xl overflow-hidden mb-3"></div>
+                <div id="scan-overlay" class="scan-overlay">
+                    <div class="scan-pulse"></div>
+                    <div class="scan-corner tl"></div><div class="scan-corner tr"></div>
+                    <div class="scan-corner bl"></div><div class="scan-corner br"></div>
+                    <div class="scan-laser"></div>
+                </div>
+            </div>
             <button id="start-scan-btn" class="w-full h-14 bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined">photo_camera</span>Start Camera Scanner
+            </button>
+            <div class="grid grid-cols-1 gap-3 mt-3">
+                <label for="qr-file-input" class="w-full h-14 bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg flex items-center justify-center gap-2 cursor-pointer">
+                    <span class="material-symbols-outlined">image</span>Scan from Photo / Screenshot
+                </label>
+                <input id="qr-file-input" type="file" accept="image/*" class="hidden">
+            </div>
+            <button id="torch-btn" class="hidden w-full h-12 mt-3 bg-surface-container-high text-on-surface rounded-xl font-bold text-body-lg flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">flashlight_on</span>Toggle Flash
             </button>
         </section>
 
@@ -51,6 +107,11 @@
         const statusText = document.getElementById('status-text');
         const scannerPanel = document.getElementById('scanner-panel');
         let html5QrCode = null;
+        let fileScanner = null;
+        let isScanning = false;
+        let scanBusy = false;
+        let torchOn = false;
+        let listenersBound = false; // guard against double-binding on repeated auth events
         let processedEvents = {}; // guard against duplicate marking in one session
         let pendingEventId = null;
 
@@ -85,6 +146,40 @@
             return null;
         }
 
+        function showSuccessPopup(eventTitle, alreadyMarked) {
+            // Remove any previous popup
+            const old = document.querySelector('.celebrate-overlay');
+            if (old) old.remove();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'celebrate-overlay';
+            const confettiColors = ['#d500f9', '#7c4dff', '#ffb300', '#00e676', '#ff5252', '#40c4ff'];
+            let confetti = '';
+            for (let i = 0; i < 26; i++) {
+                const left = Math.random() * 100;
+                const delay = Math.random() * 0.6;
+                const dur = 1.4 + Math.random() * 1.2;
+                const color = confettiColors[i % confettiColors.length];
+                confetti += `<span class="confetti" style="left:${left}%;background:${color};animation-delay:${delay}s;animation-duration:${dur}s;"></span>`;
+            }
+            overlay.innerHTML = `
+                <div class="celebrate-card">
+                    ${confetti}
+                    <div class="check-wrap">
+                        <svg class="check-svg" viewBox="0 0 52 52"><path class="check-path" d="M14 27 L23 36 L38 17"/></svg>
+                    </div>
+                    <h2>${alreadyMarked ? 'Already marked!' : 'Attendance marked!'}</h2>
+                    <p>You are marked <span class="evt">attended</span> for<br><span class="evt">${eventTitle}</span></p>
+                    <p style="font-size:.85rem;color:#93887f;">🙏 ಧನ್ಯವಾದಗಳು · See you at the event!</p>
+                    <button class="celebrate-btn" type="button">Done</button>
+                </div>`;
+            document.body.appendChild(overlay);
+            overlay.querySelector('.celebrate-btn').addEventListener('click', () => overlay.remove());
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+            // Auto-dismiss after 6 s
+            setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 6000);
+        }
+
         async function markAttendance(eventId, uid) {
             if (processedEvents[eventId]) return; // already handled in this session
             processedEvents[eventId] = true;
@@ -105,7 +200,8 @@
                 const existing = (rsvpSnap.exists && rsvpSnap.data()[eventId]) || {};
 
                 if (existing.status === 'attended') {
-                    setStatus(`<span class="material-symbols-outlined text-4xl block mb-2">task_alt</span>You are already marked <strong>attended</strong> for <strong>${eventTitle}</strong>`, 'success');
+                    setStatus(`You are already marked <strong>attended</strong> for <strong>${eventTitle}</strong>`, 'success');
+                    showSuccessPopup(eventTitle, true);
                     return;
                 }
 
@@ -131,8 +227,9 @@
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
 
-                setStatus(`<span class="material-symbols-outlined text-4xl block mb-2">task_alt</span>Attendance marked! You are <strong>attended</strong> for <strong>${eventTitle}</strong>`, 'success');
+                setStatus(`Attendance marked! You are <strong>attended</strong> for <strong>${eventTitle}</strong>`, 'success');
                 showToast('<div class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span><span>Attendance marked ✓</span></div>', true);
+                showSuccessPopup(eventTitle, false);
             } catch (err) {
                 processedEvents[eventId] = false;
                 console.error('QR attendance error:', err);
@@ -154,22 +251,125 @@
             }
         }
 
-        function startScanner() {
-            if (!scannerPanel.classList.contains('hidden') && html5QrCode) return;
-            scannerPanel.classList.remove('hidden');
-            document.getElementById('start-scan-btn').classList.add('hidden');
-            html5QrCode = new Html5Qrcode('qr-reader');
-            html5QrCode.start(
-                { facingMode: 'environment' },
-                { fps: 10, qrbox: { width: 230, height: 230 } },
-                (decodedText) => {
-                    html5QrCode.stop().catch(() => {});
-                    handleScannedText(decodedText);
-                },
-                () => {} // per-frame decode failures are normal; ignore
-            ).catch((err) => {
+        function cameraErrorMsg(err) {
+            const name = err && (err.name || err.type || '');
+            if (/NotAllowedError|PermissionDenied/i.test(name)) {
+                return 'Camera permission was denied. Please allow camera access for this site in your browser settings, then tap "Start Camera Scanner" again.';
+            }
+            if (/NotFoundError|OverconstrainedError|no camera/i.test(String(err))) {
+                return 'No usable camera was found on this device. You can use "Scan from Photo / Screenshot" instead, or scan the QR with your phone\'s camera app and open the link.';
+            }
+            if (/insecure|https/i.test(String(err))) {
+                return 'Camera access requires a secure (HTTPS) connection. Open the app over HTTPS, or scan the QR with your phone\'s camera app and open the link.';
+            }
+            return 'Could not start the camera (' + name + '). Please try again, use "Scan from Photo / Screenshot", or scan the QR with your phone\'s camera app and open the link.';
+        }
+
+        async function pickRearCamera() {
+            // Explicitly select the back camera — more reliable across Android/iOS than
+            // just asking for facingMode: environment.
+            try {
+                const devices = await Html5Qrcode.getCameras();
+                if (!devices || !devices.length) return { facingMode: 'environment' };
+                const back = devices.find(d => /back|rear|environment|arrière|trasera/i.test(d.label))
+                    || (devices.length > 1 ? devices[devices.length - 1] : devices[0]);
+                return back.id;
+            } catch (e) {
+                return { facingMode: 'environment' };
+            }
+        }
+
+        function onScanSuccess(decodedText) {
+            if (scanBusy) return;
+            scanBusy = true;
+            stopScanner().finally(() => handleScannedText(decodedText));
+        }
+
+        function stopScanner() {
+            document.getElementById('scan-overlay').classList.remove('active');
+            if (html5QrCode && isScanning) {
+                isScanning = false;
+                return html5QrCode.stop().then(() => { html5QrCode.clear(); }).catch(() => {});
+            }
+            return Promise.resolve();
+        }
+
+        async function startScanner() {
+            if (isScanning) return;
+            if (typeof Html5Qrcode === 'undefined') {
+                setStatus('Scanner library failed to load. Check your internet connection and reload the page, or scan the QR with your phone\'s camera app and open the link.', 'error');
+                return;
+            }
+            const startBtn = document.getElementById('start-scan-btn');
+            setStatus('Starting camera…', 'info');
+            try {
+                if (!html5QrCode) html5QrCode = new Html5Qrcode('qr-reader', { verbose: false });
+                const cameraIdOrConfig = await pickRearCamera();
+                await html5QrCode.start(
+                    cameraIdOrConfig,
+                    {
+                        fps: 10,
+                        qrbox: { width: 220, height: 220 },
+                        aspectRatio: 1.0,
+                        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+                        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+                    },
+                    onScanSuccess,
+                    () => {} // per-frame decode misses are normal; ignore
+                );
+                isScanning = true;
+                scanBusy = false;
+                startBtn.classList.add('hidden');
+                document.getElementById('scan-overlay').classList.add('active');
+                document.getElementById('torch-btn').classList.remove('hidden');
+                setStatus('Point the camera at the event QR code…', 'info');
+            } catch (err) {
                 console.error('Camera error:', err);
-                setStatus('Could not access the camera. Please allow camera permission, or scan the QR with your phone\'s camera app and open the link.', 'error');
+                isScanning = false;
+                scanBusy = false;
+                document.getElementById('scan-overlay').classList.remove('active');
+                startBtn.classList.remove('hidden'); // allow retry
+                document.getElementById('torch-btn').classList.add('hidden');
+                setStatus(cameraErrorMsg(err), 'error');
+            }
+        }
+
+        function setupTorch() {
+            const torchBtn = document.getElementById('torch-btn');
+            torchBtn.addEventListener('click', async () => {
+                if (!html5QrCode || !isScanning) return;
+                try {
+                    const caps = html5QrCode.getRunningTrackCapabilities();
+                    if (caps && caps.torch) {
+                        torchOn = !torchOn;
+                        await html5QrCode.applyVideoConstraints({ advanced: [{ torch: torchOn }] });
+                    } else {
+                        showToast('<span>Flash not supported on this camera</span>', false);
+                    }
+                } catch (e) {
+                    showToast('<span>Flash not supported on this camera</span>', false);
+                }
+            });
+        }
+
+        function setupFileScan() {
+            document.getElementById('qr-file-input').addEventListener('change', async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                if (typeof Html5Qrcode === 'undefined') {
+                    setStatus('Scanner library failed to load. Check your internet connection and reload the page.', 'error');
+                    return;
+                }
+                try {
+                    if (!fileScanner) fileScanner = new Html5Qrcode('qr-reader', { verbose: false });
+                    const decoded = await fileScanner.scanFile(file, false);
+                    handleScannedText(decoded);
+                } catch (err) {
+                    console.error('File scan error:', err);
+                    showToast('<span>No QR code found in that image</span>', false);
+                } finally {
+                    e.target.value = '';
+                }
             });
         }
 
@@ -189,7 +389,12 @@
             }
 
             scannerPanel.classList.remove('hidden');
-            document.getElementById('start-scan-btn').addEventListener('click', startScanner);
+            if (!listenersBound) {
+                listenersBound = true;
+                document.getElementById('start-scan-btn').addEventListener('click', startScanner);
+                setupTorch();
+                setupFileScan();
+            }
 
             if (pendingEventId) {
                 const id = pendingEventId;
