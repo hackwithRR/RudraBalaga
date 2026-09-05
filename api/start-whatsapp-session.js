@@ -46,6 +46,11 @@ export default async function handler(req, res) {
     const randomPart = crypto.randomBytes(TOKEN_BYTES).toString('hex').toUpperCase();
     const sessionToken = `VERIFY_${randomPart}`;
 
+    // ── Get expected phone from request body ────────────────────────────
+    // The frontend sends the phone number the user entered in their profile.
+    // This is used to verify that the WhatsApp message comes from the same number.
+    const expectedPhone = (req.body?.phone || '').replace(/\D/g, '');
+
     // ── Store in Firestore ────────────────────────────────────────────
     try {
         if (process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -59,6 +64,7 @@ export default async function handler(req, res) {
             await db.collection('whatsappSessions').doc(sessionToken).set({
                 status: 'PENDING',
                 phone: null,
+                expectedPhone: expectedPhone,
                 createdAt: Date.now(),
                 expiresAt: Date.now() + SESSION_TTL_MS
             }, { merge: false });

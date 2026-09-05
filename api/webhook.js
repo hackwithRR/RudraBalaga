@@ -184,6 +184,16 @@ async function processSingleMessage(message) {
             return;
         }
 
+        // Check if the sender's phone matches the expected phone from profile
+        if (sessionData.expectedPhone) {
+            const normalizedSender = userPhone.replace(/\D/g, '');
+            if (normalizedSender !== sessionData.expectedPhone) {
+                console.warn(`webhook: phone mismatch — expected ${sessionData.expectedPhone}, got ${normalizedSender}`);
+                await sessionRef.update({ status: 'REJECTED', reason: 'PHONE_MISMATCH', rejectedAt: Date.now() });
+                return;
+            }
+        }
+
         // Check if phone number is already verified by another user
         const normalizedPhone = userPhone.replace(/\D/g, '');
         const existingUserSnap = await db.collection('users')

@@ -737,7 +737,6 @@
             // Persist to Firestore
             firebaseDb.collection('users').doc(state.user.uid).set({ phoneVerified: true, verifiedPhone: state.userData.verifiedPhone, phone: phone || state.userData.phone }, { merge: true }).catch(function(){});
         }
-        }
         function showWhatsappStatus(msg, ok) {
             var el = document.getElementById('whatsapp-status-msg');
             if (!el) return;
@@ -762,9 +761,6 @@
                 }
             }
         }
-            if (verified) return;
-            document.getElementById('whatsapp-verify-area').classList.remove('hidden');
-        }
         var whatsappPollTimer = null;
         async function startWhatsappVerification() {
             var phone = document.getElementById('profile-phone').value.trim();
@@ -777,7 +773,11 @@
             if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
             try {
                 showWhatsappStatus(rbTV('Creating verification session...', 'ಪರಿಶೀಲನೆ ಸೆಷನ್ ರಚಿಸಲಾಗುತ್ತಿದೆ...'), false);
-                var res = await fetch('/api/start-whatsapp-session', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                var res = await fetch('/api/start-whatsapp-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone })
+                });
                 var data = await res.json();
                 if (!res.ok || !data.ok) {
                     showWhatsappStatus(rbTV('Could not start verification. Please try again.', 'ಪರಿಶೀಲನೆ ಪ್ರಾರಂಭಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false);
@@ -806,6 +806,8 @@
                             whatsappPollTimer = null;
                             if (pollData.reason === 'PHONE_ALREADY_USED') {
                                 showWhatsappStatus(rbTV('This phone number is already used by another member.', 'ಈ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಬ್ಬ ಸದಸ್ಯರು ಬಳಸುತ್ತಿದ್ದಾರೆ.'), false);
+                            } else if (pollData.reason === 'PHONE_MISMATCH') {
+                                showWhatsappStatus(rbTV('WhatsApp number does not match profile number. Please use the same number.', 'WhatsApp ಸಂಖ್ಯೆ ಪ್ರೊಫೈಲ್ ಸಂಖ್ಯೆಗೆ ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು ಅದೇ ಸಂಖ್ಯೆ ಬಳಸಿ.'), false);
                             } else {
                                 showWhatsappStatus(rbTV('Verification rejected. Please try again.', 'ಪರಿಶೀಲನೆ ತಿರಸ್ಕರಿಸಲಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false);
                             }
@@ -956,9 +958,11 @@
 
             const newNorm = normalizePhone(profileData.phone);
             const oldNorm = normalizePhone(state.userData && state.userData.phone);
+            const verifiedNorm = normalizePhone(state.userData && state.userData.verifiedPhone);
 
-            // If phone number changed, reset verification
-            const phoneChanged = newNorm && oldNorm && newNorm !== oldNorm;
+            // Only treat as "changed" if the new number differs from BOTH the old phone AND the verified phone
+            const phoneFromVerified = verifiedNorm && newNorm === verifiedNorm;
+            const phoneChanged = newNorm && oldNorm && newNorm !== oldNorm && !phoneFromVerified;
             if (phoneChanged) {
                 profileData.phoneVerified = false;
                 profileData.verifiedPhone = null;
