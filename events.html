@@ -403,7 +403,8 @@ s            </a>
             events: [],
             rsvps: {},
             busRoutes: {},
-            user: null
+            user: null,
+            attendance: {} // { eventId: { presentUids: [...], scannedUids: [...] } } - tracks who actually attended via QR scan
         };
 
         // Tracks the response a member had before they tapped "Change / edit my answer".
@@ -424,6 +425,7 @@ s            </a>
                     loadEvents();
                     loadRsvps();
                     loadBusRoutes();
+                    loadAttendance();
                 } else {
                     // No user - redirect to login
                     window.location.href = 'login';
@@ -653,6 +655,26 @@ s            </a>
             }
         }
 
+        // Load attendance data from Firestore (who actually attended via QR scan)
+        function loadAttendance() {
+            try {
+                firebaseDb.collection('attendance').onSnapshot(snapshot => {
+                    state.attendance = {};
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        state.attendance[doc.id] = {
+                            presentUids: Array.isArray(data.presentUids) ? data.presentUids : [],
+                            scannedUids: Array.isArray(data.scannedUids) ? data.scannedUids : []
+                        };
+                    });
+                    renderEvents();
+                });
+            } catch (error) {
+                console.log('Firestore not available for attendance');
+                state.attendance = {};
+            }
+        }
+
         // Check if event is editable (more than 1 day before event)
         function isEventEditable(eventDate) {
             const eventDateTime = new Date(eventDate);
@@ -843,10 +865,22 @@ s            </a>
                 // Determine status display
                 const ownTransport = userRsvp?.transportMode === 'own';
                 
+                // Check if user actually attended (QR scan or admin-marked present)
+                const eventAttendance = state.attendance[e.id];
+                const userActuallyAttended = eventAttendance && (
+                    (Array.isArray(eventAttendance.presentUids) && eventAttendance.presentUids.includes(state.user.uid)) ||
+                    (Array.isArray(eventAttendance.scannedUids) && eventAttendance.scannedUids.includes(state.user.uid))
+                );
+                
                 let status, statusColor;
-                if (eventFinished && userRsvp && userRsvp.status === 'attending' && !isRejected) {
-                    status = 'Attended - Event done';
+                if (eventFinished && userRsvp && userRsvp.status === 'attending' && !isRejected && userActuallyAttended) {
+                    // User RSVP'd attending AND scanned QR / was marked present
+                    status = rbT('Attended ✓', 'ಹಾಜರಾಗಿದ್ದೀರಿ ✓');
                     statusColor = 'text-green-700 font-bold';
+                } else if (eventFinished && userRsvp && userRsvp.status === 'attending' && !isRejected && !userActuallyAttended) {
+                    // User RSVP'd attending but did NOT scan QR / was not marked present
+                    status = rbT('Not Attended', 'ಹಾಜರಾಗಿಲ್ಲ');
+                    statusColor = 'text-red-600 font-bold';
                 } else if (eventFinished) {
                     status = 'Event finished';
                     statusColor = 'text-on-surface-variant font-bold';
@@ -1061,7 +1095,11 @@ s            </a>
                         ${renderAttendingSummary(e.id, attendingCount, e.limit || 0)}
                         <div class="mt-3 pt-3 border-t border-outline-variant">
                             <p class="font-label-lg text-label-lg text-on-surface-variant kannada-text">ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆ:</p>
-                            <p class="font-body-lg text-body-lg ${statusColor} kannada-text">${status}</p>
+                            <p class="font-body-lg text-body-lg ${statusColor} kannada-text inline-flex items-center gap-1.5">
+                                ${userActuallyAttended ? '<span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:\'FILL\' 1;">check_circle</span>' : ''}
+                                ${!userActuallyAttended && eventFinished && userRsvp && userRsvp.status === 'attending' && !isRejected ? '<span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:\'FILL\' 1;">cancel</span>' : ''}
+                                ${status}
+                            </p>
                             ${rsvpButtonsHtml}
                         </div>
                         ${busRoutesHtml}

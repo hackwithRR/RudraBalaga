@@ -2030,19 +2030,28 @@
             const notAttendingMembers = [];
             const busBreakdown = {};
 
-            firebaseDb.collection('users').get().then(usersSnapshot => {
+            // Load both users and attendance data for comparison
+            Promise.all([
+                firebaseDb.collection('users').get(),
+                firebaseDb.collection('attendance').doc(eventId).get()
+            ]).then(([usersSnapshot, attendanceDoc]) => {
                 const users = {};
                 usersSnapshot.forEach(doc => {
                     users[doc.id] = doc.data();
                 });
 
+                // Get UIDs who actually attended (QR scan or admin-marked present)
+                const attData = attendanceDoc.exists ? (attendanceDoc.data() || {}) : {};
+                const presentUids = new Set(Array.isArray(attData.presentUids) ? attData.presentUids : []);
+                const scannedUids = new Set(Array.isArray(attData.scannedUids) ? attData.scannedUids : []);
+                const actuallyAttendedUids = new Set([...presentUids, ...scannedUids]);
+
                 Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
                     const rsvp = rsvpData[eventId];
-                    // Check for both 'attending' and 'attended' statuses
                     if (rsvp && (rsvp.status === 'attending' || rsvp.status === 'attended')) {
                         attendingCount++;
                         const member = users[uid] || { name: 'Unknown Member' };
-                        attendingMembers.push({ ...member, pickupPoint: rsvp.pickupPoint });
+                        attendingMembers.push({ ...member, pickupPoint: rsvp.pickupPoint, uid });
                         
                         if (rsvp.pickupPoint) {
                             // Find the route in the new structure (buses with routes)
@@ -2089,8 +2098,77 @@
                     busBreakdownSection.classList.add('hidden');
                 }
 
+                // Build attendance comparison: who RSVP'd vs who actually attended
+                const actuallyAttendedMembers = attendingMembers.filter(m => actuallyAttendedUids.has(m.uid));
+                const noShowMembers = attendingMembers.filter(m => !actuallyAttendedUids.has(m.uid));
+                renderAttendanceComparison(actuallyAttendedMembers, noShowMembers);
+
                 rosterContent.classList.remove('hidden');
             });
+        }
+
+        // Render attendance comparison: RSVP'd attending vs actually attended vs no-show
+        function renderAttendanceComparison(actuallyAttendedMembers, noShowMembers) {
+            let section = document.getElementById('attendance-comparison-section');
+            if (!section) {
+                const rosterContent = document.getElementById('roster-content');
+                section = document.createElement('div');
+                section.id = 'attendance-comparison-section';
+                section.className = 'mt-6 p-4 bg-surface-container-low rounded-xl border border-outline-variant';
+                rosterContent.appendChild(section);
+            }
+
+            const totalRsvped = actuallyAttendedMembers.length + noShowMembers.length;
+            const attendanceRate = totalRsvped > 0 ? Math.round((actuallyAttendedMembers.length / totalRsvped) * 100) : 0;
+
+            section.innerHTML = `
+                <h4 class="font-headline-sm text-headline-sm text-primary mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fact_check</span>
+                    Attendance Tracking (RSVP vs Actual)
+                </h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                    <div class="p-3 bg-primary-container/30 rounded-lg text-center">
+                        <p class="text-2xl font-bold text-primary">${totalRsvped}</p>
+                        <p class="text-xs text-on-surface-variant">RSVP'd Attending</p>
+                    </div>
+                    <div class="p-3 bg-green-100 rounded-lg text-center">
+                        <p class="text-2xl font-bold text-green-700">${actuallyAttendedMembers.length}</p>
+                        <p class="text-xs text-green-700">Actually Attended</p>
+                    </div>
+                    <div class="p-3 bg-red-100 rounded-lg text-center">
+                        <p class="text-2xl font-bold text-red-600">${noShowMembers.length}</p>
+                        <p class="text-xs text-red-600">No-Show</p>
+                    </div>
+                    <div class="p-3 bg-tertiary-container/30 rounded-lg text-center">
+                        <p class="text-2xl font-bold text-tertiary">${attendanceRate}%</p>
+                        <p class="text-xs text-on-surface-variant">Attendance Rate</p>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h5 class="font-bold text-green-700 mb-2 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Actually Attended (${actuallyAttendedMembers.length})
+                    </h5>
+                    <div class="max-h-40 overflow-y-auto bg-green-50 rounded-lg p-2">
+                        ${actuallyAttendedMembers.length > 0 
+                            ? actuallyAttendedMembers.map(m => `<div class="p-2 text-sm text-green-800 flex items-center gap-2"><span class="material-symbols-outlined text-green-600" style="font-size:14px;font-variation-settings: 'FILL' 1;">check</span>${m.name || m.email}</div>`).join('')
+                            : '<p class="text-sm text-green-600 italic p-2">No one has attended yet (QR scan or admin-marked)</p>'
+                        }
+                    </div>
+                </div>
+                <div>
+                    <h5 class="font-bold text-red-600 mb-2 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings: 'FILL' 1;">person_off</span>
+                        No-Show (RSVP'd but didn't attend) (${noShowMembers.length})
+                    </h5>
+                    <div class="max-h-40 overflow-y-auto bg-red-50 rounded-lg p-2">
+                        ${noShowMembers.length > 0 
+                            ? noShowMembers.map(m => `<div class="p-2 text-sm text-red-700 flex items-center gap-2"><span class="material-symbols-outlined text-red-500" style="font-size:14px;font-variation-settings: 'FILL' 1;">close</span>${m.name || m.email}</div>`).join('')
+                            : "<p class=\"text-sm text-red-500 italic p-2\">Everyone who RSVP'd attended!</p>"
+                        }
+                    </div>
+                </div>
+            `;
         }
 
         // Populate event selectors (Admin)
@@ -2433,9 +2511,8 @@
                     const presentNames = present.map(uid => (users[uid]?.name || users[uid]?.email || 'Unknown'));
                     const absentNames = absent.map(uid => (users[uid]?.name || users[uid]?.email || 'Unknown'));
 
-                    // IMPORTANT: Use deterministic doc id so saving twice for same event updates instead of creating new docs.
-                    // This prevents your UI from resetting when you open modal again.
-                    const attendanceDocId = `event-${eventId}`;
+                    // Use eventId as doc id so QR scans and admin marking share the same record
+                    const attendanceDocId = eventId;
 
                     const attendanceDoc = {
                         eventId,

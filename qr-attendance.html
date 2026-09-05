@@ -187,11 +187,12 @@
                 // Append to the shared attendance log used by the admin roster export.
                 const userDoc = await firebaseDb.collection('users').doc(uid).get();
                 const name = (userDoc.exists && (userDoc.data().name || userDoc.data().email)) || 'Unknown';
-                await firebaseDb.collection('attendance').doc(`event-${eventId}`).set({
+                await firebaseDb.collection('attendance').doc(eventId).set({
                     eventId,
                     eventTitle,
                     presentUids: firebase.firestore.FieldValue.arrayUnion(uid),
                     present: firebase.firestore.FieldValue.arrayUnion(name),
+                    scannedUids: firebase.firestore.FieldValue.arrayUnion(uid),
                     qrMarked: firebase.firestore.FieldValue.arrayUnion(uid),
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
