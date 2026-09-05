@@ -2574,96 +2574,154 @@
 
         // ===================== A4 attendance QR sheet builder =====================
         function A4_SHEET_HTML(event, eventDate, dataUrl) {
+            const qrPayload = `${location.origin}/qr-attendance?e=${encodeURIComponent(event.id)}`;
             return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Attendance QR — ${event.title || event.id}</title><style>
                 @page { size: A4; margin: 0; }
                 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #fff; color: #1c1b1f; }
-                .sheet { width: 210mm; min-height: 297mm; margin: 0 auto; display: flex; flex-direction: column; position: relative; background: #fff; }
-                .frame { position: absolute; inset: 6mm; border: .5mm solid #f7e0cb; border-radius: 4mm; pointer-events: none; }
-                .header { background: linear-gradient(120deg, #bf360c 0%, #e65100 55%, #f57c00 100%); color: #fff; padding: 12mm 14mm 11mm; position: relative; overflow: hidden; border-radius: 4mm 4mm 0 0; }
-                .deco { position: absolute; border-radius: 50%; background: rgba(255,255,255,.07); }
-                .deco.d1 { width: 62mm; height: 62mm; right: -14mm; top: -22mm; }
-                .deco.d2 { width: 34mm; height: 34mm; right: 32mm; bottom: -16mm; }
-                .deco.d3 { width: 18mm; height: 18mm; left: 45%; top: -8mm; background: rgba(255,255,255,.05); }
-                .head-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; }
-                .brand { display: flex; align-items: center; gap: 4mm; }
-                .brand-icon { width: 14mm; height: 14mm; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 8.5mm; color: #e65100; font-weight: 800; box-shadow: 0 1mm 3mm rgba(0,0,0,.25); }
-                .brand-name { font-size: 19pt; font-weight: 800; letter-spacing: .4pt; line-height: 1.1; }
-                .brand-sub { font-size: 9pt; opacity: .85; letter-spacing: .6pt; }
-                .head-badge { background: rgba(255,255,255,.14); border: .4mm solid rgba(255,255,255,.4); border-radius: 3mm; padding: 3mm 5mm; text-align: center; }
-                .head-badge .t { font-size: 9pt; font-weight: 800; letter-spacing: 2pt; text-transform: uppercase; }
-                .head-badge .s { font-size: 7.5pt; opacity: .85; margin-top: 1mm; }
-                .head-strip { margin-top: 6mm; height: 1.2mm; border-radius: 99px; background: linear-gradient(90deg, #ffb300, #ff5252, #d500f9, #40c4ff); position: relative; }
-                .body { flex: 1; padding: 9mm 14mm 6mm; position: relative; }
-                .chips { display: flex; gap: 3mm; flex-wrap: wrap; margin-bottom: 6mm; }
-                .chip { background: #fff4e5; border: .4mm solid #ffe0b2; border-radius: 99px; padding: 2mm 5mm; font-size: 9.5pt; color: #bf360c; font-weight: 700; display: flex; align-items: center; gap: 2mm; }
-                .chip .lbl { color: #93887f; font-weight: 500; }
-                .event-title { font-size: 17pt; font-weight: 800; color: #bf360c; text-align: center; }
-                .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5mm 0 4mm; }
-                .qr-frame { position: relative; padding: 7mm; border: 1mm solid #f57c00; border-radius: 7mm; background: #fff; box-shadow: 0 2mm 8mm rgba(230,81,0,.22); }
-                .qr-frame::before, .qr-frame::after { content: ''; position: absolute; width: 10mm; height: 10mm; border: 1.6mm solid #ff6d00; }
-                .qr-frame::before { top: -2mm; left: -2mm; border-right: none; border-bottom: none; border-top-left-radius: 4mm; }
-                .qr-frame::after { bottom: -2mm; right: -2mm; border-left: none; border-top: none; border-bottom-right-radius: 4mm; }
-                .qr-frame img { width: 116mm; height: 116mm; display: block; }
-                .hero-hint { margin-top: 6mm; background: #fff4e5; border: .4mm solid #ffe0b2; color: #bf360c; border-radius: 99px; padding: 2.5mm 8mm; font-size: 11pt; font-weight: 800; letter-spacing: .4pt; }
-                .bottom { padding: 0 14mm; }
-                .chips { display: flex; gap: 3mm; justify-content: center; flex-wrap: wrap; margin-bottom: 4mm; }
-                .chip { background: #fff4e5; border: .4mm solid #ffe0b2; border-radius: 99px; padding: 2mm 5mm; font-size: 9.5pt; color: #bf360c; font-weight: 700; display: flex; align-items: center; gap: 2mm; }
-                .chip .lbl { color: #93887f; font-weight: 500; }
-                .steps h3 { font-size: 11pt; color: #bf360c; margin-bottom: 4mm; text-transform: uppercase; letter-spacing: 1.4pt; display: flex; align-items: center; gap: 3mm; }
-                .steps h3::after { content: ''; flex: 1; height: .4mm; background: #ffe0b2; border-radius: 99px; }
-                .steps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm 6mm; }
-                .step { display: flex; align-items: flex-start; gap: 3mm; font-size: 9.5pt; color: #3a3330; line-height: 1.45; }
-                .step-num { flex: 0 0 6.5mm; height: 6.5mm; border-radius: 50%; background: linear-gradient(135deg,#f57c00,#ff6d00); color: #fff; font-weight: 800; font-size: 9.5pt; display: flex; align-items: center; justify-content: center; }
-                .steps .note { margin-top: 4.5mm; padding-top: 3.5mm; border-top: .35mm dashed #f3d9bd; font-size: 9pt; color: #7a6f66; display: flex; gap: 3mm; align-items: flex-start; }
-                .footer { margin: 0 14mm; border-top: .4mm solid #eee; padding: 4mm 0 5mm; display: flex; justify-content: space-between; align-items: center; gap: 6mm; font-size: 8.5pt; color: #93887f; }
-                .footer .col { display: flex; flex-direction: column; gap: .8mm; }
-                .footer .col.mid { text-align: center; }
-                .footer .col.right { text-align: right; }
-                .footer b { color: #e65100; }
-                .footer .fid { font-weight: 700; color: #d84315; font-family: 'Courier New', monospace; font-size: 9pt; }
-                .base-strip { height: 4mm; border-radius: 4mm 4mm 0 0; background: linear-gradient(90deg, #bf360c, #e65100 40%, #ff9800 75%, #ffb300); }
-                @media print { body { width: 210mm; } }
+                .sheet { width: 210mm; height: 297mm; margin: 0 auto; display: flex; flex-direction: column; position: relative; background: #fff; overflow: hidden; }
+                .sheet::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 1px 1px, rgba(191,54,12,.03) 1px, transparent 0); background-size: 8mm 8mm; pointer-events: none; z-index: 0; }
+                .frame { position: absolute; inset: 4mm; border: .3mm solid #f0d9c0; border-radius: 2.5mm; pointer-events: none; z-index: 1; }
+                .header { background: linear-gradient(135deg, #8e24aa 0%, #d81b60 30%, #e65100 70%, #f57c00 100%); color: #fff; padding: 7mm 10mm 6mm; position: relative; overflow: hidden; border-radius: 3mm 3mm 0 0; z-index: 2; }
+                .header::before { content: ''; position: absolute; top: -30mm; right: -20mm; width: 80mm; height: 80mm; border-radius: 50%; background: rgba(255,255,255,.06); }
+                .header::after { content: ''; position: absolute; bottom: -25mm; left: 30%; width: 60mm; height: 60mm; border-radius: 50%; background: rgba(255,255,255,.04); }
+                .head-row { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; }
+                .brand { display: flex; align-items: center; gap: 3mm; }
+                .brand-icon { width: 11mm; height: 11mm; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 7mm; color: #d81b60; font-weight: 900; box-shadow: 0 1mm 3mm rgba(0,0,0,.3); }
+                .brand-text .brand-name { font-size: 16pt; font-weight: 800; letter-spacing: .3pt; line-height: 1.1; }
+                .brand-text .brand-sub { font-size: 7pt; opacity: .9; letter-spacing: .8pt; text-transform: uppercase; margin-top: .3mm; }
+                .head-tag { background: rgba(255,255,255,.15); border: .5mm solid rgba(255,255,255,.35); border-radius: 2.5mm; padding: 2mm 4mm; text-align: center; backdrop-filter: blur(2mm); }
+                .head-tag .t { font-size: 7.5pt; font-weight: 800; letter-spacing: 1.8pt; text-transform: uppercase; }
+                .head-tag .s { font-size: 6pt; opacity: .85; margin-top: .5mm; letter-spacing: .3pt; }
+                .head-accent { margin-top: 3mm; height: .8mm; border-radius: 99px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent); position: relative; z-index: 2; }
+                .body { flex: 1; padding: 5mm 10mm 3mm; position: relative; z-index: 2; display: flex; flex-direction: column; }
+                .event-title { text-align: center; margin-bottom: 3mm; }
+                .event-title h2 { font-size: 14pt; font-weight: 800; color: #4a148c; letter-spacing: .3pt; line-height: 1.2; }
+                .event-title .subtitle { font-size: 7pt; color: #7b6e64; margin-top: .5mm; letter-spacing: .5pt; text-transform: uppercase; }
+                .hero { display: flex; flex-direction: column; align-items: center; padding: 2mm 0 3mm; }
+                .qr-scanner-frame { position: relative; padding: 4mm; background: #fff; border-radius: 4mm; box-shadow: 0 1mm 4mm rgba(0,0,0,.1), 0 0 0 .4mm #e65100; }
+                .qr-scanner-frame::before { content: ''; position: absolute; top: 1mm; left: 1mm; width: 10mm; height: 10mm; border-top: 1.5mm solid #ff6d00; border-left: 1.5mm solid #ff6d00; border-top-left-radius: 2mm; }
+                .qr-scanner-frame::after { content: ''; position: absolute; bottom: 1mm; right: 1mm; width: 10mm; height: 10mm; border-bottom: 1.5mm solid #ff6d00; border-right: 1.5mm solid #ff6d00; border-bottom-right-radius: 2mm; }
+                .qr-inner { position: relative; }
+                .qr-inner::before { content: ''; position: absolute; top: 1mm; right: 1mm; width: 10mm; height: 10mm; border-top: 1.5mm solid #ff6d00; border-right: 1.5mm solid #ff6d00; border-top-right-radius: 2mm; }
+                .qr-inner::after { content: ''; position: absolute; bottom: 1mm; left: 1mm; width: 10mm; height: 10mm; border-bottom: 1.5mm solid #ff6d00; border-left: 1.5mm solid #ff6d00; border-bottom-left-radius: 2mm; }
+                .qr-scanner-frame img { width: 72mm; height: 72mm; display: block; }
+                .scan-label { margin-top: 2mm; display: flex; align-items: center; gap: 1.5mm; }
+                .scan-label .pulse { width: 5px; height: 5px; border-radius: 50%; background: #4caf50; box-shadow: 0 0 0 0 rgba(76,175,80,.5); animation: pulse 2s infinite; }
+                @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(76,175,80,.5); } 70% { box-shadow: 0 0 0 3mm rgba(76,175,80,0); } 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0); } }
+                .scan-label span:last-child { font-size: 8pt; font-weight: 700; color: #6a5f55; letter-spacing: 1.2pt; text-transform: uppercase; }
+                .qr-url { margin-top: 1mm; font-size: 6pt; color: #9e948a; font-family: 'Courier New', monospace; word-break: break-all; text-align: center; max-width: 100mm; }
+                .info-section { margin-top: 2mm; }
+                .info-row { display: flex; gap: 2.5mm; justify-content: center; flex-wrap: wrap; margin-bottom: 3mm; }
+                .info-pill { background: linear-gradient(135deg, #fff8f0, #fff3e0); border: .3mm solid #ffcc80; border-radius: 99px; padding: 1.5mm 3.5mm; font-size: 7.5pt; color: #bf360c; font-weight: 600; display: flex; align-items: center; gap: 1.5mm; }
+                .info-pill .pill-label { color: #a1887f; font-weight: 500; font-size: 6.5pt; text-transform: uppercase; letter-spacing: .5pt; }
+                .steps { background: linear-gradient(180deg, #fefefe, #faf6f1); border-radius: 2.5mm; padding: 3mm 4mm; border: .3mm solid #f0e6d8; }
+                .steps-title { font-size: 9pt; font-weight: 800; color: #4a148c; margin-bottom: 2.5mm; text-align: center; letter-spacing: .5pt; display: flex; align-items: center; justify-content: center; gap: 2mm; }
+                .steps-title::before, .steps-title::after { content: ''; flex: 1; height: .3mm; background: linear-gradient(90deg, transparent, #d7ccc8, transparent); max-width: 20mm; }
+                .steps-flow { display: flex; flex-direction: column; gap: 1.5mm; }
+                .step-item { display: flex; align-items: center; gap: 2.5mm; padding: 2mm 3mm; background: #fff; border-radius: 2mm; border: .3mm solid #f5ebe0; }
+                .step-icon { width: 6mm; height: 6mm; border-radius: 50%; background: linear-gradient(135deg, #e65100, #ff9800); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 6.5pt; font-weight: 800; flex-shrink: 0; box-shadow: 0 .8mm 2mm rgba(230,81,0,.3); }
+                .step-text { font-size: 8pt; color: #4e443c; line-height: 1.3; flex: 1; }
+                .step-text b { color: #bf360c; }
+                .step-arrow { text-align: center; color: #d7ccc8; font-size: 5pt; line-height: 1; margin: -.3mm 0; }
+                .step-arrow span { display: inline-block; transform: rotate(90deg); }
+                .note-box { margin-top: 2mm; padding: 2mm 3mm; background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border-radius: 2mm; border-left: 1mm solid #4caf50; display: flex; gap: 2mm; font-size: 7pt; color: #2e7d32; line-height: 1.4; }
+                .note-box .note-icon { font-size: 8pt; flex-shrink: 0; margin-top: .2mm; }
+                .footer { display: flex; justify-content: space-between; align-items: flex-end; padding: 3mm 10mm 2.5mm; border-top: .3mm solid #f0e6d8; gap: 3mm; margin-top: auto; }
+                .footer .col { display: flex; flex-direction: column; gap: .4mm; }
+                .footer .col-label { font-size: 5.5pt; color: #b8aaa0; text-transform: uppercase; letter-spacing: .8pt; }
+                .footer .col-val { font-size: 7pt; color: #5d4e44; font-weight: 600; }
+                .footer .col b { color: #d81b60; }
+                .footer .fid { font-weight: 700; color: #bf360c; font-family: 'Courier New', monospace; font-size: 7.5pt; background: #fff4e5; padding: .3mm 1.5mm; border-radius: 1mm; }
+                .base-strip { height: 2.5mm; background: linear-gradient(90deg, #8e24aa, #d81b60, #e65100, #ff9800, #ffb300); position: relative; z-index: 2; }
+                .base-strip::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.2) 50%, transparent 100%); }
+                @media print { body { width: 210mm; } .sheet::before { display: block; } }
             </style></head><body><div class="sheet">
                 <div class="frame"></div>
                 <div class="header">
-                    <div class="deco d1"></div><div class="deco d2"></div><div class="deco d3"></div>
-                    <div class="head-top">
+                    <div class="head-row">
                         <div class="brand">
                             <div class="brand-icon">ॐ</div>
-                            <div><div class="brand-name">Rudra Balaga</div><div class="brand-sub">ರುದ್ರ ಪರಾಯಣ · Attendance System</div></div>
+                            <div class="brand-text">
+                                <div class="brand-name">Rudra Balaga</div>
+                                <div class="brand-sub">ರುದ್ರ ಪರಾಯಣ · Attendance System</div>
+                            </div>
                         </div>
-                        <div class="head-badge"><div class="t">Attendance QR</div><div class="s">Scan · Mark · Done</div></div>
+                        <div class="head-tag">
+                            <div class="t">Check-In</div>
+                            <div class="s">Scan · Mark · Done</div>
+                        </div>
                     </div>
-                    <div class="head-strip"></div>
+                    <div class="head-accent"></div>
                 </div>
                 <div class="body">
-                    <div class="hero">
-                        <div class="qr-frame"><img src="${dataUrl}" alt="Attendance QR"></div>
-                        <div class="hero-hint">SCAN · MARK · DONE — attendance in one scan</div>
+                    <div class="event-title">
+                        <h2>${event.title || 'Event'}</h2>
+                        <div class="subtitle">Digital Attendance · QR Check-in</div>
                     </div>
-                    <div class="bottom">
-                        <div class="event-title">${event.title || 'Event'}</div>
-                        <div class="chips">
-                            ${eventDate ? `<div class="chip"><span class="lbl">Date</span> ${eventDate}</div>` : ''}
-                            <div class="chip"><span class="lbl">Type</span> QR Check-in</div>
-                            <div class="chip"><span class="lbl">Event ID</span> ${event.id}</div>
+                    <div class="hero">
+                        <div class="qr-scanner-frame">
+                            <div class="qr-inner">
+                                <img src="${dataUrl}" alt="Attendance QR Code">
+                            </div>
+                        </div>
+                        <div class="scan-label">
+                            <span class="pulse"></span>
+                            <span>Scan to check in</span>
+                        </div>
+                        <div class="qr-url">${qrPayload}</div>
+                    </div>
+                    <div class="info-section">
+                        <div class="info-row">
+                            ${eventDate ? `<div class="info-pill"><span class="pill-label">Date</span> ${eventDate}</div>` : ''}
+                            <div class="info-pill"><span class="pill-label">Type</span> QR Check-in</div>
+                            <div class="info-pill"><span class="pill-label">Event ID</span> ${event.id}</div>
                         </div>
                         <div class="steps">
-                            <h3>How to mark attendance</h3>
-                            <div class="steps-grid">
-                                <div class="step"><div class="step-num">1</div><div>Open the <b>Rudra Balaga</b> app and log in</div></div>
-                                <div class="step"><div class="step-num">2</div><div>Tap <b>QR Attendance</b> on the home screen</div></div>
-                                <div class="step"><div class="step-num">3</div><div>Tap <b>Start Camera Scanner</b> &amp; aim at this code</div></div>
-                                <div class="step"><div class="step-num">4</div><div><b>"Attendance marked!"</b> pops up — you're done ✓</div></div>
+                            <div class="steps-title">How to mark your attendance</div>
+                            <div class="steps-flow">
+                                <div class="step-item">
+                                    <div class="step-icon">1</div>
+                                    <div class="step-text">Open the <b>Rudra Balaga</b> app &amp; log in</div>
+                                </div>
+                                <div class="step-arrow"><span>▼</span></div>
+                                <div class="step-item">
+                                    <div class="step-icon">2</div>
+                                    <div class="step-text">Tap <b>QR Attendance</b> on the home screen</div>
+                                </div>
+                                <div class="step-arrow"><span>▼</span></div>
+                                <div class="step-item">
+                                    <div class="step-icon">3</div>
+                                    <div class="step-text">Tap <b>Start Camera Scanner</b> &amp; aim at this code</div>
+                                </div>
+                                <div class="step-arrow"><span>▼</span></div>
+                                <div class="step-item">
+                                    <div class="step-icon">✓</div>
+                                    <div class="step-text"><b>"Attendance marked!"</b> confirmation appears — you're done!</div>
+                                </div>
                             </div>
-                            <div class="note"><span>ℹ</span><span>Works with the phone's regular camera too — scan &amp; open the link. Every scan updates the official roster in real time.</span></div>
+                            <div class="note-box">
+                                <span class="note-icon">💡</span>
+                                <span>Works with your phone's regular camera too — just scan &amp; open the link. Every scan updates the official roster in real time.</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="footer">
-                    <div class="col"><b>Rudra Balaga</b><span>ರುದ್ರ ಪರಾಯಣ</span></div>
-                    <div class="col mid"><span>Generated on ${new Date().toLocaleString('en-IN')}</span><span>Digital attendance · Paper-free</span></div>
-                    <div class="col right"><span>Event ID</span><span class="fid">${event.id}</span></div>
+                </div>
+                <div class="footer">
+                    <div class="col">
+                        <span class="col-label">Organization</span>
+                        <span class="col-val"><b>Rudra Balaga</b></span>
+                        <span class="col-val" style="font-size:7pt;opacity:.7">ರುದ್ರ ಪರಾಯಣ</span>
+                    </div>
+                    <div class="col" style="text-align:center">
+                        <span class="col-label">Generated</span>
+                        <span class="col-val">${new Date().toLocaleString('en-IN')}</span>
+                        <span class="col-val" style="font-size:6.5pt;opacity:.6">Digital · Paper-free</span>
+                    </div>
+                    <div class="col" style="text-align:right">
+                        <span class="col-label">Event ID</span>
+                        <span class="fid">${event.id}</span>
+                    </div>
                 </div>
                 <div class="base-strip"></div>
             </div></body></html>`;
