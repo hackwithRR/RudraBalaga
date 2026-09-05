@@ -555,6 +555,124 @@
             box-shadow: 0 22px 54px rgba(74, 42, 20, 0.13) !important;
         }
 
+        /* Attending members summary: capacity bar + expandable attendee list */
+        .rbl-capacity-track {
+            height: 8px;
+            border-radius: 9999px;
+            background: #ece2d3;
+            overflow: hidden;
+        }
+        .rbl-capacity-fill {
+            height: 100%;
+            border-radius: 9999px;
+            width: 0;
+            transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .rbl-attendees-panel {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            margin-top: 0;
+            transition: max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, margin-top 0.3s ease;
+        }
+        .rbl-attendees-panel.open {
+            max-height: 18rem;
+            opacity: 1;
+            margin-top: 0.75rem;
+        }
+        .rbl-attendees-scroll {
+            max-height: 15rem;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .rbl-attendee-row {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.5rem 0.625rem;
+            border-radius: 0.625rem;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            animation: rblFadeUp 0.35s ease both;
+        }
+        .rbl-attendee-row:nth-child(even) { background: #faf6ef; }
+        @keyframes rblFadeUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: none; }
+        }
+        .rbl-attendee-serial {
+            width: 1.75rem;
+            height: 1.75rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            background: #fde9c8;
+            color: #8f4e00;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        [data-toggle-attendees] .rbl-expand-icon { transition: transform 0.3s ease; }
+
+        /* Attending members popup modal */
+        .rbl-attendees-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.25s ease, visibility 0.25s;
+        }
+        .rbl-attendees-modal.open { visibility: visible; opacity: 1; }
+        .rbl-attendees-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(30, 20, 10, 0.55);
+            backdrop-filter: blur(2px);
+        }
+        .rbl-attendees-modal-card {
+            position: relative;
+            width: 100%;
+            max-width: 26rem;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            background: #fffdf8;
+            border-radius: 1.25rem;
+            border: 2px solid #fde9c8;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+            transform: translateY(16px) scale(0.97);
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow: hidden;
+        }
+        .rbl-attendees-modal.open .rbl-attendees-modal-card { transform: none; }
+        .rbl-attendees-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .rbl-attendees-modal-close {
+            width: 2.25rem;
+            height: 2.25rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: #5d4037;
+            transition: background 0.2s ease;
+        }
+        .rbl-attendees-modal-close:hover { background: rgba(0, 0, 0, 0.06); }
+        .rbl-attendees-modal-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0.75rem; }
+
         #attending-event-bar {
             background: #e1f0ed !important;
             border: 1px solid #b9d7cf !important;
@@ -2580,6 +2698,129 @@
             return !Number.isNaN(deadlineEnd.getTime()) && new Date() > deadlineEnd;
         }
 
+        // ---- Attending members summary (capacity bar + expandable attendee list) ----
+        window.__rblAttendeeNamesCache = window.__rblAttendeeNamesCache || {};
+
+        function rblEscapeHtml(value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function getAttendingMemberNames(eventId) {
+            const cache = window.__rblAttendeeNamesCache;
+            if (cache[eventId]) return Promise.resolve(cache[eventId]);
+            return firebaseDb.collection('users').get().then(usersSnapshot => {
+                const users = {};
+                usersSnapshot.forEach(doc => { users[doc.id] = doc.data(); });
+                const names = [];
+                Object.entries(state.rsvps).forEach(([uid, rsvpData]) => {
+                    const rsvp = rsvpData[eventId];
+                    // Matches getEventAttendingCount: payment-rejected members are not attending
+                    if (rsvp && rsvp.status === 'attending' && rsvp.payment?.paymentStatus !== 'REJECTED') {
+                        const user = users[uid] || {};
+                        names.push(user.name || user.email || 'Member');
+                    }
+                });
+                cache[eventId] = names;
+                return names;
+            });
+        }
+
+        function renderAttendingSummary(eventId, attendingCount, limit) {
+            const limitValue = Number(limit) || 0;
+            const label = limitValue ? `${attendingCount} of ${limitValue} attending` : `${attendingCount} attending`;
+            const pct = limitValue ? Math.min(100, Math.round((attendingCount / limitValue) * 100)) : 0;
+            const full = limitValue && attendingCount >= limitValue;
+            const barColor = full ? '#c62828' : (pct >= 80 ? '#ef6c00' : '#2e7d32');
+            const capacityBar = limitValue ? `
+                <div class="mt-2.5">
+                    <div class="rbl-capacity-track"><div class="rbl-capacity-fill" data-target-width="${pct}" style="background:${barColor};"></div></div>
+                </div>` : '';
+            return `
+                <div class="mt-4 pt-4 border-t border-outline-variant" data-attending-summary="${rblEscapeHtml(eventId)}">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <p class="font-label-lg text-label-lg text-on-surface-variant flex items-center gap-2">
+                            <span class="material-symbols-outlined text-secondary" style="font-size:20px;">groups</span>${rbT(label, label)}
+                        </p>
+                        <button type="button" data-toggle-attendees data-event-id="${rblEscapeHtml(eventId)}" aria-expanded="false" class="touch-active inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg font-bold">
+                            <span class="material-symbols-outlined" style="font-size:18px;">visibility</span>${rbT('Show attending members', 'ಹಾಜರಾಗುವ ಸದಸ್ಯರನ್ನು ನೋಡಿ')}
+                            <span class="rbl-expand-icon material-symbols-outlined" style="font-size:18px;">expand_more</span>
+                        </button>
+                    </div>
+                    ${capacityBar}
+                </div>`;
+        }
+
+        function ensureAttendeesModal() {
+            let modal = document.getElementById('rbl-attendees-modal');
+            if (modal) return modal;
+            modal = document.createElement('div');
+            modal.id = 'rbl-attendees-modal';
+            modal.className = 'rbl-attendees-modal';
+            modal.innerHTML = `
+                <div class="rbl-attendees-modal-backdrop" data-close-attendees-modal></div>
+                <div class="rbl-attendees-modal-card" role="dialog" aria-modal="true" aria-labelledby="rbl-attendees-modal-title">
+                    <div class="rbl-attendees-modal-header">
+                        <h3 id="rbl-attendees-modal-title" class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-secondary" style="font-size:22px;">groups</span>
+                            <span id="rbl-attendees-modal-title-text"></span>
+                        </h3>
+                        <button type="button" class="rbl-attendees-modal-close" data-close-attendees-modal aria-label="Close">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="rbl-attendees-modal-list space-y-1.5" id="rbl-attendees-modal-list"></div>
+                </div>`;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', e => {
+                if (e.target.closest('[data-close-attendees-modal]')) closeAttendeesModal();
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeAttendeesModal();
+            });
+            return modal;
+        }
+
+        function closeAttendeesModal() {
+            const modal = document.getElementById('rbl-attendees-modal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        function toggleAttendeesPanel(btn) {
+            const eventId = btn.dataset.eventId;
+            const modal = ensureAttendeesModal();
+            const event = (state.events || []).find(ev => ev.id === eventId);
+            document.getElementById('rbl-attendees-modal-title-text').textContent = event?.title || rbT('Attending members', 'ಹಾಜರಾಗುವ ಸದಸ್ಯರು');
+            const listEl = document.getElementById('rbl-attendees-modal-list');
+            listEl.dataset.loaded = '';
+            listEl.innerHTML = `<p class="text-sm text-on-surface-variant text-center py-4">${rbT('Loading…', 'ಲೋಡ್ ಆಗುತ್ತಿದೆ…')}</p>`;
+            modal.classList.add('open');
+            getAttendingMemberNames(eventId).then(names => {
+                listEl.innerHTML = names.length
+                    ? names.map((name, index) => `
+                        <div class="rbl-attendee-row" style="animation-delay:${Math.min(index * 40, 600)}ms">
+                            <span class="rbl-attendee-serial">${index + 1}</span>
+                            <span class="text-on-surface font-medium text-sm">${rblEscapeHtml(name)}</span>
+                        </div>`).join('')
+                    : `<p class="text-sm text-on-surface-variant text-center py-4">${rbT('No members attending yet', 'ಇನ್ನೂ ಯಾರೂ ಹಾಜರಾಗುತ್ತಿಲ್ಲ')}</p>`;
+            }).catch(() => {
+                listEl.innerHTML = `<p class="text-sm text-error text-center py-4">${rbT('Could not load attendee names', 'ಹೆಸರುಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ')}</p>`;
+            });
+        }
+
+        function animateCapacityBars() {
+            document.querySelectorAll('.rbl-capacity-fill[data-target-width]').forEach(el => {
+                requestAnimationFrame(() => { el.style.width = el.dataset.targetWidth + '%'; });
+            });
+        }
+
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('[data-toggle-attendees]');
+            if (!btn) return;
+            e.preventDefault();
+            toggleAttendeesPanel(btn);
+        });
+
         function renderEventCard(event) {
             const userRsvp = (state.rsvps[state.user.uid] || {})[event.id];
             const attendingCount = getEventAttendingCount(event.id);
@@ -2701,7 +2942,7 @@
                 }
             } catch(e) { console.warn('Distance calc error:', e); }
 
-            return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><div class="shrink-0 flex flex-col items-end gap-1.5"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span>${eventPaymentChip}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Event dates','ಕಾರ್ಯಕ್ರಮ ದಿನಾಂಕಗಳು')}</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Time','ಸಮಯ')}</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Location','ಸ್ಥಳ')}</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p>${distanceHtml}</div></div>${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
+            return `<article data-event-id="${event.id}" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm"><div class="flex items-start justify-between gap-4 mb-5"><div><p class="font-label-md text-label-md text-secondary uppercase tracking-wider">ಮುಂಬರುವ ಕಾರ್ಯಕ್ರಮ</p><h3 class="font-headline-md text-headline-md mt-1 text-on-surface">${event.title}</h3></div><div class="shrink-0 flex flex-col items-end gap-1.5"><span class="px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-label-md text-label-md">${event.type}</span>${eventPaymentChip}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-on-surface"><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Event dates','ಕಾರ್ಯಕ್ರಮ ದಿನಾಂಕಗಳು')}</p><p class="font-body-lg text-body-lg font-bold">${eventDateRange}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Time','ಸಮಯ')}</p><p class="font-body-lg text-body-lg font-bold">${event.time}</p></div><div class="p-3 bg-surface-container-high rounded-lg"><p class="font-label-md text-label-md text-on-surface-variant">${rbT('Location','ಸ್ಥಳ')}</p><p class="font-body-lg text-body-lg font-bold">${event.location}</p>${distanceHtml}</div></div>${renderAttendingSummary(event.id, attendingCount, event.limit || 0)}${outstationHtml}${mapHtml}${responseHtml}${busHtml}</article>`;
         }
 
         // Re-render locale-aware dynamic content whenever the language is
@@ -2784,6 +3025,7 @@
             }
             eventsList.innerHTML = displayedEvents.map(renderEventCard).join('');
             animateDistanceChips();
+            animateCapacityBars();
             viewAllEventsSection.classList.toggle('hidden', !allUpcomingResponded);
             document.getElementById('bus-pickup-section').classList.add('hidden');
         }

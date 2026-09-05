@@ -4387,7 +4387,25 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                     return;
                 }
 
-                const text = names.map((name, index) => `${index + 1}. ${name}`).join('\n');
+                const event = state.events.find(e => e.id === eventId);
+                const headerLines = [];
+                if (event) {
+                    headerLines.push(`Event: ${event.title || ''}`);
+                    if (event.date) {
+                        const dateText = event.eventEndDate
+                            ? `${formatDate(event.date)} - ${formatDate(event.eventEndDate)}`
+                            : formatDate(event.date);
+                        headerLines.push(`Date: ${dateText}`);
+                    }
+                    if (event.time) headerLines.push(`Time: ${event.time}`);
+                }
+
+                const text = [
+                    ...headerLines,
+                    '',
+                    `Attending members (${names.length}):`,
+                    ...names.map((name, index) => `${index + 1}. ${name}`)
+                ].join('\n');
                 const done = () => showToast(`Copied ${names.length} attending member name${names.length === 1 ? '' : 's'}`);
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
