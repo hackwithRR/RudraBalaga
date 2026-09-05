@@ -59,7 +59,7 @@ function urlForType(type) {
 }
 
 // ---------------- PWA offline shell ----------------
-const CACHE = 'rudra-balaga-v3';
+const CACHE = 'rudra-balaga-v4';
 const PRECACHE = [
     './',
     'index',
@@ -70,8 +70,16 @@ const PRECACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+    // Cache files individually so a single 404/missing asset can't fail the
+    // whole install (addAll rejects if ANY request fails).
     event.waitUntil(
-        caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting())
+        caches.open(CACHE).then((cache) =>
+            Promise.all(PRECACHE.map((url) =>
+                cache.add(new Request(url, { cache: 'reload' })).catch((err) =>
+                    console.warn('[SW] precache skipped:', url, err && err.message)
+                )
+            ))
+        ).then(() => self.skipWaiting())
     );
 });
 
