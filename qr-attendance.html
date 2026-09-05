@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Attendance · Rudra Balaga</title>
+    <link rel="icon" href="om.ico">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        body { background: #fdf8f3; font-family: system-ui, sans-serif; }
+        #qr-reader video { border-radius: 0.75rem; width: 100% !important; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <main class="max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
+        <div class="flex items-center gap-3">
+            <a href="index" class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface" aria-label="Back to home">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <h1 class="text-2xl font-bold text-primary">QR Attendance</h1>
+        </div>
+
+        <!-- Status / result panel -->
+        <section id="status-panel" class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm text-center">
+            <p id="status-text" class="text-on-surface-variant font-body-lg text-body-lg">Loading…</p>
+        </section>
+
+        <!-- Scanner panel -->
+        <section id="scanner-panel" class="hidden bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm">
+            <h2 class="font-bold text-primary mb-2 flex items-center gap-2">
+                <span class="material-symbols-outlined">qr_code_scanner</span>Scan Event QR
+            </h2>
+            <p class="text-on-surface-variant text-sm mb-3">Point your camera at the attendance QR code displayed by the admin.</p>
+            <div id="qr-reader" class="rounded-xl overflow-hidden mb-3"></div>
+            <button id="start-scan-btn" class="w-full h-14 bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">photo_camera</span>Start Camera Scanner
+            </button>
+        </section>
+
+        <p class="text-center text-on-surface-variant text-xs">Rudra Balaga · ರುದ್ರ ಪರಾಯಣ</p>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        const statusPanel = document.getElementById('status-panel');
+        const statusText = document.getElementById('status-text');
+        const scannerPanel = document.getElementById('scanner-panel');
+        let html5QrCode = null;
+        let processedEvents = {}; // guard against duplicate marking in one session
+        let pendingEventId = null;
+
+        function setStatus(html, tone) {
+            const tones = {
+                info: 'text-on-surface-variant',
+                success: 'text-green-700 font-bold',
+                error: 'text-red-700 font-bold'
+            };
+            statusText.className = `${tones[tone] || tones.info} font-body-lg text-body-lg`;
+            statusText.innerHTML = html;
+        }
+
+        function showToast(html, ok) {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-20 left-0 right-0 mx-auto z-50 px-6 py-4 rounded-xl shadow-lg max-w-sm ${ok ? 'bg-primary-container text-on-primary-container' : 'bg-error-container text-on-error-container'}`;
+            toast.innerHTML = html;
+            document.body.appendChild(toast);
+            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3500);
+        }
+
+        // Accepts the scanned/opened payload and extracts the event id.
+        // Supported: full URL ".../qr-attendance?e=<id>", "?e=<id>", "RUDRA_ATTEND:<id>", or a bare id.
+        function extractEventId(raw) {
+            if (!raw) return null;
+            const text = String(raw).trim();
+            let m = text.match(/[?&]e=([^&\s]+)/);
+            if (m) return decodeURIComponent(m[1]);
+            m = text.match(/RUDRA_ATTEND:([\w-]+)/i);
+            if (m) return m[1];
+            if (/^[\w-]{8,}$/.test(text)) return text; // bare Firestore id
+            return null;
+        }
+
+        async function markAttendance(eventId, uid) {
+            if (processedEvents[eventId]) return; // already handled in this session
+            processedEvents[eventId] = true;
+
+            setStatus('Marking your attendance…', 'info');
+            try {
+                // Verify the event exists (QR carries the unique event id)
+                const eventSnap = await firebaseDb.collection('events').doc(eventId).get();
+                if (!eventSnap.exists) {
+                    setStatus('Invalid QR code — this event does not exist.', 'error');
+                    showToast('<div class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">error</span><span>Invalid QR code</span></div>', false);
+                    return;
+                }
+                const eventTitle = eventSnap.data().title || 'this event';
+
+                const rsvpRef = firebaseDb.collection('rsvps').doc(uid);
+                const rsvpSnap = await rsvpRef.get();
+                const existing = (rsvpSnap.exists && rsvpSnap.data()[eventId]) || {};
+
+                if (existing.status === 'attended') {
+                    setStatus(`<span class="material-symbols-outlined text-4xl block mb-2">task_alt</span>You are already marked <strong>attended</strong> for <strong>${eventTitle}</strong>`, 'success');
+                    return;
+                }
+
+                // Mark attended — merged so pickupPoint / payment details are preserved.
+                await rsvpRef.set({
+                    [eventId]: {
+                        status: 'attended',
+                        pickupPoint: existing.pickupPoint || null,
+                        qrAttendance: true,
+                        qrAttendanceAt: new Date().toISOString()
+                    }
+                }, { merge: true });
+
+                // Append to the shared attendance log used by the admin roster export.
+                const userDoc = await firebaseDb.collection('users').doc(uid).get();
+                const name = (userDoc.exists && (userDoc.data().name || userDoc.data().email)) || 'Unknown';
+                await firebaseDb.collection('attendance').doc(`event-${eventId}`).set({
+                    eventId,
+                    eventTitle,
+                    presentUids: firebase.firestore.FieldValue.arrayUnion(uid),
+                    present: firebase.firestore.FieldValue.arrayUnion(name),
+                    qrMarked: firebase.firestore.FieldValue.arrayUnion(uid),
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                setStatus(`<span class="material-symbols-outlined text-4xl block mb-2">task_alt</span>Attendance marked! You are <strong>attended</strong> for <strong>${eventTitle}</strong>`, 'success');
+                showToast('<div class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span><span>Attendance marked ✓</span></div>', true);
+            } catch (err) {
+                processedEvents[eventId] = false;
+                console.error('QR attendance error:', err);
+                setStatus('Something went wrong while marking attendance. Please try again.', 'error');
+            }
+        }
+
+        function handleScannedText(rawText) {
+            const eventId = extractEventId(rawText);
+            if (!eventId) {
+                showToast('<div class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">error</span><span>Not a valid attendance QR</span></div>', false);
+                return;
+            }
+            if (window.firebaseAuth.currentUser) {
+                markAttendance(eventId, window.firebaseAuth.currentUser.uid);
+            } else {
+                setStatus('Please wait — signing you in…', 'info');
+                pendingEventId = eventId;
+            }
+        }
+
+        function startScanner() {
+            if (!scannerPanel.classList.contains('hidden') && html5QrCode) return;
+            scannerPanel.classList.remove('hidden');
+            document.getElementById('start-scan-btn').classList.add('hidden');
+            html5QrCode = new Html5Qrcode('qr-reader');
+            html5QrCode.start(
+                { facingMode: 'environment' },
+                { fps: 10, qrbox: { width: 230, height: 230 } },
+                (decodedText) => {
+                    html5QrCode.stop().catch(() => {});
+                    handleScannedText(decodedText);
+                },
+                () => {} // per-frame decode failures are normal; ignore
+            ).catch((err) => {
+                console.error('Camera error:', err);
+                setStatus('Could not access the camera. Please allow camera permission, or scan the QR with your phone\'s camera app and open the link.', 'error');
+            });
+        }
+
+        // Boot: auth state + optional ?e= deep link (from phone camera scanning a printed QR)
+        firebase.auth().onAuthStateChanged(async (user) => {
+            const deepLinkEventId = extractEventId(location.href);
+
+            if (!user) {
+                setStatus(`Please <a href="login" class="text-primary underline font-bold">log in</a> first, then scan the event QR code to mark your attendance.`, 'info');
+                return;
+            }
+
+            if (deepLinkEventId) {
+                await markAttendance(deepLinkEventId, user.uid);
+            } else {
+                setStatus('Scan the event QR code below to mark your attendance.', 'info');
+            }
+
+            scannerPanel.classList.remove('hidden');
+            document.getElementById('start-scan-btn').addEventListener('click', startScanner);
+
+            if (pendingEventId) {
+                const id = pendingEventId;
+                pendingEventId = null;
+                markAttendance(id, user.uid);
+            }
+        });
+    </script>
+</body>
+</html>

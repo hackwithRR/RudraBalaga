@@ -1210,6 +1210,14 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                             Take Attendance
                         </button>
                         </div>
+                        <!-- QR Attendance Section -->
+                        <div class="mb-4">
+                        <button id="generate-qr-btn" class="w-full h-[56px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-xl">qr_code_2</span>
+                            Generate QR Code for Attendance
+                        </button>
+                        <p class="text-on-surface-variant text-sm mt-2 text-center">Members scan this QR in the app (or with their phone camera) to be marked attended automatically.</p>
+                        </div>
                         
                         <div class="space-y-4">
                             <div>
@@ -1911,6 +1919,10 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
             const takeAttendanceBtn = document.getElementById('take-attendance-btn');
             if (takeAttendanceBtn) {
                 takeAttendanceBtn.addEventListener('click', takeAttendance);
+            }
+            const generateQrBtn = document.getElementById('generate-qr-btn');
+            if (generateQrBtn) {
+                generateQrBtn.addEventListener('click', generateAttendanceQR);
             }
             
             const downloadPdfBtn = document.getElementById('download-pdf-btn');
@@ -4058,6 +4070,103 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                         loadRoster();
                     });
                 });
+            });
+        }
+
+        // ===================== QR Attendance (admin generates per-event QR) =====================
+        // Loads the qrcodejs library lazily so it doesn't slow down initial page load.
+        let _qrLibPromise = null;
+        function loadQrLibrary() {
+            if (window.QRCode) return Promise.resolve();
+            if (_qrLibPromise) return _qrLibPromise;
+            _qrLibPromise = new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+                s.onload = resolve;
+                s.onerror = () => reject(new Error('Failed to load QR code library'));
+                document.head.appendChild(s);
+            });
+            return _qrLibPromise;
+        }
+
+        function generateAttendanceQR() {
+            const eventId = document.getElementById('roster-event-select').value;
+            if (!eventId) {
+                alert('Please select an event first to generate its QR code.');
+                return;
+            }
+            const event = state.events.find(e => e.id === eventId);
+            if (!event) {
+                alert('Event not found. Please re-select the event.');
+                return;
+            }
+            loadQrLibrary().then(() => showQrModal(event)).catch(err => alert(err.message));
+        }
+
+        function showQrModal(event) {
+            const existing = document.getElementById('qr-attendance-modal');
+            if (existing) existing.remove();
+
+            // QR payload: URL that opens the member scanner page with this event's unique id.
+            const qrPayload = `${location.origin}/qr-attendance?e=${encodeURIComponent(event.id)}`;
+
+            const modal = document.createElement('div');
+            modal.id = 'qr-attendance-modal';
+            modal.className = 'fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-xl w-full max-w-sm text-center max-h-[90vh] overflow-y-auto">
+                    <h3 class="font-headline-sm text-headline-sm text-primary mb-1">Event Attendance QR</h3>
+                    <p class="font-body-lg text-body-lg font-bold mb-0.5">${event.title || 'Event'}</p>
+                    <p class="text-on-surface-variant text-xs mb-4 break-all">Event ID: ${event.id}</p>
+                    <div id="qr-code-container" class="flex justify-center mb-4 bg-white p-3 rounded-xl border border-outline-variant"></div>
+                    <p class="text-on-surface-variant text-sm mb-4">Members scan this to be marked <strong>attended</strong> automatically.</p>
+                    <div class="space-y-3">
+                        <button id="qr-download-btn" class="w-full h-[52px] bg-primary-container text-on-primary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-xl">download</span>
+                            Download PNG
+                        </button>
+                        <button id="qr-print-btn" class="w-full h-[52px] bg-secondary-container text-on-secondary-container rounded-xl font-bold text-body-lg btn-active flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-xl">print</span>
+                            Print
+                        </button>
+                        <button id="qr-close-btn" class="w-full h-[52px] bg-surface-container-high text-on-surface rounded-xl font-bold text-body-lg btn-active">Close</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+
+            const qrContainer = modal.querySelector('#qr-code-container');
+            new QRCode(qrContainer, {
+                text: qrPayload,
+                width: 256,
+                height: 256,
+                colorDark: '#1c1b1f',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.M
+            });
+
+            const close = () => modal.remove();
+            modal.querySelector('#qr-close-btn').addEventListener('click', close);
+            modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+
+            const getQrCanvas = () => qrContainer.querySelector('canvas');
+            modal.querySelector('#qr-download-btn').addEventListener('click', () => {
+                const canvas = getQrCanvas();
+                if (!canvas) { alert('QR code not ready yet, please try again.'); return; }
+                const link = document.createElement('a');
+                link.download = `attendance-qr-${(event.title || event.id).replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+
+            modal.querySelector('#qr-print-btn').addEventListener('click', () => {
+                const canvas = getQrCanvas();
+                if (!canvas) { alert('QR code not ready yet, please try again.'); return; }
+                const printWindow = window.open('', '_blank', 'width=500,height=650');
+                if (!printWindow) { alert('Please allow pop-ups to print the QR code.'); return; }
+                printWindow.document.write(`<html><head><title>Attendance QR — ${event.title || event.id}</title></head><body style="font-family:sans-serif;text-align:center;padding:40px;"><h2 style="margin:0 0 4px;">${event.title || 'Event'}</h2><p style="color:#555;margin:0 0 24px;">Scan to mark your attendance</p><img src="${canvas.toDataURL('image/png')}" style="width:340px;height:340px;" /><p style="color:#888;font-size:12px;margin-top:24px;">Rudra Balaga · Event ID: ${event.id}</p></body></html>`);
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
             });
         }
 
