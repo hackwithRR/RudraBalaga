@@ -74,6 +74,15 @@ export default async function handler(req, res) {
             });
         }
 
+        // Return rejected with reason
+        if (sessionData.status === 'REJECTED') {
+            return res.status(200).json({
+                ok: true,
+                status: 'REJECTED',
+                reason: sessionData.reason || 'UNKNOWN'
+            });
+        }
+
         // PENDING or EXPIRED
         return res.status(200).json({ ok: true, status: sessionData.status });
     } catch (err) {

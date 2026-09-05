@@ -184,6 +184,22 @@ async function processSingleMessage(message) {
             return;
         }
 
+        // Check if phone number is already verified by another user
+        const normalizedPhone = userPhone.replace(/\D/g, '');
+        const existingUserSnap = await db.collection('users')
+            .where('verifiedPhone', '==', normalizedPhone)
+            .limit(1)
+            .get();
+        
+        if (!existingUserSnap.empty) {
+            const existingUid = existingUserSnap.docs[0].id;
+            if (existingUid !== sessionData.uid) {
+                console.warn(`webhook: phone ${userPhone} already verified by user ${existingUid}`);
+                await sessionRef.update({ status: 'REJECTED', reason: 'PHONE_ALREADY_USED', rejectedAt: Date.now() });
+                return;
+            }
+        }
+
         // Generate JWT auth token for the verified user
         const jwtSecret = process.env.JWT_SECRET || 'default-insecure-secret-change-me';
         const authToken = jwt.sign(

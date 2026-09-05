@@ -689,6 +689,32 @@
         var trackerForm = document.getElementById('profile-form');
         if (trackerForm) trackerForm.addEventListener('input', updateProfileTracker);
 
+        // ---- Member ID (5-digit, stored in Firestore) ----
+        function generateMemberId() {
+            // Generate a random 5-digit number (10000-99999)
+            return String(Math.floor(10000 + Math.random() * 90000));
+        }
+        async function ensureMemberId() {
+            if (!state.user) return null;
+            // Check if user already has a memberId
+            if (state.userData && state.userData.memberId) {
+                return state.userData.memberId;
+            }
+            // Generate a unique memberId
+            const db = firebaseDb;
+            let memberId;
+            let unique = false;
+            while (!unique) {
+                memberId = generateMemberId();
+                const snap = await db.collection('users').where('memberId', '==', memberId).limit(1).get();
+                if (snap.empty) unique = true;
+            }
+            // Save to Firestore
+            await db.collection('users').doc(state.user.uid).set({ memberId }, { merge: true });
+            state.userData.memberId = memberId;
+            return memberId;
+        }
+
         // ---- Phone verification (WhatsApp OTP-less flow) ----
         function rbTV(en, kn) { return (window.RBLang && window.RBLang.language && window.RBLang.language() === 'en') ? en : kn; }
         function phoneVerifiedUI(on) {
@@ -699,18 +725,24 @@
         }
         function markPhoneVerified(phone) {
             if (!state.user) return;
+            // Normalize phone to digits only for consistent storage
+            var normalizedPhone = String(phone || '').replace(/\D/g, '');
             state.userData.phoneVerified = true;
             if (phone) state.userData.phone = phone;
+            state.userData.verifiedPhone = normalizedPhone || state.userData.verifiedPhone;
             phoneVerifiedUI(true);
             updateProfileTracker(); // verified ⇒ 100% + badge
+            // Show success message
+            showWhatsappStatus(rbTV('Phone verified successfully! ✓', 'ಫೋನ್ ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ! ✓'), true);
             // Persist to Firestore
-            firebaseDb.collection('users').doc(state.user.uid).set({ phoneVerified: true, phone: phone || state.userData.phone }, { merge: true }).catch(function(){});
+            firebaseDb.collection('users').doc(state.user.uid).set({ phoneVerified: true, verifiedPhone: state.userData.verifiedPhone, phone: phone || state.userData.phone }, { merge: true }).catch(function(){});
+        }
         }
         function showWhatsappStatus(msg, ok) {
             var el = document.getElementById('whatsapp-status-msg');
             if (!el) return;
             el.textContent = msg;
-            el.className = 'text-xs mt-2 ' + (ok ? 'text-green-700' : 'text-amber-600');
+            el.className = 'text-xs mt-2 font-medium ' + (ok ? 'text-green-700' : 'text-amber-600');
             el.classList.remove('hidden');
         }
         async function initPhoneVerification() {
@@ -718,6 +750,18 @@
             if (!btn) return;
             var verified = !!(state.userData && state.userData.phoneVerified);
             phoneVerifiedUI(verified);
+            // If phone number was changed, reset verification
+            if (state.userData && state.userData.phoneVerified && state.userData.verifiedPhone) {
+                var currentPhone = normalizePhone(state.userData.phone);
+                var verifiedPhone = normalizePhone(state.userData.verifiedPhone);
+                if (currentPhone !== verifiedPhone && currentPhone !== '') {
+                    // Phone changed — require re-verification
+                    state.userData.phoneVerified = false;
+                    phoneVerifiedUI(false);
+                    showWhatsappStatus(rbTV('Phone number changed. Please re-verify.', 'ಫೋನ್ ಸಂಖ್ಯೆ ಬದಲಾಗಿದೆ. ದಯವಿಟ್ಟು ಮರು-ಪರಿಶೀಲಿಸಿ.'), false);
+                }
+            }
+        }
             if (verified) return;
             document.getElementById('whatsapp-verify-area').classList.remove('hidden');
         }
@@ -757,6 +801,15 @@
                             whatsappPollTimer = null;
                             showWhatsappStatus(rbTV('Session expired. Please try again.', 'ಸೆಷನ್ ಅವಧಿ ಮೀರಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false);
                             if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+                        } else if (pollData.status === 'REJECTED') {
+                            clearInterval(whatsappPollTimer);
+                            whatsappPollTimer = null;
+                            if (pollData.reason === 'PHONE_ALREADY_USED') {
+                                showWhatsappStatus(rbTV('This phone number is already used by another member.', 'ಈ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಬ್ಬ ಸದಸ್ಯರು ಬಳಸುತ್ತಿದ್ದಾರೆ.'), false);
+                            } else {
+                                showWhatsappStatus(rbTV('Verification rejected. Please try again.', 'ಪರಿಶೀಲನೆ ತಿರಸ್ಕರಿಸಲಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false);
+                            }
+                            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
                         }
                     } catch (e) { /* poll retry */ }
                 }, 2000);
@@ -787,7 +840,13 @@
                 document.getElementById('profile-email').value = state.user.email || '';
                 const profileUserId = document.getElementById('profile-user-id');
                 if (profileUserId) {
-                    profileUserId.textContent = state.userData?.userId || state.user.uid || 'Not available';
+                    if (state.userData?.memberId) {
+                        profileUserId.textContent = state.userData.memberId;
+                    } else {
+                        ensureMemberId().then(function(id) {
+                            if (id) profileUserId.textContent = id;
+                        });
+                    }
                 }
             }
             // Load additional data from Firestore
@@ -898,6 +957,13 @@
             const newNorm = normalizePhone(profileData.phone);
             const oldNorm = normalizePhone(state.userData && state.userData.phone);
 
+            // If phone number changed, reset verification
+            const phoneChanged = newNorm && oldNorm && newNorm !== oldNorm;
+            if (phoneChanged) {
+                profileData.phoneVerified = false;
+                profileData.verifiedPhone = null;
+            }
+
             const doSave = () => firebaseDb.collection('users').doc(state.user.uid).set({
                 ...state.userData,
                 ...profileData,
@@ -907,6 +973,10 @@
                 if (!state.userData) state.userData = {};
                 state.userData.photoURL = state.userData.photoURL || document.querySelector('#profile-preview img')?.src || '';
                 state.userData.phone = profileData.phone;
+                if (phoneChanged) {
+                    state.userData.phoneVerified = false;
+                    state.userData.verifiedPhone = null;
+                }
                 state.profileIncomplete = false;
                 updateFirstTimeBanner();
                 updateProfileTracker();
