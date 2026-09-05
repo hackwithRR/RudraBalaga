@@ -388,6 +388,9 @@
         // Load user data
         // Load user data
         function loadUserData(user) {
+            // Set default user data with coordinates for distance calculation
+            // (will be overwritten by Firestore data if available)
+            state.userData = state.userData || { lat: 12.9716, lng: 77.5946, name: user.displayName || 'ಭಕ್ತ' };
             // Set Google data as fallback
             document.getElementById('user-name').textContent = user.displayName || user.email || 'ಭಕ್ತ';
             if (user.photoURL) {
@@ -400,6 +403,7 @@
                     firebaseDb.collection('users').doc(user.uid).onSnapshot(doc => {
                         if (doc.exists) {
                             const userData = doc.data();
+                            state.userData = userData;
                             // Update user name in header
                             document.getElementById('user-name').textContent = userData.name || user.displayName || user.email || 'ಭಕ್ತ';
                             // Show user ID
@@ -411,12 +415,12 @@
                             if (userData.photoURL) {
                                 document.getElementById('profile-link').innerHTML = `<img src="${userData.photoURL}" class="w-full h-full rounded-full object-cover" alt="Profile">`;
                             }
+                            // Re-render events now that we have user data (for distance)
+                            if (state.events && state.events.length) renderEvents();
                         }
                     });
                 } catch (error) {
                     console.log('Firestore not available, using Google data');
-                    // Set demo user data with coordinates for distance calculation
-                    state.userData = { lat: 12.9716, lng: 77.5946, name: user.displayName || 'ಭಕ್ತ' };
                 }
             }
         }
