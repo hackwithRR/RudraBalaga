@@ -64,5 +64,10 @@ service cloud.firestore {
     match /phoneIndex/{phone} {
       allow read, write: if true;
     }
+
+    // Verified phones registry - quick lookup for duplicate check
+    match /verifiedPhones/{phone} {
+      allow read, write: if true;
+    }
   }
 }

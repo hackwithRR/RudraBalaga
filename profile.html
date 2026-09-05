@@ -738,8 +738,18 @@
             setTimeout(function() {
                 alert(rbTV('Your phone number has been verified successfully!', 'ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ!'));
             }, 500);
-            // Persist to Firestore
-            firebaseDb.collection('users').doc(state.user.uid).set({ phoneVerified: true, verifiedPhone: state.userData.verifiedPhone, phone: phone || state.userData.phone }, { merge: true }).catch(function(){});
+            // Persist to Firestore - user doc + verifiedPhones registry
+            var userData = { phoneVerified: true, verifiedPhone: state.userData.verifiedPhone, phone: phone || state.userData.phone };
+            firebaseDb.collection('users').doc(state.user.uid).set(userData, { merge: true }).catch(function(){});
+            // Add to verifiedPhones registry (doc id = normalized phone)
+            if (normalizedPhone) {
+                firebaseDb.collection('verifiedPhones').doc(normalizedPhone).set({
+                    uid: state.user.uid,
+                    memberId: state.userData.memberId || '',
+                    verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(function(){});
+            }
+        }
         }
         function showWhatsappStatus(msg, ok) {
             var el = document.getElementById('whatsapp-status-msg');
@@ -779,11 +789,8 @@
             }
             // Check if phone is already used by another user
             try {
-                var existingSnap = await firebaseDb.collection('users')
-                    .where('verifiedPhone', '==', digits)
-                    .limit(1)
-                    .get();
-                if (!existingSnap.empty && existingSnap.docs[0].id !== state.user.uid) {
+                var existingDoc = await firebaseDb.collection('verifiedPhones').doc(digits).get();
+                if (existingDoc.exists && existingDoc.data().uid !== state.user.uid) {
                     showWhatsappStatus(rbTV('This phone number is already used by another member.', 'ಈ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಬ್ಬ ಸದಸ್ಯರು ಬಳಸುತ್ತಿದ್ದಾರೆ.'), false);
                     return;
                 }
@@ -869,15 +876,9 @@
                 // Debounce check
                 phoneCheckTimeout = setTimeout(async function() {
                     try {
-                        var snap = await firebaseDb.collection('users')
-                            .where('verifiedPhone', '==', digits)
-                            .limit(1)
-                            .get();
-                        if (!snap.empty) {
-                            var existingUid = snap.docs[0].id;
-                            if (existingUid !== state.user.uid) {
-                                showWhatsappStatus(rbTV('This phone number is already used by another member. Please enter a different number.', 'ಈ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಬ್ಬ ಸದಸ್ಯರು ಬಳಸುತ್ತಿದ್ದಾರೆ. ದಯವಿಟ್ಟು ಬೇರೆ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ.'), false);
-                            }
+                        var doc = await firebaseDb.collection('verifiedPhones').doc(digits).get();
+                        if (doc.exists && doc.data().uid !== state.user.uid) {
+                            showWhatsappStatus(rbTV('This phone number is already used by another member. Please enter a different number.', 'ಈ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಬ್ಬ ಸದಸ್ಯರು ಬಳಸುತ್ತಿದ್ದಾರೆ. ದಯವಿಟ್ಟು ಬೇರೆ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ.'), false);
                         }
                     } catch (err) { /* ignore */ }
                 }, 500);
