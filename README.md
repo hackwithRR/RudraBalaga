@@ -143,7 +143,7 @@ const firebaseConfig = {
 
 ### Authentication
 - Google Sign-In
-- Phone number OTP
+- Phone number verification via WhatsApp (OTP-less deep-link flow)
 - Account linking (prevents duplicate accounts)
 - User ID in format 00001, 00002, etc.
 

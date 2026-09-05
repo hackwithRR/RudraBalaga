@@ -58,6 +58,22 @@ import jwt from 'jsonwebtoken';
  * @property {string} field - The field that changed
  */
 
+/**
+ * @typedef {Object} MetaWebhookEntry
+ * @property {string} id - WhatsApp Business Account ID
+ * @property {MetaWebhookChange[]} changes - Array of changes
+ */
+
+/**
+ * @typedef {Object} MetaWebhookPayload
+ * @property {string} object - Always "whatsapp_business_account"
+ * @property {MetaWebhookEntry[]} entries - Array of entries
+ */
+// ═══════════════════════════════════════════════════════════════════════
+// Constants
+// ═══════════════════════════════════════════════════════════════════════
+
+const SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 // ═══════════════════════════════════════════════════════════════════════
 // Handshake (GET)
@@ -194,15 +210,6 @@ async function processSingleMessage(message) {
     }
 }
 
-/**
- * @typedef {Object} MetaWebhookEntry
- * @property {string} id - WhatsApp Business Account ID
- * @property {MetaWebhookChange[]} changes - Array of changes
- */
-
-/**
- * @typedef {Object} MetaWebhookPayload
-
 // ═══════════════════════════════════════════════════════════════════════
 // Main handler
 // ═══════════════════════════════════════════════════════════════════════
@@ -223,13 +230,3 @@ export default async function handler(req, res) {
 
     return res.status(405).json({ ok: false, error: 'method_not_allowed' });
 }
-
- * @property {string} object - Always "whatsapp_business_account"
- * @property {MetaWebhookEntry[]} entries - Array of entries
- */
-
-// ═══════════════════════════════════════════════════════════════════════
-// Constants
-// ═══════════════════════════════════════════════════════════════════════
-
-const SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes

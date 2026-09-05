@@ -132,6 +132,9 @@ function createEvent(e) {
     const time = document.getElementById('event-time').value;
     const type = document.getElementById('event-type-select').value;
     const location = document.getElementById('event-location').value;
+    const mapLink = document.getElementById('event-map-link').value;
+    const lat = parseFloat(document.getElementById('event-lat').value) || null;
+    const lng = parseFloat(document.getElementById('event-lng').value) || null;
 
     firebaseDb.collection('events').add({
         title,
@@ -139,6 +142,9 @@ function createEvent(e) {
         time,
         type,
         location,
+        mapLink,
+        lat,
+        lng,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 

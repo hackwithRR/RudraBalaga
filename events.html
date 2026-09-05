@@ -365,6 +365,27 @@
             });
         });
 
+        // ---- Distance calculation (Haversine, no API) ----
+        const EARTH_RADIUS_KM = 6371;
+        function haversineKm(lat1, lon1, lat2, lon2) {
+            const toRad = (d) => (d * Math.PI) / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+            return EARTH_RADIUS_KM * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+        function formatDistance(km) {
+            if (km < 1) return `${Math.round(km * 1000)} m`;
+            if (km < 10) return `${Math.round(km * 10) / 10} km`;
+            return `${Math.round(km)} km`;
+        }
+        function getUserCoords() {
+            const d = state.userData;
+            if (d && d.lat && d.lng) return { lat: parseFloat(d.lat), lng: parseFloat(d.lng) };
+            return null;
+        }
+
+        // Load user data
         // Load user data
         function loadUserData(user) {
             // Set Google data as fallback
@@ -394,6 +415,8 @@
                     });
                 } catch (error) {
                     console.log('Firestore not available, using Google data');
+                    // Set demo user data with coordinates for distance calculation
+                    state.userData = { lat: 12.9716, lng: 77.5946, name: user.displayName || 'ಭಕ್ತ' };
                 }
             }
         }
@@ -414,7 +437,7 @@
                 console.log('Firestore not available, using demo data');
                 // Demo data
                 state.events = [
-                    { id: 'demo-event-1', title: 'ರುದ್ರ ಅಭಿಷೇಕಂ', date: '2026-07-15', time: '06:00', type: 'ಬೆಂಗಳೂರು', location: 'ISKCON ದೇವಸ್ಥಾನ, ಬೆಂಗಳೂರು' }
+                    { id: 'demo-event-1', title: 'ರುದ್ರ ಅಭಿಷೇಕಂ', date: '2026-07-15', time: '06:00', type: 'ಬೆಂಗಳೂರು', location: 'ISKCON ದೇವಸ್ಥಾನ, ಬೆಂಗಳೂರು', lat: 12.9716, lng: 77.5946 }
                 ];
                 renderEvents();
                 if (window.Notifications && state.user) { try { Notifications.checkEventReminders(state.events); } catch (e) {} }
@@ -697,6 +720,16 @@
                     ? `<div class="mt-4"><a href="${eventMapLink}" target="_blank" class="block"><div class="w-full h-48 rounded-lg border-2 border-primary-container overflow-hidden"><iframe class="w-full h-full" loading="lazy" allowfullscreen title="Map" src="${mapEmbedUrl}"></iframe></div><p class="text-center text-on-surface-variant font-label-md text-label-md mt-2 kannada-text">Open in Google Maps</p></a></div>`
                     : '';
 
+                // Calculate distance from user's location to event
+                const userCoords = getUserCoords();
+                const eventLat = parseFloat(e.lat);
+                const eventLng = parseFloat(e.lng);
+                let distanceHtml = '';
+                if (userCoords && !isNaN(eventLat) && !isNaN(eventLng)) {
+                    const km = haversineKm(userCoords.lat, userCoords.lng, eventLat, eventLng);
+                    distanceHtml = `<span class="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container/60 text-primary font-label-md text-label-md"><span class="material-symbols-outlined" style="font-size:13px;">directions_car</span>${formatDistance(km)}</span>`;
+                }
+
                 return `
                     <div class="bg-surface-container-lowest border-2 border-primary-container rounded-xl p-6 shadow-sm" data-event-id="${e.id}">
                         <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -704,7 +737,7 @@
                             ${paymentBadgeHtml}
                         </div>
                         <p class="text-on-surface font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' && e.eventEndDate ? `${formatDate(e.date)} - ${formatDate(e.eventEndDate)}` : formatDate(e.date)}${rbT(' at ', ' ರಂದು ')}${e.time}${rbT('', ' ಗಂಟೆಗೆ')}</p>
-                        <p class="text-on-surface-variant font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' ? 'ಹೊರಊರಿನ' : 'ಬೆಂಗಳೂರು'} - ${e.location}</p>
+                        <p class="text-on-surface-variant font-body-lg text-body-lg kannada-text">${e.type === 'Outstation' ? 'ಹೊರಊರಿನ' : 'ಬೆಂಗಳೂರು'} - ${e.location}${distanceHtml}</p>
                         ${mapHtml}
                         ${e.type === 'Outstation' ? (() => {
                             const outstationDates = Array.isArray(e.outstationDates) ? e.outstationDates : [];

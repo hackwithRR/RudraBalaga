@@ -365,6 +365,11 @@
                     <div>
                         <label for="profile-address" class="block font-label-lg text-label-lg text-on-surface mb-2 kannada-text">ವಿಳಾಸ</label>
                         <textarea id="profile-address" rows="3" class="w-full h-[100px] px-4 py-3 rounded-xl border-2 border-stone-300 bg-white text-on-surface font-body-lg kannada-text" placeholder="ನಿಮ್ಮ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ"></textarea>
+                        <button type="button" id="capture-location-btn" class="mt-2 text-sm text-primary font-bold flex items-center gap-1 kannada-text">
+                            <span class="material-symbols-outlined" style="font-size:18px;">my_location</span>
+                            ನನ್ನ ಸ್ಥಳ ಪತ್ತೆಮಾಡಿ
+                        </button>
+                        <p id="location-capture-status" class="hidden text-xs text-on-surface-variant mt-1"></p>
                     </div>
                     <div class="pt-4 border-t border-outline-variant">
                         <h3 class="font-headline-sm text-headline-sm text-primary mb-3 kannada-text">ತುರ್ತು ಸಂಪರ್ಕ ವಿವರಗಳು</h3>
@@ -387,6 +392,10 @@
                         <span class="material-symbols-outlined" data-icon="save" style="font-variation-settings: 'FILL' 1;">save</span>
                         ಪ್ರೊಫೈಲ್ ಸೇವ್ ಮಾಡಿ
                     </button>
+                    <!-- Hidden fields for geocoded coordinates -->
+                    <input type="hidden" id="profile-lat">
+                    <input type="hidden" id="profile-lng">
+                </form>
                 </form>
             </div>
         </section>
@@ -680,22 +689,13 @@
         var trackerForm = document.getElementById('profile-form');
         if (trackerForm) trackerForm.addEventListener('input', updateProfileTracker);
 
-        // ---- Phone verification (Truecaller 1-tap + OTP fallback) ----
+        // ---- Phone verification (WhatsApp OTP-less flow) ----
         function rbTV(en, kn) { return (window.RBLang && window.RBLang.language && window.RBLang.language() === 'en') ? en : kn; }
         function phoneVerifiedUI(on) {
             var tick = document.getElementById('phone-verified-tick');
-            var area = document.getElementById('truecaller-verify-area');
-            var otp = document.getElementById('otp-fallback-area');
+            var waArea = document.getElementById('whatsapp-verify-area');
             if (tick) tick.style.display = on ? 'flex' : 'none';
-            if (area) area.classList.toggle('hidden', on);
-            if (otp && on) otp.classList.add('hidden');
-        }
-        function isTcSdkUsable() {
-            try {
-                return typeof window.TruecallerSDK !== 'undefined' &&
-                    typeof window.TruecallerSDK.isUsable === 'function' &&
-                    window.TruecallerSDK.isUsable();
-            } catch (e) { return false; }
+            if (waArea) waArea.classList.toggle('hidden', on);
         }
         function markPhoneVerified(phone) {
             if (!state.user) return;
@@ -703,97 +703,80 @@
             if (phone) state.userData.phone = phone;
             phoneVerifiedUI(true);
             updateProfileTracker(); // verified ⇒ 100% + badge
+            // Persist to Firestore
+            firebaseDb.collection('users').doc(state.user.uid).set({ phoneVerified: true, phone: phone || state.userData.phone }, { merge: true }).catch(function(){});
+        }
+        function showWhatsappStatus(msg, ok) {
+            var el = document.getElementById('whatsapp-status-msg');
+            if (!el) return;
+            el.textContent = msg;
+            el.className = 'text-xs mt-2 ' + (ok ? 'text-green-700' : 'text-amber-600');
+            el.classList.remove('hidden');
         }
         async function initPhoneVerification() {
-            var btn = document.getElementById('tc-verify-btn');
+            var btn = document.getElementById('whatsapp-verify-btn');
             if (!btn) return;
             var verified = !!(state.userData && state.userData.phoneVerified);
             phoneVerifiedUI(verified);
             if (verified) return;
-            var label = document.getElementById('tc-verify-label');
-            var note = document.getElementById('tc-fallback-note');
-            if (isTcSdkUsable()) {
-                if (label) label.textContent = rbTV('Verify with Truecaller', 'ಟ್ರೂಕಾಲರ್‌ನೊಂದಿಗೆ ಪರಿಶೀಲಿಸಿ');
-            } else if (label) {
-                label.textContent = rbTV('Verify my phone number', 'ನನ್ನ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ');
-                if (note) {
-                    note.textContent = rbTV('Tap to receive a 6-digit OTP to verify your number.', 'ನಿಮ್ಮ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಲು 6-ಅಂಕಿಯ OTP ಪಡೆಯಲು ಟ್ಯಾಪ್ ಮಾಡಿ.');
-                    note.classList.remove('hidden');
+            document.getElementById('whatsapp-verify-area').classList.remove('hidden');
+        }
+        var whatsappPollTimer = null;
+        async function startWhatsappVerification() {
+            var phone = document.getElementById('profile-phone').value.trim();
+            var digits = phone.replace(/\D/g, '');
+            if (digits.length < 10) {
+                showWhatsappStatus(rbTV('Please enter a valid phone number first.', 'ದಯವಿಟ್ಟು ಮೊದಲು ಸರಿಯಾದ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.'), false);
+                return;
+            }
+            var btn = document.getElementById('whatsapp-verify-btn');
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+            try {
+                showWhatsappStatus(rbTV('Creating verification session...', 'ಪರಿಶೀಲನೆ ಸೆಷನ್ ರಚಿಸಲಾಗುತ್ತಿದೆ...'), false);
+                var res = await fetch('/api/start-whatsapp-session', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                var data = await res.json();
+                if (!res.ok || !data.ok) {
+                    showWhatsappStatus(rbTV('Could not start verification. Please try again.', 'ಪರಿಶೀಲನೆ ಪ್ರಾರಂಭಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false);
+                    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+                    return;
                 }
+                window.open(data.whatsappUrl, '_blank');
+                showWhatsappStatus(rbTV('WhatsApp opened! Send the message, then wait...', 'WhatsApp ತೆರೆಯಿತು! ಸಂದೇಶ ಕಳುಹಿಸಿ, ನಂತರ ಕಾಯಿರಿ...'), false);
+                if (whatsappPollTimer) clearInterval(whatsappPollTimer);
+                whatsappPollTimer = setInterval(async function () {
+                    try {
+                        var pollRes = await fetch('/api/whatsapp-status?token=' + encodeURIComponent(data.sessionToken));
+                        var pollData = await pollRes.json();
+                        if (pollData.status === 'VERIFIED') {
+                            clearInterval(whatsappPollTimer);
+                            whatsappPollTimer = null;
+                            showWhatsappStatus(rbTV('Phone verified successfully!', 'ಫೋನ್ ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ!'), true);
+                            markPhoneVerified(pollData.phone || phone);
+                        } else if (pollData.status === 'EXPIRED' || pollData.status === 'UNKNOWN') {
+                            clearInterval(whatsappPollTimer);
+                            whatsappPollTimer = null;
+                            showWhatsappStatus(rbTV('Session expired. Please try again.', 'ಸೆಷನ್ ಅವಧಿ ಮೀರಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false);
+                            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+                        }
+                    } catch (e) { /* poll retry */ }
+                }, 2000);
+                setTimeout(function () {
+                    if (whatsappPollTimer) {
+                        clearInterval(whatsappPollTimer);
+                        whatsappPollTimer = null;
+                        showWhatsappStatus(rbTV('Session expired. Please try again.', 'ಸೆಷನ್ ಅವಧಿ ಮೀರಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false);
+                        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+                    }
+                }, 5 * 60 * 1000);
+            } catch (e) {
+                showWhatsappStatus(rbTV('Network error. Please try again.', 'ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false);
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
             }
         }
-        // OTP attempt limiting (3/day client-side; server enforces too)
-        function otpAttemptsKey() { return 'rbOtpAttempts-' + new Date().toISOString().slice(0, 10); }
-        function otpAttemptsLeft() { return Math.max(0, 3 - parseInt(localStorage.getItem(otpAttemptsKey()) || '0', 10)); }
-        function consumeOtpAttempt() { localStorage.setItem(otpAttemptsKey(), String(3 - otpAttemptsLeft() + 1)); }
-        function showOtpStatus(msg, ok) {
-            var el = document.getElementById('otp-status');
-            if (!el) return;
-            el.textContent = msg;
-            el.className = 'text-xs mt-2 ' + (ok ? 'text-green-700' : 'text-red-600');
-            el.classList.remove('hidden');
-        }
-        async function authHeaders(extra) {
-            var h = Object.assign({ 'Content-Type': 'application/json' }, extra || {});
-            if (state.user) { try { h['x-firebase-idtoken'] = await state.user.getIdToken(); } catch (e) {} }
-            return h;
-        }
-        async function sendOtp() {
-            var phone = document.getElementById('profile-phone').value.trim();
-            if (otpAttemptsLeft() <= 0) { showOtpStatus(rbTV('Daily OTP limit reached. Try again tomorrow.', 'ದೈನಂದಿನ OTP ಮಿತಿ ಮೀರಿದೆ. ನಾಳೆ ಪ್ರಯತ್ನಿಸಿ.'), false); return; }
-            try {
-                var res = await fetch('/api/otp', { method: 'POST', headers: await authHeaders(), body: JSON.stringify({ action: 'send', phone: phone, uid: state.user.uid }) });
-                var data = await res.json();
-                if (res.ok && data.ok) showOtpStatus(rbTV('OTP sent to ' + phone, phone + ' ಗೆ OTP ಕಳುಹಿಸಲಾಗಿದೆ'), true);
-                else if (res.status === 503) showOtpStatus(rbTV('SMS service is not configured yet. Please contact an admin.', 'SMS ಸೇವೆ ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಅಡ್ಮಿನ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ.'), false);
-                else showOtpStatus(rbTV('Could not send OTP.', 'OTP ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.'), false);
-            } catch (e) { showOtpStatus(rbTV('Network error. Please try again.', 'ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false); }
-        }
-        async function verifyOtp() {
-            var phone = document.getElementById('profile-phone').value.trim();
-            var code = document.getElementById('otp-input').value.trim();
-            if (!/^\d{6}$/.test(code)) { showOtpStatus(rbTV('Enter the 6-digit OTP.', '6-ಅಂಕಿಯ OTP ನಮೂದಿಸಿ.'), false); return; }
-            try {
-                var res = await fetch('/api/otp', { method: 'POST', headers: await authHeaders(), body: JSON.stringify({ action: 'verify', phone: phone, code: code, uid: state.user.uid }) });
-                var data = await res.json();
-                if (res.ok && data.ok) {
-                    firebaseDb.collection('users').doc(state.user.uid).set({ phoneVerified: true }, { merge: true })
-                        .then(function () { markPhoneVerified(phone); showOtpStatus(rbTV('Phone verified!', 'ಫೋನ್ ಪರಿಶೀಲಿಸಲಾಗಿದೆ!'), true); });
-                } else {
-                    showOtpStatus(data.error === 'wrong_otp' ? rbTV('Wrong OTP. Please try again.', 'ತಪ್ಪು OTP. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.') : rbTV('Verification failed.', 'ಪರಿಶೀಲನೆ ವಿಫಲವಾಗಿದೆ.'), false);
-                }
-            } catch (e) { showOtpStatus(rbTV('Network error. Please try again.', 'ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'), false); }
-        }
-        function otpFallback() { document.getElementById('otp-fallback-area').classList.remove('hidden'); sendOtp(); }
         (function wirePhoneVerification() {
-            var tcBtn = document.getElementById('tc-verify-btn');
-            var otpVerify = document.getElementById('otp-verify-btn');
-            var otpResend = document.getElementById('otp-resend-btn');
-            if (!tcBtn) return;
-            tcBtn.addEventListener('click', function () {
-                if (isTcSdkUsable()) {
-                    try {
-                        window.TruecallerSDK.verify({
-                            onSuccess: async function (payload) {
-                                try {
-                                    var res = await fetch('/api/truecaller', { method: 'POST', headers: await authHeaders(), body: JSON.stringify({ accessToken: payload.accessToken || payload.authorizationCode, phoneNumber: document.getElementById('profile-phone').value.trim(), uid: state.user.uid }) });
-                                    var data = await res.json();
-                                    if (res.ok && data.ok) markPhoneVerified(document.getElementById('profile-phone').value.trim());
-                                    else otpFallback();
-                                } catch (e) { otpFallback(); }
-                            },
-                            onError: otpFallback,
-                            onFailure: otpFallback
-                        });
-                    } catch (e) { otpFallback(); }
-                } else {
-                    var otpArea = document.getElementById('otp-fallback-area');
-                    otpArea.classList.toggle('hidden');
-                    if (!otpArea.classList.contains('hidden')) sendOtp();
-                }
-            });
-            if (otpVerify) otpVerify.addEventListener('click', verifyOtp);
-            if (otpResend) otpResend.addEventListener('click', function () { consumeOtpAttempt(); sendOtp(); });
+            var waBtn = document.getElementById('whatsapp-verify-btn');
+            if (!waBtn) return;
+            waBtn.addEventListener('click', startWhatsappVerification);
         })();
 
         // Load profile data
@@ -812,6 +795,8 @@
                 document.getElementById('profile-phone').value = state.userData.phone || '';
                 document.getElementById('profile-dob').value = state.userData.dob || '';
                 document.getElementById('profile-address').value = state.userData.address || '';
+                document.getElementById('profile-lat').value = state.userData.lat || '';
+                document.getElementById('profile-lng').value = state.userData.lng || '';
                 document.getElementById('profile-emergency-name').value = state.userData.emergencyContactName || '';
                 document.getElementById('profile-emergency-contact').value = state.userData.emergencyContact || '';
                 document.getElementById('profile-emergency-relation').value = state.userData.emergencyContactRelation || '';
@@ -859,6 +844,8 @@
                 phone: document.getElementById('profile-phone').value,
                 dob: document.getElementById('profile-dob').value,
                 address: document.getElementById('profile-address').value,
+                lat: parseFloat(document.getElementById('profile-lat').value) || null,
+                lng: parseFloat(document.getElementById('profile-lng').value) || null,
                 emergencyContactName: document.getElementById('profile-emergency-name').value,
                 emergencyContact: document.getElementById('profile-emergency-contact').value,
                 emergencyContactRelation: document.getElementById('profile-emergency-relation').value
@@ -917,6 +904,56 @@
         // Setup profile picture change
         document.getElementById('change-pic-btn').addEventListener('click', function() {
             document.getElementById('profile-pic-input').click();
+        });
+
+        // Capture location via browser Geolocation API + reverse geocode to address
+        document.getElementById('capture-location-btn').addEventListener('click', function() {
+            const statusEl = document.getElementById('location-capture-status');
+            const btn = this;
+            if (!navigator.geolocation) {
+                statusEl.textContent = 'Geolocation not supported in this browser.';
+                statusEl.className = 'text-xs text-error mt-1';
+                statusEl.classList.remove('hidden');
+                return;
+            }
+            btn.disabled = true;
+            statusEl.textContent = 'Detecting location...';
+            statusEl.className = 'text-xs text-on-surface-variant mt-1';
+            statusEl.classList.remove('hidden');
+            navigator.geolocation.getCurrentPosition(
+                async function(pos) {
+                    const lat = pos.coords.latitude.toFixed(6);
+                    const lng = pos.coords.longitude.toFixed(6);
+                    document.getElementById('profile-lat').value = lat;
+                    document.getElementById('profile-lng').value = lng;
+                    statusEl.textContent = '✓ Location captured — fetching address...';
+                    // Reverse geocode: coordinates → address
+                    try {
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`, {
+                            headers: { 'User-Agent': 'RudraBalaga/1.0' }
+                        });
+                        const data = await res.json();
+                        if (data && data.display_name) {
+                            // Use a short, readable part of the address
+                            const addr = data.display_name;
+                            document.getElementById('profile-address').value = addr.length > 120 ? addr.slice(0, 117) + '...' : addr;
+                            statusEl.textContent = '✓ Location & address captured';
+                        } else {
+                            statusEl.textContent = '✓ Location captured (address not found)';
+                        }
+                    } catch {
+                        statusEl.textContent = '✓ Location captured (address lookup failed)';
+                    }
+                    statusEl.className = 'text-xs text-green-700 mt-1';
+                    btn.disabled = false;
+                },
+                function() {
+                    statusEl.textContent = 'Could not detect location. Please allow location access.';
+                    statusEl.className = 'text-xs text-error mt-1';
+                    btn.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
         });
 
         document.getElementById('profile-pic-input').addEventListener('change', function(e) {

@@ -989,6 +989,18 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                         <label for="event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link (Optional)</label>
                         <input type="url" id="event-map-link" placeholder="https://maps.google.com/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                     </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="event-lat" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Latitude</label>
+                            <input type="number" id="event-lat" step="any" placeholder="12.9716" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        </div>
+                        <div>
+                            <label for="event-lng" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Longitude</label>
+                            <input type="number" id="event-lng" step="any" placeholder="77.5946" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        </div>
+                    </div>
+                    <p class="text-xs text-on-surface-variant mt-1">Enter coordinates for distance calculation. <a href="https://www.google.com/maps" target="_blank" class="text-primary underline">Find on Google Maps</a> (right-click → "What's here?").</p>
+                    <!-- Outstation Dates (shown only for Outstation events) -->
                     <!-- Outstation Dates (shown only for Outstation events) -->
                     <div id="outstation-dates-section" class="hidden">
                         <div class="p-4 bg-surface-container-high rounded-xl border-2 border-secondary-container">
@@ -1312,6 +1324,17 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                         <label for="edit-event-map-link" class="block font-label-lg text-label-lg text-on-surface mb-2">Google Maps Link (Optional)</label>
                         <input type="url" id="edit-event-map-link" placeholder="https://maps.google.com/..." class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
                     </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="edit-event-lat" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Latitude</label>
+                            <input type="number" id="edit-event-lat" step="any" placeholder="12.9716" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        </div>
+                        <div>
+                            <label for="edit-event-lng" class="block font-label-lg text-label-lg text-on-surface mb-2">Location Longitude</label>
+                            <input type="number" id="edit-event-lng" step="any" placeholder="77.5946" class="w-full h-[60px] px-4 rounded-xl border-2 border-primary-container bg-white text-on-surface font-body-lg">
+                        </div>
+                    </div>
+                    <!-- Outstation Dates (shown only for Outstation events) -->
                     <!-- Outstation Dates (shown only for Outstation events) -->
                     <div id="edit-outstation-dates-section" class="hidden">
                         <div class="p-4 bg-surface-container-high rounded-xl border-2 border-secondary-container">
@@ -3059,6 +3082,8 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
             document.getElementById('edit-event-is-outstation').checked = event.type === 'Outstation' || event.isOutstation === true;
             document.getElementById('edit-event-location').value = event.location;
             document.getElementById('edit-event-map-link').value = event.mapLink || '';
+            document.getElementById('edit-event-lat').value = event.lat || '';
+            document.getElementById('edit-event-lng').value = event.lng || '';
             
             // Set limit
             if (event.limit) {
@@ -3132,6 +3157,8 @@ body,main,article,section,header,footer,nav,p,span,li,a,button,h1,h2,h3,h4,h5,h6
                 type: type,
                 location: document.getElementById('edit-event-location').value,
                 mapLink: document.getElementById('edit-event-map-link').value || null,
+                lat: parseFloat(document.getElementById('edit-event-lat').value) || null,
+                lng: parseFloat(document.getElementById('edit-event-lng').value) || null,
                 limit: limit,
                 isOutstation: type === 'Outstation',
                 registrationDeadline: null,
