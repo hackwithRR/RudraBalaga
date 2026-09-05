@@ -6,12 +6,15 @@ node_modules/
 .env.local
 .env.*.local
 
+# WhatsApp Auth State (NEVER commit — contains sensitive session tokens)
+auth_info/
+
 # Vercel
 .vercel/
 
 # macOS
 .DS_Store
-._*
+._
 
 # IDE
 .vscode/

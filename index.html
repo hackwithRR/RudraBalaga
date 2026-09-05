@@ -1250,6 +1250,20 @@
             </div>
         </section>
 
+         <!-- Recent Events with Attendance Status -->
+         <section id="recent-events-section" class="hidden">
+             <div class="home-section-head">
+                 <span class="home-section-head-icon material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+                 <div class="min-w-0">
+                     <p class="home-section-eyebrow">Recent</p>
+                     <h2 class="home-section-title font-headline-sm text-headline-sm kannada-text">ಕಳೆದ ಕಾರ್ಯಕ್ರಮಗಳು</h2>
+                 </div>
+             </div>
+             <div id="recent-events-list" class="grid grid-cols-1 gap-4">
+                 <p class="text-on-surface-variant font-body-lg text-body-lg">Loading...</p>
+             </div>
+         </section>
+
          <!-- View All Events Button (Shown when all events are responded to) -->
          <section id="view-all-events-section" class="hidden">
              <a href="events" class="touch-active w-full bg-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-md flex items-center justify-center gap-2 h-16 text-body-lg kannada-text">
@@ -1416,7 +1430,8 @@
             rsvps: {},
             busRoutes: {},
             user: null,
-            userData: null
+            userData: null,
+            attendance: {} // { eventId: { presentUids: [...], scannedUids: [...] } } - tracks who actually attended
         };
 
         // Loading animation
@@ -1528,6 +1543,7 @@
                     loadEvents();
                     loadRsvps();
                     loadBusRoutes();
+                    loadAttendance();
                     loadAnnouncements();
                     setupEventListeners();
                 } else {
@@ -1815,6 +1831,102 @@
                 console.log('Firestore not available, using demo data');
                 state.busRoutes = {};
             }
+        }
+
+        // Load attendance data from Firestore (who actually attended via QR scan)
+        function loadAttendance() {
+            try {
+                firebaseDb.collection('attendance').onSnapshot(snapshot => {
+                    state.attendance = {};
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        state.attendance[doc.id] = {
+                            presentUids: Array.isArray(data.presentUids) ? data.presentUids : [],
+                            scannedUids: Array.isArray(data.scannedUids) ? data.scannedUids : []
+                        };
+                    });
+                    renderRecentEvents();
+                });
+            } catch (error) {
+                console.log('Firestore not available for attendance');
+                state.attendance = {};
+            }
+        }
+
+        // Render recent past events with attendance status (Attended / Not Attended / No-Show)
+        function renderRecentEvents() {
+            const section = document.getElementById('recent-events-section');
+            const list = document.getElementById('recent-events-list');
+            if (!section || !list) return;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Get past events (finished) sorted by most recent first
+            const pastEvents = state.events
+                .filter(e => e.date && new Date(e.date) < today)
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 3); // Show only the 3 most recent past events
+
+            if (pastEvents.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            section.classList.remove('hidden');
+            const userUid = state.user?.uid;
+
+            list.innerHTML = pastEvents.map(event => {
+                const userRsvp = state.rsvps[userUid]?.[event.id];
+                const rsvpStatus = userRsvp?.status;
+
+                // Check if user actually attended (QR scan or admin-marked present)
+                const eventAttendance = state.attendance[event.id];
+                const userActuallyAttended = eventAttendance && (
+                    (Array.isArray(eventAttendance.presentUids) && eventAttendance.presentUids.includes(userUid)) ||
+                    (Array.isArray(eventAttendance.scannedUids) && eventAttendance.scannedUids.includes(userUid))
+                );
+
+                // Determine attendance status
+                let statusHtml = '';
+                if ((rsvpStatus === 'attending' || rsvpStatus === 'attended') && userActuallyAttended) {
+                    // User RSVP'd attending AND scanned QR / was marked present
+                    statusHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold bg-green-100 text-green-800">
+                        <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">check_circle</span>
+                        ${rbT('Attended','ಹಾಜರಾಗಿದ್ದೀರಿ')}
+                    </span>`;
+                } else if ((rsvpStatus === 'attending' || rsvpStatus === 'attended') && !userActuallyAttended) {
+                    // User RSVP'd attending but did NOT scan QR / was not marked present
+                    statusHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold bg-red-100 text-red-700">
+                        <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">person_off</span>
+                        ${rbT('No-Show','ಹಾಜರಾಗಿಲ್ಲ')}
+                    </span>`;
+                } else if (rsvpStatus === 'not-attending' || rsvpStatus === 'not-attended') {
+                    // User RSVP'd not attending
+                    statusHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold bg-surface-container-high text-on-surface-variant">
+                        <span class="material-symbols-outlined" style="font-size:16px;">event_busy</span>
+                        ${rbT('Not Attending','ಹಾಜರಾಗುತ್ತಿಲ್ಲ')}
+                    </span>`;
+                } else {
+                    // No response
+                    statusHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold bg-amber-100 text-amber-800">
+                        <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">help_outline</span>
+                        ${rbT('No Response','ಪ್ರತಿಕ್ರಿಯೆ ಇಲ್ಲ')}
+                    </span>`;
+                }
+
+                return `
+                    <div class="bg-surface-container-lowest border-2 border-outline-variant rounded-xl p-4 shadow-sm">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0 flex-1">
+                                <h4 class="font-bold text-on-surface text-lg truncate">${event.title}</h4>
+                                <p class="text-on-surface-variant text-sm mt-1">${formatDate(event.date)} ${event.time ? '• ' + event.time : ''}</p>
+                            </div>
+                            ${statusHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // Load announcements from Firestore
@@ -3036,6 +3148,7 @@
             animateCapacityBars();
             viewAllEventsSection.classList.toggle('hidden', !allUpcomingResponded);
             document.getElementById('bus-pickup-section').classList.add('hidden');
+            renderRecentEvents(); // Update recent events with attendance status
         }
 
         /* Legacy single-event renderer retained below for reference.

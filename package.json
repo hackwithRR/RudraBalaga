@@ -4,7 +4,16 @@
   "description": "Rudra Parayana - Mobile Web Application for Vedic chanting group management",
   "private": true,
   "type": "module",
+  "scripts": {
+    "start": "node worker.js"
+  },
   "dependencies": {
-    "jsonwebtoken": "^9.0.2"
+    "@hapi/boom": "^10.0.1",
+    "@whiskeysockets/baileys": "^7.0.0-rc14",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "pino": "^9.0.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0"
   }
 }
