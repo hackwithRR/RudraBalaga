@@ -2598,18 +2598,18 @@
                 .chips { display: flex; gap: 3mm; flex-wrap: wrap; margin-bottom: 6mm; }
                 .chip { background: #fff4e5; border: .4mm solid #ffe0b2; border-radius: 99px; padding: 2mm 5mm; font-size: 9.5pt; color: #bf360c; font-weight: 700; display: flex; align-items: center; gap: 2mm; }
                 .chip .lbl { color: #93887f; font-weight: 500; }
-                .event-title { font-size: 20pt; font-weight: 800; color: #bf360c; line-height: 1.2; }
-                .qr-row { display: flex; align-items: center; gap: 8mm; margin: 7mm 0; }
-                .qr-frame { position: relative; padding: 5mm; border: .8mm solid #f57c00; border-radius: 5mm; background: #fff; box-shadow: 0 2mm 6mm rgba(230,81,0,.2); flex: 0 0 auto; }
-                .qr-frame::before, .qr-frame::after { content: ''; position: absolute; width: 8mm; height: 8mm; border: 1.2mm solid #ff6d00; }
-                .qr-frame::before { top: -1.6mm; left: -1.6mm; border-right: none; border-bottom: none; border-top-left-radius: 3mm; }
-                .qr-frame::after { bottom: -1.6mm; right: -1.6mm; border-left: none; border-top: none; border-bottom-right-radius: 3mm; }
-                .qr-frame img { width: 74mm; height: 74mm; display: block; }
-                .qr-side { flex: 1; }
-                .qr-side h3 { font-size: 12.5pt; color: #e65100; font-weight: 800; margin-bottom: 2.5mm; }
-                .qr-side p { font-size: 10pt; color: #57504a; line-height: 1.55; }
-                .qr-side .hint { margin-top: 4mm; display: inline-block; background: #fff6e0; border: .4mm solid #ffe08a; color: #8a6d00; border-radius: 3mm; padding: 2.5mm 4mm; font-size: 9pt; font-weight: 600; }
-                .steps { margin-top: 6mm; background: #fff8f0; border: .4mm solid #ffe0b2; border-radius: 5mm; padding: 6mm 7mm 4mm; }
+                .event-title { font-size: 17pt; font-weight: 800; color: #bf360c; text-align: center; }
+                .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5mm 0 4mm; }
+                .qr-frame { position: relative; padding: 7mm; border: 1mm solid #f57c00; border-radius: 7mm; background: #fff; box-shadow: 0 2mm 8mm rgba(230,81,0,.22); }
+                .qr-frame::before, .qr-frame::after { content: ''; position: absolute; width: 10mm; height: 10mm; border: 1.6mm solid #ff6d00; }
+                .qr-frame::before { top: -2mm; left: -2mm; border-right: none; border-bottom: none; border-top-left-radius: 4mm; }
+                .qr-frame::after { bottom: -2mm; right: -2mm; border-left: none; border-top: none; border-bottom-right-radius: 4mm; }
+                .qr-frame img { width: 116mm; height: 116mm; display: block; }
+                .hero-hint { margin-top: 6mm; background: #fff4e5; border: .4mm solid #ffe0b2; color: #bf360c; border-radius: 99px; padding: 2.5mm 8mm; font-size: 11pt; font-weight: 800; letter-spacing: .4pt; }
+                .bottom { padding: 0 14mm; }
+                .chips { display: flex; gap: 3mm; justify-content: center; flex-wrap: wrap; margin-bottom: 4mm; }
+                .chip { background: #fff4e5; border: .4mm solid #ffe0b2; border-radius: 99px; padding: 2mm 5mm; font-size: 9.5pt; color: #bf360c; font-weight: 700; display: flex; align-items: center; gap: 2mm; }
+                .chip .lbl { color: #93887f; font-weight: 500; }
                 .steps h3 { font-size: 11pt; color: #bf360c; margin-bottom: 4mm; text-transform: uppercase; letter-spacing: 1.4pt; display: flex; align-items: center; gap: 3mm; }
                 .steps h3::after { content: ''; flex: 1; height: .4mm; background: #ffe0b2; border-radius: 99px; }
                 .steps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm 6mm; }
@@ -2638,32 +2638,29 @@
                     <div class="head-strip"></div>
                 </div>
                 <div class="body">
-                    <div class="chips">
-                        <div class="chip"><span class="lbl">Event</span> ${event.title || 'Event'}</div>
-                        ${eventDate ? `<div class="chip"><span class="lbl">Date</span> ${eventDate}</div>` : ''}
-                        <div class="chip"><span class="lbl">Type</span> QR Check-in</div>
-                    </div>
-                    <div class="event-title">${event.title || 'Event'}</div>
-                    <div class="qr-row">
+                    <div class="hero">
                         <div class="qr-frame"><img src="${dataUrl}" alt="Attendance QR"></div>
-                        <div class="qr-side">
-                            <h3>Scan to check in</h3>
-                            <p>Members simply open the <b>Rudra Balaga</b> app, start the built-in scanner and point it at this code. Their attendance is recorded instantly — no signatures, no manual registers, no queues.</p>
-                            <span class="hint">✦ Works with the phone's regular camera too — just scan &amp; open the link</span>
+                        <div class="hero-hint">SCAN · MARK · DONE — attendance in one scan</div>
+                    </div>
+                    <div class="bottom">
+                        <div class="event-title">${event.title || 'Event'}</div>
+                        <div class="chips">
+                            ${eventDate ? `<div class="chip"><span class="lbl">Date</span> ${eventDate}</div>` : ''}
+                            <div class="chip"><span class="lbl">Type</span> QR Check-in</div>
+                            <div class="chip"><span class="lbl">Event ID</span> ${event.id}</div>
+                        </div>
+                        <div class="steps">
+                            <h3>How to mark attendance</h3>
+                            <div class="steps-grid">
+                                <div class="step"><div class="step-num">1</div><div>Open the <b>Rudra Balaga</b> app and log in</div></div>
+                                <div class="step"><div class="step-num">2</div><div>Tap <b>QR Attendance</b> on the home screen</div></div>
+                                <div class="step"><div class="step-num">3</div><div>Tap <b>Start Camera Scanner</b> &amp; aim at this code</div></div>
+                                <div class="step"><div class="step-num">4</div><div><b>"Attendance marked!"</b> pops up — you're done ✓</div></div>
+                            </div>
+                            <div class="note"><span>ℹ</span><span>Works with the phone's regular camera too — scan &amp; open the link. Every scan updates the official roster in real time.</span></div>
                         </div>
                     </div>
-                    <div class="steps">
-                        <h3>How to mark attendance</h3>
-                        <div class="steps-grid">
-                            <div class="step"><div class="step-num">1</div><div>Open the <b>Rudra Balaga</b> app and log in</div></div>
-                            <div class="step"><div class="step-num">2</div><div>Tap <b>QR Attendance</b> on the home screen</div></div>
-                            <div class="step"><div class="step-num">3</div><div>Tap <b>Start Camera Scanner</b> &amp; aim at this code</div></div>
-                            <div class="step"><div class="step-num">4</div><div><b>"Attendance marked!"</b> pops up — you're done ✓</div></div>
-                        </div>
-                        <div class="note"><span>ℹ</span><span>Every scan is linked to this event's unique ID and updates the official roster in real time. Admins can view and export the attended list at any time.</span></div>
-                    </div>
-                </div>
-                <div class="footer">
+                    <div class="footer">
                     <div class="col"><b>Rudra Balaga</b><span>ರುದ್ರ ಪರಾಯಣ</span></div>
                     <div class="col mid"><span>Generated on ${new Date().toLocaleString('en-IN')}</span><span>Digital attendance · Paper-free</span></div>
                     <div class="col right"><span>Event ID</span><span class="fid">${event.id}</span></div>
