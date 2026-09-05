@@ -54,5 +54,15 @@ service cloud.firestore {
     match /pushMeta/{metaId} {
       allow read, write: if true;
     }
+
+    // WhatsApp verification sessions
+    match /whatsappSessions/{sessionId} {
+      allow read, write: if true;
+    }
+
+    // Phone index - prevents duplicate phone numbers across accounts
+    match /phoneIndex/{phone} {
+      allow read, write: if true;
+    }
   }
 }

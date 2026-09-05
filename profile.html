@@ -734,6 +734,10 @@
             updateProfileTracker(); // verified ⇒ 100% + badge
             // Show success message
             showWhatsappStatus(rbTV('Phone verified successfully! ✓', 'ಫೋನ್ ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ! ✓'), true);
+            // Show popup
+            setTimeout(function() {
+                alert(rbTV('Your phone number has been verified successfully!', 'ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ!'));
+            }, 500);
             // Persist to Firestore
             firebaseDb.collection('users').doc(state.user.uid).set({ phoneVerified: true, verifiedPhone: state.userData.verifiedPhone, phone: phone || state.userData.phone }, { merge: true }).catch(function(){});
         }
@@ -749,6 +753,10 @@
             if (!btn) return;
             var verified = !!(state.userData && state.userData.phoneVerified);
             phoneVerifiedUI(verified);
+            // Show success message if already verified
+            if (verified) {
+                showWhatsappStatus(rbTV('Phone verified ✓', 'ಫೋನ್ ಪರಿಶೀಲಿಸಲಾಗಿದೆ ✓'), true);
+            }
             // If phone number was changed, reset verification
             if (state.userData && state.userData.phoneVerified && state.userData.verifiedPhone) {
                 var currentPhone = normalizePhone(state.userData.phone);
@@ -880,19 +888,23 @@
         function claimPhone(normalized, previousNormalized) {
             const db = firebaseDb;
             return db.runTransaction(async (tx) => {
+                // ALL READS FIRST
                 const ref = db.collection('phoneIndex').doc(normalized);
                 const snap = await tx.get(ref);
                 if (snap.exists && snap.data().uid !== state.user.uid) {
                     throw new Error('PHONE_TAKEN');
                 }
-                tx.set(ref, { uid: state.user.uid, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                // Release the old number if the user changed it
+                // Read old number if it exists
+                var oldSnap = null;
                 if (previousNormalized && previousNormalized !== normalized) {
                     const oldRef = db.collection('phoneIndex').doc(previousNormalized);
-                    const oldSnap = await tx.get(oldRef);
-                    if (oldSnap.exists && oldSnap.data().uid === state.user.uid) {
-                        tx.delete(oldRef);
-                    }
+                    oldSnap = await tx.get(oldRef);
+                }
+                // ALL WRITES AFTER READS
+                tx.set(ref, { uid: state.user.uid, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                if (oldSnap && oldSnap.exists && oldSnap.data().uid === state.user.uid) {
+                    const oldRef = db.collection('phoneIndex').doc(previousNormalized);
+                    tx.delete(oldRef);
                 }
             });
         }
