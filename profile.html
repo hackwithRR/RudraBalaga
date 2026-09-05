@@ -777,6 +777,17 @@
                 showWhatsappStatus(rbTV('Please enter a valid phone number first.', 'ದಯವಿಟ್ಟು ಮೊದಲು ಸರಿಯಾದ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.'), false);
                 return;
             }
+            // Check if phone is already used by another user
+            try {
+                var existingSnap = await firebaseDb.collection('users')
+                    .where('verifiedPhone', '==', digits)
+                    .limit(1)
+                    .get();
+                if (!existingSnap.empty && existingSnap.docs[0].id !== state.user.uid) {
+                    showWhatsappStatus(rbTV('This phone number is already used by another member.', 'ಈ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಬ್ಬ ಸದಸ್ಯರು ಬಳಸುತ್ತಿದ್ದಾರೆ.'), false);
+                    return;
+                }
+            } catch (err) { /* continue */ }
             var btn = document.getElementById('whatsapp-verify-btn');
             if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
             try {
@@ -840,6 +851,37 @@
             var waBtn = document.getElementById('whatsapp-verify-btn');
             if (!waBtn) return;
             waBtn.addEventListener('click', startWhatsappVerification);
+        })();
+
+        // Check if phone number is already used by another user (on input)
+        var phoneCheckTimeout = null;
+        (function wirePhoneDuplicateCheck() {
+            var phoneInput = document.getElementById('profile-phone');
+            if (!phoneInput) return;
+            phoneInput.addEventListener('input', function() {
+                if (phoneCheckTimeout) clearTimeout(phoneCheckTimeout);
+                var phone = phoneInput.value.trim();
+                var digits = phone.replace(/\D/g, '');
+                if (digits.length < 10) {
+                    showWhatsappStatus('', false);
+                    return;
+                }
+                // Debounce check
+                phoneCheckTimeout = setTimeout(async function() {
+                    try {
+                        var snap = await firebaseDb.collection('users')
+                            .where('verifiedPhone', '==', digits)
+                            .limit(1)
+                            .get();
+                        if (!snap.empty) {
+                            var existingUid = snap.docs[0].id;
+                            if (existingUid !== state.user.uid) {
+                                showWhatsappStatus(rbTV('This phone number is already used by another member. Please enter a different number.', 'ಈ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಈಗಾಗಲೇ ಇನ್ನೊಬ್ಬ ಸದಸ್ಯರು ಬಳಸುತ್ತಿದ್ದಾರೆ. ದಯವಿಟ್ಟು ಬೇರೆ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ.'), false);
+                            }
+                        }
+                    } catch (err) { /* ignore */ }
+                }, 500);
+            });
         })();
 
         // Load profile data
@@ -971,6 +1013,14 @@
             const newNorm = normalizePhone(profileData.phone);
             const oldNorm = normalizePhone(state.userData && state.userData.phone);
             const verifiedNorm = normalizePhone(state.userData && state.userData.verifiedPhone);
+
+            // If phone is filled but not verified, block save
+            if (newNorm && !verifiedNorm) {
+                if (saveBtn) saveBtn.disabled = false;
+                showWhatsappStatus(rbTV('Please verify your phone number before saving.', 'ಉಳಿಸುವ ಮೊದಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.'), false);
+                alert(rbTV('Please verify your phone number before saving the profile.', 'ಪ್ರೊಫೈಲ್ ಉಳಿಸುವ ಮೊದಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.'));
+                return;
+            }
 
             // Only treat as "changed" if the new number differs from BOTH the old phone AND the verified phone
             const phoneFromVerified = verifiedNorm && newNorm === verifiedNorm;
